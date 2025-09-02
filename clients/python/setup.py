@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""
+Setup configuration for Mosaic Logger Python client
+"""
+
+from setuptools import setup, find_packages
+import pathlib
+
+# Get the long description from the README file
+here = pathlib.Path(__file__).parent
+long_description = (here / "README.md").read_text(encoding='utf-8') if (here / "README.md").exists() else ""
+
+setup(
+    name="mosaic-logger",
+    version="1.0.0",
+    description="Platform-agnostic logging client for Mosaic Artist Assistant",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/mosaic-platform/logging-system",
+    author="Mosaic Platform",
+    author_email="dev@mosaic-platform.com",
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: System :: Logging",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+    ],
+    keywords="logging, observability, telemetry, platform, mosaic",
+    packages=find_packages(exclude=["tests", "tests.*"]),
+    python_requires=">=3.8",
+    install_requires=[
+        "typing_extensions>=4.0.0",
+        "dataclasses; python_version<'3.7'",
+    ],
+    extras_require={
+        "dev": [
+            "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
+            "pytest-asyncio>=0.21.0",
+            "black>=22.0.0",
+            "mypy>=1.0.0",
+            "flake8>=5.0.0",
+        ],
+        "file": [
+            "aiofiles>=22.0.0",
+        ],
+        "cloud": [
+            "boto3>=1.26.0",
+            "azure-monitor-opentelemetry-exporter>=1.0.0b17",
+            "google-cloud-logging>=3.4.0",
+        ],
+    },
+    entry_points={
+        "console_scripts": [
+            "mosaic-logger-validate=mosaic_logger.cli:validate",
+        ],
+    },
+    project_urls={
+        "Bug Reports": "https://github.com/mosaic-platform/logging-system/issues",
+        "Source": "https://github.com/mosaic-platform/logging-system",
+        "Documentation": "https://docs.mosaic-platform.com/logging",
+    },
+)
