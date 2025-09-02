@@ -1,5 +1,5 @@
 """
-Emoji resolution system for Mosaic Logger Python client
+Emoji resolution system for Artissist Logger Python client
 """
 
 from typing import Dict, Optional

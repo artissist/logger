@@ -1,5 +1,5 @@
 """
-Core type definitions for Mosaic Logger Python client
+Core type definitions for Artissist Logger Python client
 """
 
 from enum import Enum

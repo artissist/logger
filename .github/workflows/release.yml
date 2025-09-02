@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        type: string
+      create_release:
+        description: 'Create GitHub release'
+        type: boolean
+        default: true
+
+jobs:
+  create-release:
+    if: github.event_name == 'push' || inputs.create_release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Determine version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION="${GITHUB_REF#refs/tags/v}"
+        fi
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Version: ${VERSION}"
+    
+    - name: Create Release
+      if: github.event_name == 'push' || inputs.create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        release_name: Release v${{ steps.version.outputs.version }}
+        body: |
+          ## Artissist Logger v${{ steps.version.outputs.version }}
+          
+          ### Installation
+          
+          **Python:**
+          ```bash
+          pip install artissist-logger==${{ steps.version.outputs.version }}
+          ```
+          
+          **JavaScript/TypeScript:**
+          ```bash
+          npm install @artissist/logger@${{ steps.version.outputs.version }}
+          ```
+          
+          ### What's Changed
+          See [CHANGELOG.md](https://github.com/artissist/logger/blob/main/CHANGELOG.md) for details.
+        draft: false
+        prerelease: false
+  
+  publish-python:
+    needs: create-release
+    uses: ./.github/workflows/publish-python.yml
+    with:
+      version: ${{ needs.create-release.outputs.version }}
+    secrets: inherit
+  
+  publish-npm:
+    needs: create-release
+    uses: ./.github/workflows/publish-npm.yml
+    with:
+      version: ${{ needs.create-release.outputs.version }}
+    secrets: inherit

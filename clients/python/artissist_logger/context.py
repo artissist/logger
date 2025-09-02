@@ -1,5 +1,5 @@
 """
-Context management for distributed tracing in Mosaic Logger Python client
+Context management for distributed tracing in Artissist Logger Python client
 """
 
 import uuid
@@ -69,7 +69,7 @@ class LoggerContext:
 
 
 # Context variable for async context propagation
-_current_context: ContextVar[Optional[LoggerContext]] = ContextVar("mosaic_logger_context", default=None)
+_current_context: ContextVar[Optional[LoggerContext]] = ContextVar("artissist_logger_context", default=None)
 
 
 class ContextManager:

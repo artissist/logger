@@ -1,5 +1,5 @@
 """
-Console output adapter for Mosaic Logger Python client
+Console output adapter for Artissist Logger Python client
 """
 
 import sys

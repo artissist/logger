@@ -1,5 +1,5 @@
 """
-Base adapter interface for Mosaic Logger Python client
+Base adapter interface for Artissist Logger Python client
 """
 
 from abc import ABC, abstractmethod

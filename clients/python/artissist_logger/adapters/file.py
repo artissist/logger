@@ -1,5 +1,5 @@
 """
-File output adapter for Mosaic Logger Python client
+File output adapter for Artissist Logger Python client
 """
 
 import json

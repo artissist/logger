@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup configuration for Mosaic Logger Python client
+Setup configuration for Artissist Logger Python client
 """
 
 from setuptools import setup, find_packages
@@ -11,14 +11,14 @@ here = pathlib.Path(__file__).parent
 long_description = (here / "README.md").read_text(encoding='utf-8') if (here / "README.md").exists() else ""
 
 setup(
-    name="mosaic-logger",
+    name="artissist-logger",
     version="1.0.0",
-    description="Platform-agnostic logging client for Mosaic Artist Assistant",
+    description="Platform-agnostic logging client for Artissist",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mosaic-platform/logging-system",
-    author="Mosaic Platform",
-    author_email="dev@mosaic-platform.com",
+    url="https://github.com/artissist/logger",
+    author="Artissist",
+    author_email="dev@artissist.com",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -32,7 +32,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
     ],
-    keywords="logging, observability, telemetry, platform, mosaic",
+    keywords="logging, observability, telemetry, platform, artissist",
     packages=find_packages(exclude=["tests", "tests.*"]),
     python_requires=">=3.8",
     install_requires=[
@@ -59,12 +59,12 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "mosaic-logger-validate=mosaic_logger.cli:validate",
+            "artissist-logger-validate=artissist_logger.cli:validate",
         ],
     },
     project_urls={
-        "Bug Reports": "https://github.com/mosaic-platform/logging-system/issues",
-        "Source": "https://github.com/mosaic-platform/logging-system",
-        "Documentation": "https://docs.mosaic-platform.com/logging",
+        "Bug Reports": "https://github.com/artissist/logger/issues",
+        "Source": "https://github.com/artissist/logger",
+        "Documentation": "https://github.com/artissist/logger",
     },
 )

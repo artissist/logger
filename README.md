@@ -1,6 +1,6 @@
-# Mosaic Logger
+# Artissist Logger
 
-A unified, platform-agnostic logging system built with Smithy IDL for the Mosaic Artist's Personal Assistant platform.
+A unified, platform-agnostic logging system built with Smithy IDL for the Artissist platform.
 
 ## Features
 
@@ -48,17 +48,17 @@ This project is currently in active development. See `SMITHY_LOGGER_PROPOSAL.md`
 ### Install Packages
 ```bash
 # TypeScript/JavaScript
-npm install @mosaic/logger
+npm install @artissist/logger
 
 # Python
-pip install mosaic-logger
+pip install artissist-logger
 ```
 
 ### Basic Usage
 
 **TypeScript:**
 ```typescript
-import { LoggerFactory, LogLevel, LogEvent } from '@mosaic/logger';
+import { LoggerFactory, LogLevel, LogEvent } from '@artissist/logger';
 
 const logger = LoggerFactory.createFrontendLogger({
   service: 'my-app',
@@ -72,7 +72,7 @@ logger.logEvent(LogEvent.USER_AUTH, 'User login successful', { userId: 'user123'
 
 **Python:**
 ```python
-from mosaic_logger import LoggerFactory, LogLevel, LogEvent
+from artissist_logger import LoggerFactory, LogLevel, LogEvent
 
 logger = LoggerFactory.create_backend_logger(
     service='my-service',

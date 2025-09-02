@@ -1,5 +1,5 @@
 """
-Output adapters for Mosaic Logger Python client
+Output adapters for Artissist Logger Python client
 """
 
 from .base import LogAdapter

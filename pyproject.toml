@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "artissist-logger"
+version = "1.0.0"
+description = "Platform-agnostic logging client for Artissist"
+authors = [
+    {name = "Artissist", email = "dev@artissist.com"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Logging",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["logging", "observability", "telemetry", "platform", "artissist"]
+dependencies = [
+    "typing_extensions>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=22.0.0",
+    "mypy>=1.0.0",
+    "flake8>=5.0.0",
+]
+file = [
+    "aiofiles>=22.0.0",
+]
+cloud = [
+    "boto3>=1.26.0",
+    "azure-monitor-opentelemetry-exporter>=1.0.0b17",
+    "google-cloud-logging>=3.4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/artissist/logger"
+"Bug Reports" = "https://github.com/artissist/logger/issues"
+Source = "https://github.com/artissist/logger"
+Documentation = "https://github.com/artissist/logger"
+
+[project.scripts]
+artissist-logger-validate = "artissist_logger.cli:validate"
+
+[tool.setuptools]
+packages = ["artissist_logger"]
+package-dir = {"" = "clients/python"}
+
+[tool.setuptools.package-data]
+artissist_logger = ["py.typed"]

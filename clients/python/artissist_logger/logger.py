@@ -1,5 +1,5 @@
 """
-Core Logger implementation for Mosaic Logger Python client
+Core Logger implementation for Artissist Logger Python client
 """
 
 import asyncio
