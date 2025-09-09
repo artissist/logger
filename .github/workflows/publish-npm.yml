@@ -27,6 +27,11 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
         scope: '@artissist'
     
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    
     - name: Set version from input or tag
       run: |
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -39,24 +44,24 @@ jobs:
     
     - name: Install dependencies
       working-directory: clients/typescript
-      run: npm ci
+      run: pnpm install --frozen-lockfile
     
     - name: Update version in package.json
       working-directory: clients/typescript
       run: |
-        npm version ${VERSION} --no-git-tag-version --allow-same-version
+        pnpm version ${VERSION} --no-git-tag-version --allow-same-version
     
     - name: Build package
       working-directory: clients/typescript
-      run: npm run build
+      run: pnpm run build
     
     - name: Run tests
       working-directory: clients/typescript
-      run: npm test
+      run: pnpm test
     
     - name: Publish to npm
       working-directory: clients/typescript
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
-        npm publish --access public
+        pnpm publish --access public --no-git-checks

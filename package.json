@@ -1,0 +1,54 @@
+{
+  "name": "@artissist/logger-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Artissist Logger - Unified logging library monorepo",
+  "scripts": {
+    "lint": "pnpm run lint:ts && pnpm run lint:py",
+    "lint:ts": "cd clients/typescript && pnpm run lint",
+    "lint:py": "./scripts/lint-python.sh",
+    "lint:fix": "cd clients/typescript && pnpm run lint:fix",
+    "build": "./scripts/build.sh",
+    "build:ts": "cd clients/typescript && pnpm run build",
+    "build:py": "cd clients/python && python -m build",
+    "test": "pnpm run test:ts && pnpm run test:py",
+    "test:ts": "cd clients/typescript && pnpm test",
+    "test:py": "cd clients/python && pytest",
+    "install:ts": "cd clients/typescript && pnpm install",
+    "install:py": "cd clients/python && pip install -e .[dev]",
+    "clean": "./scripts/clean.sh",
+    "validate": "pnpm run lint && pnpm run test"
+  },
+  "workspaces": [
+    "clients/typescript"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.1.0",
+    "typescript": "^5.2.2",
+    "typescript-eslint": "^8.42.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/artissist/logger.git"
+  },
+  "keywords": [
+    "logging",
+    "logger",
+    "observability",
+    "telemetry",
+    "artissist",
+    "typescript",
+    "python"
+  ],
+  "author": "Artissist",
+  "license": "MIT"
+}
