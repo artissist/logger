@@ -83,3 +83,8 @@ pids/
 # Temporary folders
 tmp/
 temp/
+
+
+#pythong env
+.venv/
+venv/
