@@ -5,8 +5,8 @@ echo "🔍 Running Python linting and type checking..."
 
 cd "$(dirname "$0")/../clients/python"
 
-# Activate virtual environment if it exists
-if [ -d "venv" ]; then
+# Activate virtual environment if it exists and is functional
+if [ -d "venv" ] && [ -x "venv/bin/python" ]; then
     source venv/bin/activate
     PYTHON="venv/bin/python"
     PIP="venv/bin/pip"
