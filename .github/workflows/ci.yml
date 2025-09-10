@@ -29,13 +29,8 @@ jobs:
     
     - name: Run linter
       run: |
-        flake8 artissist_logger --max-line-length=100
-      working-directory: clients/python
-    
-    - name: Run type checker
-      run: |
-        mypy artissist_logger
-      working-directory: clients/python
+        pnpm run lint:py
+
     
     - name: Run tests
       run: |
@@ -64,7 +59,7 @@ jobs:
       working-directory: clients/typescript
     
     - name: Run linter
-      run: pnpm run lint
+      run: pnpm run lint:ts
       working-directory: clients/typescript
     
     - name: Type check
