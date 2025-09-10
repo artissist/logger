@@ -52,6 +52,8 @@ setup(
             "mypy>=1.0.0",
             "flake8>=5.0.0",
             "pylint>=2.15.0",
+            "types-aiofiles>=22.0.0",
+            "aiofiles>=22.0.0",  # Include aiofiles in dev for proper type checking
         ],
         "file": [
             "aiofiles>=22.0.0",
