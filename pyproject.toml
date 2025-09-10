@@ -40,6 +40,7 @@ dev = [
     "flake8>=5.0.0",
     "pylint>=3.0.0",
     "fastapi>=0.116.1",
+    "types-aiofiles>=24.1.0.20250822",
 ]
 file = [
     "aiofiles>=22.0.0",
