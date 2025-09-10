@@ -4,9 +4,10 @@ Core Logger implementation for Artissist Logger Python client
 
 import asyncio
 from datetime import datetime
-from .types import LogLevel, LogMessage, LoggerConfig, LogEntryParams
-from .context import LoggerContext, ContextManager
+
+from .context import ContextManager, LoggerContext
 from .emoji import EmojiResolver
+from .types import LogEntryParams, LoggerConfig, LogLevel, LogMessage
 
 
 class Logger:
@@ -17,7 +18,8 @@ class Logger:
         Initialize logger
 
         Args:
-            config: Logger configuration containing service, environment, adapters, etc.
+            config: Logger configuration containing service, environment,
+                adapters
         """
         self.service = config.service
         self.environment = config.environment
@@ -61,12 +63,16 @@ class Logger:
         # Get emoji if enabled
         emoji = None
         if self.emojis:
-            emoji = self.emoji_resolver.get_emoji(params.event, params.custom_event)
+            emoji = self.emoji_resolver.get_emoji(
+                params.event, params.custom_event
+            )
 
         # Format and send to all adapters
         tasks = []
         for adapter in self.adapters:
-            formatted_message = adapter.format_message(log_message, self.emojis, emoji)
+            formatted_message = adapter.format_message(
+                log_message, self.emojis, emoji
+            )
             task = adapter.write(log_message, formatted_message)
             tasks.append(task)
 
@@ -74,24 +80,32 @@ class Logger:
             try:
                 await asyncio.gather(*tasks, return_exceptions=True)
             except Exception:
-                # Ignore adapter errors to prevent logging failures from breaking application
+                # Ignore adapter errors to prevent logging failures
                 pass
 
     async def debug(self, message: str, **kwargs):
         """Log debug message"""
-        await self.log(LogEntryParams(level=LogLevel.DEBUG, message=message, **kwargs))
+        await self.log(
+            LogEntryParams(level=LogLevel.DEBUG, message=message, **kwargs)
+        )
 
     async def info(self, message: str, **kwargs):
         """Log info message"""
-        await self.log(LogEntryParams(level=LogLevel.INFO, message=message, **kwargs))
+        await self.log(
+            LogEntryParams(level=LogLevel.INFO, message=message, **kwargs)
+        )
 
     async def warn(self, message: str, **kwargs):
         """Log warning message"""
-        await self.log(LogEntryParams(level=LogLevel.WARN, message=message, **kwargs))
+        await self.log(
+            LogEntryParams(level=LogLevel.WARN, message=message, **kwargs)
+        )
 
     async def error(self, message: str, **kwargs):
         """Log error message"""
-        await self.log(LogEntryParams(level=LogLevel.ERROR, message=message, **kwargs))
+        await self.log(
+            LogEntryParams(level=LogLevel.ERROR, message=message, **kwargs)
+        )
 
     # Synchronous convenience methods
     def debug_sync(self, message: str, **kwargs):

@@ -2,14 +2,15 @@
 Logger factory for creating specialized loggers in different contexts
 """
 
-from typing import Dict, Any, List, Optional
-from .logger import Logger
-from .types import LoggerConfig, AgentLoggerConfig
-from .context import LoggerContext
-from .emoji import EmojiResolver
+from typing import Any, Dict, List, Optional
+
 from .adapters.base import LogAdapter
 from .adapters.console import ConsoleAdapter
 from .adapters.file import FileAdapter
+from .context import LoggerContext
+from .emoji import EmojiResolver
+from .logger import Logger
+from .types import AgentLoggerConfig, LoggerConfig
 
 
 class LoggerFactory:
@@ -118,7 +119,10 @@ class LoggerFactory:
         adapters = adapters or ["console", "file"]
 
         adapter_configs: Dict[str, Dict[str, Any]] = {
-            "console": {"colors": environment == "development", "use_stderr": True},
+            "console": {
+                "colors": environment == "development",
+                "use_stderr": True,
+            },
             "file": {
                 "file_path": f"logs/{service}.log",
                 "format": "json" if environment == "production" else "text",
@@ -162,7 +166,9 @@ class LoggerFactory:
                 "use_stderr": False,
             },
             "file": {
-                "file_path": f"logs/agents/{config.agent_type}-{config.agent_id}.log",
+                "file_path": (
+                    f"logs/agents/{config.agent_type}-{config.agent_id}.log"
+                ),
                 "format": "json",
                 "rotate": True,
                 "max_size_mb": 25,

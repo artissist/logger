@@ -2,12 +2,13 @@
 File output adapter for Artissist Logger Python client
 """
 
-import json
 import asyncio
+import json
 from pathlib import Path
-from typing import Dict, Any, Optional, TextIO
-from .base import LogAdapter
+from typing import Any, Dict, Optional, TextIO
+
 from ..types import LogMessage
+from .base import LogAdapter
 
 try:
     import aiofiles
@@ -15,7 +16,7 @@ try:
     HAS_AIOFILES = True
 except ImportError:
     HAS_AIOFILES = False
-    aiofiles = None  # Define aiofiles as None if import fails
+    aiofiles = None  # type: ignore
 
 
 class FileAdapter(LogAdapter):
@@ -63,11 +64,15 @@ class FileAdapter(LogAdapter):
 
                 # Add structured data for errors and metrics
                 if message.error:
-                    error_line = f"  ERROR: {json.dumps(message.error.to_dict())}"
+                    error_line = (
+                        f"  ERROR: {json.dumps(message.error.to_dict())}"
+                    )
                     await f.write(error_line + "\n")
 
                 if message.metrics:
-                    metrics_line = f"  METRICS: {json.dumps(message.metrics.to_dict())}"
+                    metrics_line = (
+                        f"  METRICS: {json.dumps(message.metrics.to_dict())}"
+                    )
                     await f.write(metrics_line + "\n")
 
     async def _write_sync(self, message: LogMessage, formatted_message: str):
@@ -85,11 +90,15 @@ class FileAdapter(LogAdapter):
 
                 # Add structured data for errors and metrics
                 if message.error:
-                    error_line = f"  ERROR: {json.dumps(message.error.to_dict())}"
+                    error_line = (
+                        f"  ERROR: {json.dumps(message.error.to_dict())}"
+                    )
                     f.write(error_line + "\n")
 
                 if message.metrics:
-                    metrics_line = f"  METRICS: {json.dumps(message.metrics.to_dict())}"
+                    metrics_line = (
+                        f"  METRICS: {json.dumps(message.metrics.to_dict())}"
+                    )
                     f.write(metrics_line + "\n")
 
             f.flush()
@@ -109,8 +118,12 @@ class FileAdapter(LogAdapter):
 
         # Move existing files
         for i in range(self.max_files - 1, 0, -1):
-            old_file = self.file_path.with_suffix(f".{i}{self.file_path.suffix}")
-            new_file = self.file_path.with_suffix(f".{i+1}{self.file_path.suffix}")
+            old_file = self.file_path.with_suffix(
+                f".{i}{self.file_path.suffix}"
+            )
+            new_file = self.file_path.with_suffix(
+                f".{i+1}{self.file_path.suffix}"
+            )
 
             if old_file.exists():
                 if new_file.exists():
@@ -130,8 +143,12 @@ class FileAdapter(LogAdapter):
 
         # Move existing files
         for i in range(self.max_files - 1, 0, -1):
-            old_file = self.file_path.with_suffix(f".{i}{self.file_path.suffix}")
-            new_file = self.file_path.with_suffix(f".{i+1}{self.file_path.suffix}")
+            old_file = self.file_path.with_suffix(
+                f".{i}{self.file_path.suffix}"
+            )
+            new_file = self.file_path.with_suffix(
+                f".{i+1}{self.file_path.suffix}"
+            )
 
             if old_file.exists():
                 if new_file.exists():

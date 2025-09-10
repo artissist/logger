@@ -2,8 +2,9 @@
 Emoji resolution system for Artissist Logger Python client
 """
 
-from typing import Dict, Optional
 from dataclasses import dataclass
+from typing import Dict, Optional
+
 from .types import LogEvent
 
 
@@ -21,24 +22,34 @@ class EmojiResolver:
 
     # Default emoji mappings for all pre-defined events
     DEFAULT_MAPPINGS: Dict[LogEvent, EmojiMapping] = {
-        LogEvent.SYSTEM_START: EmojiMapping("🚀", "System startup or initialization"),
-        LogEvent.ERROR_OCCURRED: EmojiMapping("🐛", "Error conditions and exceptions"),
+        LogEvent.SYSTEM_START: EmojiMapping(
+            "🚀", "System startup or initialization"
+        ),
+        LogEvent.ERROR_OCCURRED: EmojiMapping(
+            "🐛", "Error conditions and exceptions"
+        ),
         LogEvent.API_REQUEST: EmojiMapping("🔄", "API requests and responses"),
         LogEvent.DATABASE_OPERATION: EmojiMapping(
             "💾", "Database queries and operations"
         ),
-        LogEvent.USER_AUTH: EmojiMapping("👤", "User authentication and authorization"),
+        LogEvent.USER_AUTH: EmojiMapping(
+            "👤", "User authentication and authorization"
+        ),
         LogEvent.PROJECT_LIFECYCLE: EmojiMapping(
             "📁", "Project creation, updates, and status changes"
         ),
         LogEvent.PERFORMANCE_METRIC: EmojiMapping(
             "⚡", "Performance measurements and metrics"
         ),
-        LogEvent.WARNING_ISSUED: EmojiMapping("⚠️", "Warning conditions and alerts"),
+        LogEvent.WARNING_ISSUED: EmojiMapping(
+            "⚠️", "Warning conditions and alerts"
+        ),
         LogEvent.SECURITY_EVENT: EmojiMapping(
             "🔐", "Security-related events and violations"
         ),
-        LogEvent.AI_INFERENCE: EmojiMapping("🧠", "AI model inference and processing"),
+        LogEvent.AI_INFERENCE: EmojiMapping(
+            "🧠", "AI model inference and processing"
+        ),
         LogEvent.CONVERSATION_EVENT: EmojiMapping(
             "💬", "Conversation logging and transcript events"
         ),
@@ -48,7 +59,9 @@ class EmojiResolver:
         LogEvent.TASK_EXECUTION: EmojiMapping(
             "⚙️", "Task execution and workflow processing"
         ),
-        LogEvent.BUSINESS_METRIC: EmojiMapping("📊", "Business KPIs and analytics"),
+        LogEvent.BUSINESS_METRIC: EmojiMapping(
+            "📊", "Business KPIs and analytics"
+        ),
         LogEvent.INSPIRATION_EVENT: EmojiMapping(
             "💡", "Inspiration capture and management"
         ),
@@ -61,8 +74,12 @@ class EmojiResolver:
         LogEvent.CONFIGURATION_CHANGE: EmojiMapping(
             "🔧", "Configuration updates and settings"
         ),
-        LogEvent.DEPLOYMENT_EVENT: EmojiMapping("🚢", "Deployment and release events"),
-        LogEvent.BACKUP_OPERATION: EmojiMapping("💿", "Backup and recovery operations"),
+        LogEvent.DEPLOYMENT_EVENT: EmojiMapping(
+            "🚢", "Deployment and release events"
+        ),
+        LogEvent.BACKUP_OPERATION: EmojiMapping(
+            "💿", "Backup and recovery operations"
+        ),
         LogEvent.MAINTENANCE_EVENT: EmojiMapping(
             "🔨", "System maintenance and updates"
         ),
@@ -72,10 +89,14 @@ class EmojiResolver:
         LogEvent.DATA_PROCESSING: EmojiMapping(
             "🔄", "Data processing and transformation"
         ),
-        LogEvent.CUSTOM_EVENT: EmojiMapping("✨", "Custom application-specific events"),
+        LogEvent.CUSTOM_EVENT: EmojiMapping(
+            "✨", "Custom application-specific events"
+        ),
     }
 
-    def __init__(self, custom_mappings: Optional[Dict[str, EmojiMapping]] = None):
+    def __init__(
+        self, custom_mappings: Optional[Dict[str, EmojiMapping]] = None
+    ):
         """Initialize with optional custom emoji mappings"""
         self.custom_mappings = custom_mappings or {}
 

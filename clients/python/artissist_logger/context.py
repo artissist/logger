@@ -3,9 +3,9 @@ Context management for distributed tracing in Artissist Logger Python client
 """
 
 import uuid
-from typing import Dict, Any, Optional
 from contextvars import ContextVar
 from dataclasses import dataclass, field
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -56,7 +56,9 @@ class LoggerContext:
         cls, correlation_id: Optional[str] = None
     ) -> "LoggerContext":
         """Create context with generated or provided correlation ID"""
-        return cls(correlation_id=correlation_id or f"corr_{uuid.uuid4().hex[:12]}")
+        return cls(
+            correlation_id=correlation_id or f"corr_{uuid.uuid4().hex[:16]}"
+        )
 
     @classmethod
     def from_headers(cls, headers: Dict[str, str]) -> "LoggerContext":
@@ -128,7 +130,8 @@ class _ContextScope:
 
         # Create new context with updates
         new_context = LoggerContext(
-            correlation_id=self.kwargs.get("correlation_id") or current.correlation_id,
+            correlation_id=self.kwargs.get("correlation_id")
+            or current.correlation_id,
             user_id=self.kwargs.get("user_id") or current.user_id,
             session_id=self.kwargs.get("session_id") or current.session_id,
             request_id=self.kwargs.get("request_id") or current.request_id,

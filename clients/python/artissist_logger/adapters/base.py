@@ -3,7 +3,8 @@ Base adapter interface for Artissist Logger Python client
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from ..types import LogMessage
 
 

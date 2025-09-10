@@ -3,9 +3,10 @@ Console output adapter for Artissist Logger Python client
 """
 
 import sys
-from typing import Dict, Any
+from typing import Any, Dict
+
+from ..types import LogLevel, LogMessage
 from .base import LogAdapter
-from ..types import LogMessage, LogLevel
 
 
 class ConsoleAdapter(LogAdapter):
@@ -39,7 +40,9 @@ class ConsoleAdapter(LogAdapter):
 
         # Add error details if present
         if message.error:
-            error_output = f"  ERROR: {message.error.type}: {message.error.message}"
+            error_output = (
+                f"  ERROR: {message.error.type}: {message.error.message}"
+            )
             if self.use_colors and sys.stdout.isatty():
                 error_output = (
                     f"{self.COLORS[LogLevel.ERROR]}{error_output}{self.RESET}"
@@ -54,7 +57,9 @@ class ConsoleAdapter(LogAdapter):
                     f"{k}={v}" for k, v in metrics_dict.items()
                 )
                 if self.use_colors and sys.stdout.isatty():
-                    metrics_output = f"\033[35m{metrics_output}{self.RESET}"  # Magenta
+                    metrics_output = (
+                        f"\033[35m{metrics_output}{self.RESET}"  # \
+                    )
                 print(metrics_output, file=self.output_stream)
 
         # Flush output
