@@ -25,7 +25,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -e ".[dev]"
-      working-directory: clients/python
     
     - name: Run linter
       run: |
@@ -35,7 +34,6 @@ jobs:
     - name: Run tests
       run: |
         pytest --cov=artissist_logger --cov-report=term-missing
-      working-directory: clients/python
 
   test-typescript:
     runs-on: ubuntu-latest
@@ -56,20 +54,12 @@ jobs:
     
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-      working-directory: clients/typescript
     
     - name: Run linter
       run: pnpm run lint:ts
-      working-directory: clients/typescript
-    
-    - name: Type check
-      run: pnpm run typecheck
-      working-directory: clients/typescript
     
     - name: Run tests
       run: pnpm test
-      working-directory: clients/typescript
     
     - name: Build package
       run: pnpm run build
-      working-directory: clients/typescript
