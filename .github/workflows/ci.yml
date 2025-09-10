@@ -68,11 +68,17 @@ jobs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4.1.0
 
-    - uses: actions/setup-java@v5
+    - name: Set up Java 21
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '21'
         cache: gradle
+    
+    - name: Verify Java setup
+      run: |
+        echo "JAVA_HOME: $JAVA_HOME"
+        java -version
     
     - name: Install dependencies
       run: pnpm install --frozen-lockfile

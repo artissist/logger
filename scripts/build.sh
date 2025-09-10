@@ -155,9 +155,16 @@ if [ "$SKIP_SMITHY" = false ]; then
     
     cd "$SMITHY_DIR"
     
-    # Set Java environment for Smithy build
-    export JAVA_HOME=/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home
-    export PATH=$JAVA_HOME/bin:$PATH
+    # Set Java environment for Smithy build (only if not already set)
+    if [ -z "$JAVA_HOME" ] && [ -d "/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home" ]; then
+        export JAVA_HOME=/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home
+        export PATH=$JAVA_HOME/bin:$PATH
+        print_status "Using local Homebrew Java installation"
+    elif [ -n "$JAVA_HOME" ]; then
+        print_status "Using system Java installation: $JAVA_HOME"
+    else
+        print_status "Using Java from PATH"
+    fi
     
     if [ -f "gradlew" ]; then
         print_status "Using Gradle wrapper"
