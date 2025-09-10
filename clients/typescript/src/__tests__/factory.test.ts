@@ -121,8 +121,7 @@ describe('LoggerFactory', () => {
       });
 
       const logger = LoggerFactory.create({
-        service: 'test-service',
-        environment: 'test',
+        // Don't provide explicit service/environment to test defaults
       });
 
       expect(logger.getService()).toBe('default-service');

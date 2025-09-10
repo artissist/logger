@@ -160,8 +160,10 @@ export class EmojiResolver {
      * Create a new custom event mapping with validation
      */
     static createCustomMapping(emoji: string, description: string, isDefault: boolean = false): EmojiMapping {
-        if (!EmojiResolver.isValidEmoji(emoji)) {
-            throw new Error(`Invalid emoji character: ${emoji}`);
+        const trimmedEmoji = emoji.trim();
+        
+        if (!EmojiResolver.isValidEmoji(trimmedEmoji)) {
+            throw new Error(`Invalid emoji character: ${trimmedEmoji}`);
         }
 
         if (!description || description.trim().length === 0) {
@@ -169,7 +171,7 @@ export class EmojiResolver {
         }
 
         return {
-            emoji: emoji.trim(),
+            emoji: trimmedEmoji,
             description: description.trim(),
             isDefault
         };

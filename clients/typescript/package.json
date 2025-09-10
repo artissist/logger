@@ -108,6 +108,9 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
+    "forceExit": true,
+    "detectOpenHandles": true,
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
     "collectCoverageFrom": [
       "src/**/*.ts",
       "!src/**/*.d.ts",

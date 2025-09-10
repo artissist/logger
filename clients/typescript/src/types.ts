@@ -1,7 +1,7 @@
 // Type definitions for Mosaic Logger TypeScript client
 // These types mirror the Smithy model definitions
 
-export type LogLevel = 
+export type LogLevel =
     | 'TRACE'
     | 'DEBUG'
     | 'INFO'
@@ -9,7 +9,7 @@ export type LogLevel =
     | 'ERROR'
     | 'FATAL';
 
-export type LogEvent = 
+export type LogEvent =
     | 'SYSTEM_START'
     | 'SYSTEM_STOP'
     | 'USER_AUTH'
@@ -102,8 +102,8 @@ export type CustomEventMap = Record<string, EmojiMapping>;
 
 // Logger configuration interfaces
 export interface LoggerConfig {
-    service: string;
-    environment: string;
+    service?: string;
+    environment?: string;
     emojis?: boolean;
     context?: Partial<LoggingContext>;
     adapters?: string[];
