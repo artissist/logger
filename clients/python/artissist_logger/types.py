@@ -58,6 +58,7 @@ class LogMetrics:
     custom_metrics: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
+        """Convert metrics to dictionary for serialization."""
         result: Dict[str, Any] = {}
         if self.duration_ms is not None:
             result["duration_ms"] = self.duration_ms
@@ -84,6 +85,7 @@ class ErrorInfo:
     context: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
+        """Convert error info to dictionary for serialization."""
         result: Dict[str, Any] = {"type": self.type, "message": self.message}
         if self.stack_trace:
             result["stack_trace"] = self.stack_trace
@@ -139,3 +141,42 @@ class LogMessage:
             result["tags"] = self.tags
 
         return result
+
+
+@dataclass
+class LoggerConfig:
+    """Configuration for Logger initialization"""
+
+    service: str
+    environment: str
+    adapters: List[Any]  # Will be typed properly in logger.py
+    emojis: bool = False
+    context: Optional[Any] = None  # LoggerContext
+    emoji_resolver: Optional[Any] = None  # EmojiResolver
+
+
+@dataclass
+class LogEntryParams:
+    """Parameters for creating a log entry"""
+
+    level: LogLevel
+    message: str
+    event: Optional[LogEvent] = None
+    custom_event: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+    metrics: Optional[LogMetrics] = None
+    error: Optional[ErrorInfo] = None
+    tags: Optional[List[str]] = None
+    context: Optional[Any] = None  # LoggerContext
+
+
+@dataclass
+class AgentLoggerConfig:
+    """Configuration for agent logger creation"""
+
+    agent_id: str
+    agent_type: str
+    environment: str
+    emojis: bool = False
+    context: Optional[Any] = None  # LoggerContext
+    adapters: Optional[List[str]] = None

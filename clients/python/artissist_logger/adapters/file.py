@@ -6,12 +6,12 @@ import json
 import asyncio
 from pathlib import Path
 from typing import Dict, Any, Optional, TextIO
-from datetime import datetime
 from .base import LogAdapter
 from ..types import LogMessage
 
 try:
     import aiofiles
+
     HAS_AIOFILES = True
 except ImportError:
     HAS_AIOFILES = False

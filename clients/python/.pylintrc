@@ -1,0 +1,14 @@
+[MAIN]
+
+[MESSAGES CONTROL]
+# Disable too-many-instance-attributes for dataclasses as they're designed to hold data
+# Disable too-many-function-args as requested
+disable=too-many-instance-attributes,too-many-function-args,trailing-whitespace,
+    too-few-public-methods, missing-function-docstring, too-many-arguments, missing-class-docstring,
+    too-many-lines, line-too-long, missing-final-newline, too-many-positional-arguments,
+    broad-exception-caught, duplicate-code
+    
+
+[DESIGN]
+# Allow more instance attributes for dataclasses
+max-attributes=15

@@ -17,12 +17,12 @@ class LogAdapter(ABC):
     @abstractmethod
     async def write(self, message: LogMessage, formatted_message: str):
         """Write formatted log message to output destination"""
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     async def close(self):
         """Clean up adapter resources"""
-        pass
+        raise NotImplementedError
 
     def format_message(
         self,

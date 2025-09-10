@@ -62,4 +62,3 @@ class ConsoleAdapter(LogAdapter):
 
     async def close(self):
         """Console adapter doesn't need cleanup"""
-        pass

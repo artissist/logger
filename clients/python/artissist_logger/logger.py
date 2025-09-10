@@ -3,99 +3,65 @@ Core Logger implementation for Artissist Logger Python client
 """
 
 import asyncio
-from typing import List, Dict, Any, Optional, Union
 from datetime import datetime
-from .types import LogLevel, LogEvent, LogMessage, LogMetrics, ErrorInfo
+from .types import LogLevel, LogMessage, LoggerConfig, LogEntryParams
 from .context import LoggerContext, ContextManager
 from .emoji import EmojiResolver
-from .adapters.base import LogAdapter
 
 
 class Logger:
     """Core logger implementation with emoji support and context management"""
 
-    def __init__(
-        self,
-        service: str,
-        environment: str,
-        adapters: List[LogAdapter],
-        emojis: bool = False,
-        context: Optional[LoggerContext] = None,
-        emoji_resolver: Optional[EmojiResolver] = None,
-    ):
+    def __init__(self, config: LoggerConfig):
         """
         Initialize logger
 
         Args:
-            service: Service name for identification
-            environment: Environment (dev, staging, prod)
-            adapters: List of output adapters
-            emojis: Whether to include emojis in log messages
-            context: Base context for all log messages
-            emoji_resolver: Custom emoji resolver
+            config: Logger configuration containing service, environment, adapters, etc.
         """
-        self.service = service
-        self.environment = environment
-        self.adapters = adapters
-        self.emojis = emojis
-        self.base_context = context or LoggerContext()
-        self.emoji_resolver = emoji_resolver or EmojiResolver()
+        self.service = config.service
+        self.environment = config.environment
+        self.adapters = config.adapters
+        self.emojis = config.emojis
+        self.base_context = config.context or LoggerContext()
+        self.emoji_resolver = config.emoji_resolver or EmojiResolver()
 
-    async def log(
-        self,
-        level: LogLevel,
-        message: str,
-        event: Optional[LogEvent] = None,
-        custom_event: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        metrics: Optional[LogMetrics] = None,
-        error: Optional[ErrorInfo] = None,
-        tags: Optional[List[str]] = None,
-        context: Optional[LoggerContext] = None,
-    ):
+    async def log(self, params: LogEntryParams):
         """
         Core logging method
 
         Args:
-            level: Log severity level
-            message: Log message text
-            event: Pre-defined event type
-            custom_event: Custom event name for extensibility
-            metadata: Additional structured data
-            metrics: Performance and business metrics
-            error: Error information
-            tags: List of tags for categorization
-            context: Context information for this log entry
+            params: LogEntryParams containing all log entry parameters
         """
         # Merge contexts: base -> current -> provided
         current_context = ContextManager.get_context()
         final_context = self.base_context
         if current_context:
             final_context = final_context.merge(current_context)
-        if context:
-            final_context = final_context.merge(context)
+        if params.context:
+            final_context = final_context.merge(params.context)
 
         # Create log message
         log_message = LogMessage(
             timestamp=datetime.utcnow(),
-            level=level,
-            message=message,
+            level=params.level,
+            message=params.message,
             service=self.service,
-            event=event,
+            event=params.event,
             correlation_id=final_context.correlation_id,
             user_id=final_context.user_id,
             session_id=final_context.session_id,
             request_id=final_context.request_id,
-            metadata=metadata,
-            metrics=metrics,
-            error=error,
-            tags=tags,
+            metadata=params.metadata,
+            metrics=params.metrics,
+            error=params.error,
+            tags=params.tags,
         )
 
         # Get emoji if enabled
         emoji = None
         if self.emojis:
-            emoji = self.emoji_resolver.get_emoji(event, custom_event)
+            emoji = self.emoji_resolver.get_emoji(params.event, params.custom_event)
 
         # Format and send to all adapters
         tasks = []
@@ -113,19 +79,19 @@ class Logger:
 
     async def debug(self, message: str, **kwargs):
         """Log debug message"""
-        await self.log(LogLevel.DEBUG, message, **kwargs)
+        await self.log(LogEntryParams(level=LogLevel.DEBUG, message=message, **kwargs))
 
     async def info(self, message: str, **kwargs):
         """Log info message"""
-        await self.log(LogLevel.INFO, message, **kwargs)
+        await self.log(LogEntryParams(level=LogLevel.INFO, message=message, **kwargs))
 
     async def warn(self, message: str, **kwargs):
         """Log warning message"""
-        await self.log(LogLevel.WARN, message, **kwargs)
+        await self.log(LogEntryParams(level=LogLevel.WARN, message=message, **kwargs))
 
     async def error(self, message: str, **kwargs):
         """Log error message"""
-        await self.log(LogLevel.ERROR, message, **kwargs)
+        await self.log(LogEntryParams(level=LogLevel.ERROR, message=message, **kwargs))
 
     # Synchronous convenience methods
     def debug_sync(self, message: str, **kwargs):
@@ -180,10 +146,12 @@ class Logger:
         merged_context = new_context.merge(context_update)
 
         return Logger(
-            service=self.service,
-            environment=self.environment,
-            adapters=self.adapters,
-            emojis=self.emojis,
-            context=merged_context,
-            emoji_resolver=self.emoji_resolver,
+            LoggerConfig(
+                service=self.service,
+                environment=self.environment,
+                adapters=self.adapters,
+                emojis=self.emojis,
+                context=merged_context,
+                emoji_resolver=self.emoji_resolver,
+            )
         )

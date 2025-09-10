@@ -4,6 +4,7 @@ Logger factory for creating specialized loggers in different contexts
 
 from typing import Dict, Any, List, Optional
 from .logger import Logger
+from .types import LoggerConfig, AgentLoggerConfig
 from .context import LoggerContext
 from .emoji import EmojiResolver
 from .adapters.base import LogAdapter
@@ -51,7 +52,7 @@ class LoggerFactory:
             else:
                 raise ValueError(f"Unknown adapter: {adapter_name}")
 
-        return Logger(
+        config = LoggerConfig(
             service=service,
             environment=environment,
             adapters=adapter_instances,
@@ -59,6 +60,7 @@ class LoggerFactory:
             context=context,
             emoji_resolver=emoji_resolver,
         )
+        return Logger(config)
 
     @staticmethod
     def create_frontend_logger(
@@ -136,40 +138,31 @@ class LoggerFactory:
         )
 
     @staticmethod
-    def create_agent_logger(
-        agent_id: str,
-        agent_type: str,
-        environment: str,
-        emojis: bool = False,
-        context: Optional[LoggerContext] = None,
-        adapters: Optional[List[str]] = None,
-    ) -> Logger:
+    def create_agent_logger(config: AgentLoggerConfig) -> Logger:
         """
         Create logger optimized for agent systems
 
         Args:
-            agent_id: Unique agent identifier
-            agent_type: Type of agent (e.g., 'conversation', 'extraction')
-            environment: Environment
-            emojis: Enable emojis (recommended for development)
-            context: Base context with agent info
-            adapters: Override default adapters
+            config: AgentLoggerConfig containing agent configuration
         """
-        service = f"agent-{agent_type}"
+        service = f"agent-{config.agent_type}"
 
         # Agent context includes agent-specific information
-        agent_context = context or LoggerContext()
+        agent_context = config.context or LoggerContext()
         agent_context.custom_context.update(
-            {"agent_id": agent_id, "agent_type": agent_type}
+            {"agent_id": config.agent_id, "agent_type": config.agent_type}
         )
 
         # Agents typically use console and file
-        adapters = adapters or ["console", "file"]
+        adapters = config.adapters or ["console", "file"]
 
         adapter_configs: Dict[str, Dict[str, Any]] = {
-            "console": {"colors": environment == "development", "use_stderr": False},
+            "console": {
+                "colors": config.environment == "development",
+                "use_stderr": False,
+            },
             "file": {
-                "file_path": f"logs/agents/{agent_type}-{agent_id}.log",
+                "file_path": f"logs/agents/{config.agent_type}-{config.agent_id}.log",
                 "format": "json",
                 "rotate": True,
                 "max_size_mb": 25,
@@ -179,9 +172,9 @@ class LoggerFactory:
 
         return LoggerFactory.create_logger(
             service=service,
-            environment=environment,
+            environment=config.environment,
             adapters=adapters,
-            emojis=emojis,
+            emojis=config.emojis,
             context=agent_context,
             adapter_configs=adapter_configs,
         )

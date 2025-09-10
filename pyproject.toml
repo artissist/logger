@@ -39,6 +39,7 @@ dev = [
     "mypy>=1.0.0",
     "flake8>=5.0.0",
     "pylint>=3.0.0",
+    "fastapi>=0.116.1",
 ]
 file = [
     "aiofiles>=22.0.0",
