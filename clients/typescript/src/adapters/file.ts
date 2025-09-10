@@ -63,7 +63,7 @@ export class FileAdapter implements LogAdapter {
 
     // Initialize file system
     this.initializeFile();
-    
+
     // Only start flush timer if not in test environment
     if (process.env.NODE_ENV !== 'test' && process.env.JEST_WORKER_ID === undefined) {
       this.startFlushTimer();

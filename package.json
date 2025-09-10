@@ -13,7 +13,7 @@
     "build:py": "cd clients/python && python -m build",
     "test": "pnpm run test:ts && pnpm run test:py",
     "test:ts": "cd clients/typescript && pnpm test",
-    "test:py": "cd clients/python && pytest",
+    "test:py": "cd clients/python && if find . -path \"./venv\" -prune -o \\( -name \"test_*.py\" -o -name \"*_test.py\" \\) -print | grep -q .; then pytest --cov=artissist_logger --cov-report=term-missing; else echo \"⚠️ No test files found, skipping test execution\"; echo \"ℹ️ Create test files in the clients/python directory to enable testing\"; fi",
     "install:ts": "cd clients/typescript && pnpm install",
     "install:py": "./scripts/install-python.sh",
     "install:py:ci": "./scripts/install-python.sh --no-venv",
