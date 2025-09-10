@@ -369,6 +369,10 @@ describe('LoggerFactory', () => {
     });
 
     it('should handle unknown adapter types gracefully', () => {
+      // Suppress console warnings for this test
+      const originalWarn = console.warn;
+      console.warn = jest.fn();
+
       const logger = LoggerFactory.create({
         service: 'test',
         environment: 'test',
@@ -377,6 +381,41 @@ describe('LoggerFactory', () => {
 
       // Should still create logger with fallback console adapter
       expect(logger).toBeInstanceOf(Logger);
+      expect(console.warn).toHaveBeenCalledWith('Unknown adapter type: unknown-adapter');
+
+      // Restore console.warn
+      console.warn = originalWarn;
+    });
+
+    it('should create multiple adapters', () => {
+      const logger = LoggerFactory.create({
+        service: 'test',
+        environment: 'test',
+        adapters: ['console', 'file'],
+      });
+
+      expect(logger).toBeInstanceOf(Logger);
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle unknown adapter types gracefully', () => {
+      // Suppress console warnings for this test
+      const originalWarn = console.warn;
+      console.warn = jest.fn();
+
+      const logger = LoggerFactory.create({
+        service: 'test',
+        environment: 'test',
+        adapters: ['unknown-adapter'] as any,
+      });
+
+      // Should still create logger with fallback console adapter
+      expect(logger).toBeInstanceOf(Logger);
+      expect(console.warn).toHaveBeenCalledWith('Unknown adapter type: unknown-adapter');
+
+      // Restore console.warn
+      console.warn = originalWarn;
     });
 
     it('should create multiple adapters', () => {
@@ -392,6 +431,10 @@ describe('LoggerFactory', () => {
 
   describe('error handling', () => {
     it('should handle adapter creation errors gracefully', () => {
+      // Suppress console errors for this test
+      const originalError = console.error;
+      console.error = jest.fn();
+
       // Mock file adapter to throw error
       const originalEnv = process.env.LOG_FILE;
       process.env.LOG_FILE = '/invalid/path/that/does/not/exist/test.log';
@@ -404,7 +447,16 @@ describe('LoggerFactory', () => {
         });
       }).not.toThrow(); // Should handle error and fallback to console
 
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to create file adapter:'),
+        expect.objectContaining({
+          code: 'ENOENT',
+        })
+      );
+
       process.env.LOG_FILE = originalEnv;
+      // Restore console.error
+      console.error = originalError;
     });
   });
 
