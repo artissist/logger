@@ -51,6 +51,7 @@ setup(
             "black>=22.0.0",
             "mypy>=1.0.0",
             "flake8>=5.0.0",
+            "pylint>=2.15.0",
         ],
         "file": [
             "aiofiles>=22.0.0",

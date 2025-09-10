@@ -20,8 +20,7 @@ LINT_ERRORS=0
 # 1. Run Black formatter check
 echo "📝 Checking code formatting with Black..."
 if [ -f "venv/bin/black" ] || command -v black &> /dev/null; then
-    BLACK_CMD="${PYTHON} -m black"
-    if ! $BLACK_CMD --check artissist_logger/; then
+    if ! $PYTHON -m black --check artissist_logger/; then
         echo "❌ Black formatting issues found"
         LINT_ERRORS=$((LINT_ERRORS + 1))
     else
@@ -34,8 +33,7 @@ fi
 # 2. Run MyPy type checking
 echo "🔬 Running type checking with MyPy..."
 if [ -f "venv/bin/mypy" ] || command -v mypy &> /dev/null; then
-    MYPY_CMD="${PYTHON} -m mypy"
-    if ! $MYPY_CMD artissist_logger/; then
+    if ! $PYTHON -m mypy artissist_logger/; then
         echo "❌ MyPy type checking found issues"
         LINT_ERRORS=$((LINT_ERRORS + 1))
     else
@@ -48,8 +46,7 @@ fi
 # 3. Run Flake8 style checking
 echo "📏 Running style checking with Flake8..."
 if [ -f "venv/bin/flake8" ] || command -v flake8 &> /dev/null; then
-    FLAKE8_CMD="${PYTHON} -m flake8"
-    if ! $FLAKE8_CMD artissist_logger/; then
+    if ! $PYTHON -m flake8 artissist_logger/; then
         echo "❌ Flake8 style issues found"
         LINT_ERRORS=$((LINT_ERRORS + 1))
     else
@@ -62,8 +59,7 @@ fi
 # 4. Run Pylint comprehensive linting
 echo "🔍 Running comprehensive linting with Pylint..."
 if [ -f "venv/bin/pylint" ] || command -v pylint &> /dev/null; then
-    PYLINT_CMD="${PYTHON} -m pylint"
-    if ! $PYLINT_CMD artissist_logger/; then
+    if ! $PYTHON -m pylint artissist_logger/; then
         echo "❌ Pylint found issues"
         LINT_ERRORS=$((LINT_ERRORS + 1))
     else
@@ -76,7 +72,7 @@ fi
 # 5. Lint example files (with relaxed rules)
 if [ -d "../../examples" ]; then
     echo "📄 Linting example files..."
-    find ../../examples/ -name "*.py" -exec $PYLINT_CMD --disable=all --enable=syntax-error,undefined-variable {} \; 2>/dev/null || true
+    find ../../examples/ -name "*.py" -exec $PYTHON -m pylint --disable=all --enable=syntax-error,undefined-variable {} \; 2>/dev/null || true
 fi
 
 # Summary

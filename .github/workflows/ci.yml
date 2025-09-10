@@ -26,6 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        cd clients/python
         pip install -e ".[dev]"
     
     - name: Run linter
@@ -35,6 +36,7 @@ jobs:
     
     - name: Run tests
       run: |
+        cd clients/python
         pytest --cov=artissist_logger --cov-report=term-missing
 
   test-typescript:
