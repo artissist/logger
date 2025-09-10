@@ -34,6 +34,7 @@ jobs:
     
     - name: Run type checker
       run: |
+        mypy --install-types
         mypy artissist_logger
       working-directory: clients/python
     
