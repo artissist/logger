@@ -86,7 +86,7 @@ export default tseslint.config(
       'no-useless-concat': 'error',
       'no-multi-spaces': 'error',
       'no-trailing-spaces': 'error',
-      'comma-dangle': ['error', 'always-multiline'],
+      // 'comma-dangle' handled by Prettier
       'semi': ['error', 'always'],
       'quotes': ['error', 'single', { avoidEscape: true }],
       

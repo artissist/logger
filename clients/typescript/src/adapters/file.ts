@@ -97,8 +97,8 @@ export class FileAdapter implements LogAdapter {
     // Wait for write stream to finish if it exists
     if (this.writeStream) {
       return await new Promise((resolve, reject) => {
-        this.writeStream!.once('finish', resolve);
-        this.writeStream!.once('error', reject);
+        this.writeStream?.once('finish', resolve);
+        this.writeStream?.once('error', reject);
       });
     }
   }
@@ -119,7 +119,7 @@ export class FileAdapter implements LogAdapter {
     // Close write stream
     if (this.writeStream) {
       return await new Promise((resolve) => {
-        this.writeStream!.end(() => {
+        this.writeStream?.end(() => {
           this.writeStream = undefined;
           resolve();
         });
@@ -164,6 +164,7 @@ export class FileAdapter implements LogAdapter {
     });
 
     this.writeStream.on('error', (error) => {
+      // eslint-disable-next-line no-console
       console.error('FileAdapter write stream error:', error);
     });
   }
@@ -317,6 +318,7 @@ export class FileAdapter implements LogAdapter {
       // Create new write stream
       this.createWriteStream();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('FileAdapter rotation error:', error);
     }
   }
@@ -347,11 +349,13 @@ export class FileAdapter implements LogAdapter {
           try {
             fs.unlinkSync(file.path);
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.error(`Failed to delete backup file ${file.path}:`, error);
           }
         });
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('FileAdapter cleanup error:', error);
     }
   }
