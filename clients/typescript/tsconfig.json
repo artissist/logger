@@ -13,9 +13,9 @@
     "noEmit": false,
 
     /* Linting */
-    "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
@@ -40,13 +40,13 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/**/__tests__/**/*",
+    "src/**/*.test.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/__tests__/**/*"
+    "dist"
   ],
   "ts-node": {
     "esm": true

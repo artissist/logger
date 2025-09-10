@@ -13,12 +13,12 @@ __author__ = "Artissist"
 
 __all__ = [
     "Logger",
-    "LoggerFactory", 
+    "LoggerFactory",
     "LoggerContext",
     "EmojiResolver",
     "EmojiMapping",
     "LogLevel",
-    "LogEvent", 
+    "LogEvent",
     "LogMessage",
     "LogMetrics",
     "ErrorInfo",

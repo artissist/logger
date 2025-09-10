@@ -3,11 +3,7 @@ import {
     Logger as ILogger, 
     LogEntry, 
     LogLevel, 
-    LogEvent, 
     LoggingContext, 
-    LogMetadata, 
-    PerformanceMetrics, 
-    ErrorDetails,
     LogAdapter 
 } from './types';
 import { EmojiResolver } from './emoji';

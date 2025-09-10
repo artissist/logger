@@ -41,10 +41,17 @@ if [ "$USE_VENV" = true ]; then
         source venv/bin/activate
     fi
     
+    # Ensure pip is installed and upgraded in the venv
+    echo "Ensuring pip is available and up to date..."
+    python -m ensurepip --upgrade 2>/dev/null || python -m pip install --upgrade pip
+    
     echo "Installing dependencies in virtual environment..."
 else
     echo "Installing dependencies without virtual environment (CI/Docker mode)..."
 fi
+
+# Ensure wheel is installed for building
+pip install wheel
 
 # Install the package in development mode with all dependencies
 pip install -e .[dev]

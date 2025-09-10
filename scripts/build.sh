@@ -262,6 +262,8 @@ if [ "$SKIP_PYTHON" = false ] && [ -d "$CLIENTS_DIR/python" ]; then
     
     if command -v mypy &> /dev/null; then
         print_status "Running Python type checking..."
+        # Clean build directory to avoid duplicate module errors
+        rm -rf build/
         mypy . || print_warning "Python type checking found issues"
     fi
     

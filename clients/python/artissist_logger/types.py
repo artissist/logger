@@ -10,18 +10,20 @@ from datetime import datetime
 
 class LogLevel(Enum):
     """Log severity levels"""
+
     DEBUG = "DEBUG"
-    INFO = "INFO" 
+    INFO = "INFO"
     WARN = "WARN"
     ERROR = "ERROR"
 
 
 class LogEvent(Enum):
     """Pre-defined log event types with emoji mappings"""
+
     SYSTEM_START = "SYSTEM_START"
     ERROR_OCCURRED = "ERROR_OCCURRED"
     API_REQUEST = "API_REQUEST"
-    DATABASE_OPERATION = "DATABASE_OPERATION" 
+    DATABASE_OPERATION = "DATABASE_OPERATION"
     USER_AUTH = "USER_AUTH"
     PROJECT_LIFECYCLE = "PROJECT_LIFECYCLE"
     PERFORMANCE_METRIC = "PERFORMANCE_METRIC"
@@ -47,6 +49,7 @@ class LogEvent(Enum):
 @dataclass
 class LogMetrics:
     """Performance and business metrics"""
+
     duration_ms: Optional[float] = None
     count: Optional[int] = None
     bytes_processed: Optional[int] = None
@@ -55,7 +58,7 @@ class LogMetrics:
     custom_metrics: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        result = {}
+        result: Dict[str, Any] = {}
         if self.duration_ms is not None:
             result["duration_ms"] = self.duration_ms
         if self.count is not None:
@@ -74,16 +77,14 @@ class LogMetrics:
 @dataclass
 class ErrorInfo:
     """Error details for logging"""
+
     type: str
     message: str
     stack_trace: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        result = {
-            "type": self.type,
-            "message": self.message
-        }
+        result: Dict[str, Any] = {"type": self.type, "message": self.message}
         if self.stack_trace:
             result["stack_trace"] = self.stack_trace
         if self.context:
@@ -94,6 +95,7 @@ class ErrorInfo:
 @dataclass
 class LogMessage:
     """Complete log message structure"""
+
     timestamp: datetime
     level: LogLevel
     message: str
@@ -110,13 +112,13 @@ class LogMessage:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization"""
-        result = {
+        result: Dict[str, Any] = {
             "timestamp": self.timestamp.isoformat(),
             "level": self.level.value,
             "message": self.message,
-            "service": self.service
+            "service": self.service,
         }
-        
+
         if self.event:
             result["event"] = self.event.value
         if self.correlation_id:
@@ -135,5 +137,5 @@ class LogMessage:
             result["error"] = self.error.to_dict()
         if self.tags:
             result["tags"] = self.tags
-            
+
         return result

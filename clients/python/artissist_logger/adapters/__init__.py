@@ -8,6 +8,6 @@ from .file import FileAdapter
 
 __all__ = [
     "LogAdapter",
-    "ConsoleAdapter", 
+    "ConsoleAdapter",
     "FileAdapter",
 ]

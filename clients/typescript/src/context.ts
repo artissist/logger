@@ -257,7 +257,7 @@ export async function withContext<T>(
 /**
  * Decorator for automatically adding correlation context to functions
  */
-export function withCorrelation(target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function withCorrelation(_target: any, _propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
     descriptor.value = function (...args: any[]) {

@@ -13,7 +13,7 @@ from .adapters.file import FileAdapter
 
 class LoggerFactory:
     """Factory for creating specialized loggers for different use cases"""
-    
+
     @staticmethod
     def create_logger(
         service: str,
@@ -22,11 +22,11 @@ class LoggerFactory:
         emojis: bool = False,
         context: Optional[LoggerContext] = None,
         adapter_configs: Optional[Dict[str, Dict[str, Any]]] = None,
-        emoji_resolver: Optional[EmojiResolver] = None
+        emoji_resolver: Optional[EmojiResolver] = None,
     ) -> Logger:
         """
         Create a logger with specified configuration
-        
+
         Args:
             service: Service name
             environment: Environment (dev, staging, prod)
@@ -37,11 +37,11 @@ class LoggerFactory:
             emoji_resolver: Custom emoji resolver
         """
         adapter_configs = adapter_configs or {}
-        adapter_instances = []
-        
+        adapter_instances: List[LogAdapter] = []
+
         for adapter_name in adapters:
             adapter_config = adapter_configs.get(adapter_name, {})
-            
+
             if adapter_name == "console":
                 adapter_instances.append(ConsoleAdapter(adapter_config))
             elif adapter_name == "file":
@@ -50,27 +50,27 @@ class LoggerFactory:
                 adapter_instances.append(FileAdapter(adapter_config))
             else:
                 raise ValueError(f"Unknown adapter: {adapter_name}")
-                
+
         return Logger(
             service=service,
             environment=environment,
             adapters=adapter_instances,
             emojis=emojis,
             context=context,
-            emoji_resolver=emoji_resolver
+            emoji_resolver=emoji_resolver,
         )
-    
+
     @staticmethod
     def create_frontend_logger(
         service: str,
         environment: str,
         emojis: bool = False,
         context: Optional[LoggerContext] = None,
-        adapters: Optional[List[str]] = None
+        adapters: Optional[List[str]] = None,
     ) -> Logger:
         """
         Create logger optimized for frontend applications
-        
+
         Args:
             service: Service name (usually the frontend app name)
             environment: Environment
@@ -80,34 +80,31 @@ class LoggerFactory:
         """
         # Frontend typically uses console only
         adapters = adapters or ["console"]
-        
-        adapter_configs = {
-            "console": {
-                "colors": True,
-                "use_stderr": False
-            }
+
+        adapter_configs: Dict[str, Dict[str, Any]] = {
+            "console": {"colors": True, "use_stderr": False}
         }
-        
+
         return LoggerFactory.create_logger(
             service=service,
             environment=environment,
             adapters=adapters,
             emojis=emojis,
             context=context,
-            adapter_configs=adapter_configs
+            adapter_configs=adapter_configs,
         )
-    
+
     @staticmethod
     def create_backend_logger(
         service: str,
         environment: str,
         emojis: bool = False,
         context: Optional[LoggerContext] = None,
-        adapters: Optional[List[str]] = None
+        adapters: Optional[List[str]] = None,
     ) -> Logger:
         """
         Create logger optimized for backend services
-        
+
         Args:
             service: Service name
             environment: Environment
@@ -117,30 +114,27 @@ class LoggerFactory:
         """
         # Backend uses both console and file
         adapters = adapters or ["console", "file"]
-        
-        adapter_configs = {
-            "console": {
-                "colors": environment == "development",
-                "use_stderr": True
-            },
+
+        adapter_configs: Dict[str, Dict[str, Any]] = {
+            "console": {"colors": environment == "development", "use_stderr": True},
             "file": {
                 "file_path": f"logs/{service}.log",
                 "format": "json" if environment == "production" else "text",
                 "rotate": True,
                 "max_size_mb": 50,
-                "max_files": 10
-            }
+                "max_files": 10,
+            },
         }
-        
+
         return LoggerFactory.create_logger(
             service=service,
             environment=environment,
             adapters=adapters,
             emojis=emojis,
             context=context,
-            adapter_configs=adapter_configs
+            adapter_configs=adapter_configs,
         )
-    
+
     @staticmethod
     def create_agent_logger(
         agent_id: str,
@@ -148,11 +142,11 @@ class LoggerFactory:
         environment: str,
         emojis: bool = False,
         context: Optional[LoggerContext] = None,
-        adapters: Optional[List[str]] = None
+        adapters: Optional[List[str]] = None,
     ) -> Logger:
         """
         Create logger optimized for agent systems
-        
+
         Args:
             agent_id: Unique agent identifier
             agent_type: Type of agent (e.g., 'conversation', 'extraction')
@@ -162,51 +156,47 @@ class LoggerFactory:
             adapters: Override default adapters
         """
         service = f"agent-{agent_type}"
-        
+
         # Agent context includes agent-specific information
         agent_context = context or LoggerContext()
-        agent_context.custom_context.update({
-            "agent_id": agent_id,
-            "agent_type": agent_type
-        })
-        
+        agent_context.custom_context.update(
+            {"agent_id": agent_id, "agent_type": agent_type}
+        )
+
         # Agents typically use console and file
         adapters = adapters or ["console", "file"]
-        
-        adapter_configs = {
-            "console": {
-                "colors": environment == "development",
-                "use_stderr": False
-            },
+
+        adapter_configs: Dict[str, Dict[str, Any]] = {
+            "console": {"colors": environment == "development", "use_stderr": False},
             "file": {
                 "file_path": f"logs/agents/{agent_type}-{agent_id}.log",
                 "format": "json",
                 "rotate": True,
                 "max_size_mb": 25,
-                "max_files": 5
-            }
+                "max_files": 5,
+            },
         }
-        
+
         return LoggerFactory.create_logger(
             service=service,
             environment=environment,
             adapters=adapters,
             emojis=emojis,
             context=agent_context,
-            adapter_configs=adapter_configs
+            adapter_configs=adapter_configs,
         )
-    
+
     @staticmethod
     def create_infrastructure_logger(
         component: str,
         environment: str,
         emojis: bool = False,
         context: Optional[LoggerContext] = None,
-        adapters: Optional[List[str]] = None
+        adapters: Optional[List[str]] = None,
     ) -> Logger:
         """
         Create logger optimized for infrastructure components
-        
+
         Args:
             component: Infrastructure component name
             environment: Environment
@@ -215,29 +205,29 @@ class LoggerFactory:
             adapters: Override default adapters
         """
         service = f"infra-{component}"
-        
+
         # Infrastructure typically uses structured logging
         adapters = adapters or ["console", "file"]
-        
-        adapter_configs = {
+
+        adapter_configs: Dict[str, Dict[str, Any]] = {
             "console": {
                 "colors": False,  # Infrastructure logs are typically plain
-                "use_stderr": True
+                "use_stderr": True,
             },
             "file": {
                 "file_path": f"logs/infrastructure/{component}.log",
                 "format": "json",  # Always structured for infrastructure
                 "rotate": True,
                 "max_size_mb": 100,
-                "max_files": 20
-            }
+                "max_files": 20,
+            },
         }
-        
+
         return LoggerFactory.create_logger(
             service=service,
             environment=environment,
             adapters=adapters,
             emojis=emojis,
             context=context,
-            adapter_configs=adapter_configs
+            adapter_configs=adapter_configs,
         )

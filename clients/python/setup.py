@@ -8,7 +8,11 @@ import pathlib
 
 # Get the long description from the README file
 here = pathlib.Path(__file__).parent
-long_description = (here / "README.md").read_text(encoding='utf-8') if (here / "README.md").exists() else ""
+long_description = (
+    (here / "README.md").read_text(encoding="utf-8")
+    if (here / "README.md").exists()
+    else ""
+)
 
 setup(
     name="artissist-logger",

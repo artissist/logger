@@ -1,13 +1,13 @@
 // Unit tests for emoji utilities
-import { 
-  EmojiResolver, 
-  EventEmojiMapping, 
+import {
   DEFAULT_EMOJI_MAPPINGS,
+  EmojiResolver,
+  EventEmojiMapping,
+  createCustomEventRegistry,
   formatLogMessage,
   getAllPredefinedEvents,
-  createCustomEventRegistry
 } from '../emoji';
-import { LogEvent } from '../types';
+import type { LogEvent } from '../types';
 
 describe('EmojiResolver', () => {
   let resolver: EmojiResolver;
@@ -28,7 +28,7 @@ describe('EmojiResolver', () => {
 
     it('should create resolver with custom mappings', () => {
       const customMappings = {
-        CUSTOM_EVENT: { emoji: '🎯', description: 'Custom event', isDefault: true }
+        CUSTOM_EVENT: { emoji: '🎯', description: 'Custom event', isDefault: true },
       };
       const customResolver = new EmojiResolver(true, customMappings);
       expect(customResolver.getEmoji('CUSTOM_EVENT')).toBe('🎯');
@@ -39,7 +39,7 @@ describe('EmojiResolver', () => {
     it('should enable and disable emoji resolution', () => {
       resolver.setEnabled(true);
       expect(resolver.isEnabled()).toBe(true);
-      
+
       resolver.setEnabled(false);
       expect(resolver.isEnabled()).toBe(false);
     });
@@ -73,7 +73,7 @@ describe('EmojiResolver', () => {
       resolver.addCustomMapping('SYSTEM_START', {
         emoji: '🎉',
         description: 'Custom system start',
-        isDefault: false
+        isDefault: false,
       });
       expect(resolver.getEmoji('SYSTEM_START')).toBe('🎉');
     });
@@ -89,7 +89,7 @@ describe('EmojiResolver', () => {
       resolver.addCustomMapping('CUSTOM_EVENT', {
         emoji: '🎯',
         description: 'Custom test event',
-        isDefault: true
+        isDefault: true,
       });
       expect(resolver.getDescription('CUSTOM_EVENT')).toBe('Custom test event');
     });
@@ -117,7 +117,9 @@ describe('EmojiResolver', () => {
 
     it('should use fallback emoji when provided', () => {
       resolver.setEnabled(true);
-      expect(resolver.formatMessage('Unknown event', 'UNKNOWN_EVENT' as LogEvent, '❓')).toBe('❓ Unknown event');
+      expect(resolver.formatMessage('Unknown event', 'UNKNOWN_EVENT' as LogEvent, '❓')).toBe(
+        '❓ Unknown event'
+      );
     });
   });
 
@@ -127,9 +129,9 @@ describe('EmojiResolver', () => {
       resolver.addCustomMapping('TEST_EVENT', {
         emoji: '🧪',
         description: 'Test event',
-        isDefault: true
+        isDefault: true,
       });
-      
+
       expect(resolver.getEmoji('TEST_EVENT')).toBe('🧪');
       expect(resolver.getDescription('TEST_EVENT')).toBe('Test event');
     });
@@ -139,9 +141,9 @@ describe('EmojiResolver', () => {
       resolver.addCustomMapping('SYSTEM_START', {
         emoji: '⭐',
         description: 'Modified system start',
-        isDefault: false
+        isDefault: false,
       });
-      
+
       expect(resolver.getEmoji('SYSTEM_START')).toBe('⭐');
       expect(resolver.getDescription('SYSTEM_START')).toBe('Modified system start');
     });
@@ -152,11 +154,11 @@ describe('EmojiResolver', () => {
       resolver.setEnabled(true);
       const mappings = {
         EVENT_1: { emoji: '1️⃣', description: 'Event one', isDefault: true },
-        EVENT_2: { emoji: '2️⃣', description: 'Event two', isDefault: true }
+        EVENT_2: { emoji: '2️⃣', description: 'Event two', isDefault: true },
       };
-      
+
       resolver.addCustomMappings(mappings);
-      
+
       expect(resolver.getEmoji('EVENT_1')).toBe('1️⃣');
       expect(resolver.getEmoji('EVENT_2')).toBe('2️⃣');
     });
@@ -167,9 +169,9 @@ describe('EmojiResolver', () => {
       resolver.addCustomMapping('CUSTOM_EVENT', {
         emoji: '🎯',
         description: 'Custom event',
-        isDefault: true
+        isDefault: true,
       });
-      
+
       const mappings = resolver.getAllMappings();
       expect(mappings).toHaveProperty('SYSTEM_START');
       expect(mappings).toHaveProperty('CUSTOM_EVENT');
@@ -239,17 +241,34 @@ describe('DEFAULT_EMOJI_MAPPINGS', () => {
 
   it('should have required predefined events', () => {
     const requiredEvents: LogEvent[] = [
-      'SYSTEM_START', 'SYSTEM_STOP', 'USER_AUTH', 'USER_AUTHZ',
-      'PROJECT_LIFECYCLE', 'DATABASE_OPERATION', 'API_REQUEST',
-      'PERFORMANCE_METRIC', 'ERROR_OCCURRED', 'WARNING_ISSUED',
-      'CONFIG_CHANGE', 'ANALYTICS_EVENT', 'AGENT_PROCESSING',
-      'CONVERSATION_EVENT', 'ASSET_PROCESSING', 'INSPIRATION_EVENT',
-      'INFRASTRUCTURE_DEPLOY', 'BUSINESS_METRIC', 'SEARCH_OPERATION',
-      'BACKGROUND_JOB', 'NOTIFICATION_SENT', 'SECURITY_EVENT',
-      'SCHEDULED_TASK', 'EXTERNAL_SERVICE', 'AUDIT_TRAIL'
+      'SYSTEM_START',
+      'SYSTEM_STOP',
+      'USER_AUTH',
+      'USER_AUTHZ',
+      'PROJECT_LIFECYCLE',
+      'DATABASE_OPERATION',
+      'API_REQUEST',
+      'PERFORMANCE_METRIC',
+      'ERROR_OCCURRED',
+      'WARNING_ISSUED',
+      'CONFIG_CHANGE',
+      'ANALYTICS_EVENT',
+      'AGENT_PROCESSING',
+      'CONVERSATION_EVENT',
+      'ASSET_PROCESSING',
+      'INSPIRATION_EVENT',
+      'INFRASTRUCTURE_DEPLOY',
+      'BUSINESS_METRIC',
+      'SEARCH_OPERATION',
+      'BACKGROUND_JOB',
+      'NOTIFICATION_SENT',
+      'SECURITY_EVENT',
+      'SCHEDULED_TASK',
+      'EXTERNAL_SERVICE',
+      'AUDIT_TRAIL',
     ];
 
-    requiredEvents.forEach(event => {
+    requiredEvents.forEach((event) => {
       expect(DEFAULT_EMOJI_MAPPINGS).toHaveProperty(event);
       expect(DEFAULT_EMOJI_MAPPINGS[event].emoji).toBeTruthy();
       expect(DEFAULT_EMOJI_MAPPINGS[event].description).toBeTruthy();
@@ -257,7 +276,7 @@ describe('DEFAULT_EMOJI_MAPPINGS', () => {
   });
 
   it('should have unique emojis for each event', () => {
-    const emojis = Object.values(DEFAULT_EMOJI_MAPPINGS).map(m => m.emoji);
+    const emojis = Object.values(DEFAULT_EMOJI_MAPPINGS).map((m) => m.emoji);
     const uniqueEmojis = new Set(emojis);
     // Note: Some emojis might be repeated (like 🔄 for API_REQUEST and BACKGROUND_JOB)
     expect(uniqueEmojis.size).toBeGreaterThan(20);
@@ -297,15 +316,10 @@ describe('Utility functions', () => {
       customResolver.addCustomMapping('CUSTOM_EVENT', {
         emoji: '🎯',
         description: 'Custom',
-        isDefault: true
+        isDefault: true,
       });
 
-      const result = formatLogMessage(
-        'Custom message', 
-        'CUSTOM_EVENT', 
-        true, 
-        customResolver
-      );
+      const result = formatLogMessage('Custom message', 'CUSTOM_EVENT', true, customResolver);
       expect(result).toBe('🎯 Custom message');
     });
   });
@@ -314,8 +328,8 @@ describe('Utility functions', () => {
     it('should return all predefined events', () => {
       const events = getAllPredefinedEvents();
       expect(events).toHaveLength(25);
-      
-      events.forEach(event => {
+
+      events.forEach((event) => {
         expect(event).toHaveProperty('event');
         expect(event).toHaveProperty('emoji');
         expect(event).toHaveProperty('description');
@@ -324,8 +338,8 @@ describe('Utility functions', () => {
 
     it('should include specific known events', () => {
       const events = getAllPredefinedEvents();
-      const eventTypes = events.map(e => e.event);
-      
+      const eventTypes = events.map((e) => e.event);
+
       expect(eventTypes).toContain('SYSTEM_START');
       expect(eventTypes).toContain('ERROR_OCCURRED');
       expect(eventTypes).toContain('USER_AUTH');
@@ -335,19 +349,19 @@ describe('Utility functions', () => {
   describe('createCustomEventRegistry', () => {
     it('should create registry with custom mappings', () => {
       const customMappings = {
-        CUSTOM_EVENT: { emoji: '🎯', description: 'Custom event', isDefault: true }
+        CUSTOM_EVENT: { emoji: '🎯', description: 'Custom event', isDefault: true },
       };
-      
+
       const registry = createCustomEventRegistry(customMappings);
       registry.setEnabled(true);
-      
+
       expect(registry.getEmoji('CUSTOM_EVENT')).toBe('🎯');
     });
 
     it('should create empty registry by default', () => {
       const registry = createCustomEventRegistry();
       registry.setEnabled(true);
-      
+
       expect(registry.getEmoji('SYSTEM_START')).toBe('🚀'); // Should still have defaults
     });
   });
@@ -361,13 +375,13 @@ describe('Edge cases and error handling', () => {
   });
 
   it('should handle undefined event gracefully', () => {
-    expect(resolver.getEmoji(undefined as any)).toBe('');
-    expect(resolver.getDescription(undefined as any)).toBe('Unknown event');
+    expect(resolver.getEmoji(undefined as any as string)).toBe('');
+    expect(resolver.getDescription(undefined as any as string)).toBe('Unknown event');
   });
 
   it('should handle null event gracefully', () => {
-    expect(resolver.getEmoji(null as any)).toBe('');
-    expect(resolver.getDescription(null as any)).toBe('Unknown event');
+    expect(resolver.getEmoji(null as any as string)).toBe('');
+    expect(resolver.getDescription(null as any as string)).toBe('Unknown event');
   });
 
   it('should handle empty string event', () => {
@@ -376,7 +390,7 @@ describe('Edge cases and error handling', () => {
   });
 
   it('should handle numeric event values', () => {
-    expect(resolver.getEmoji(123 as any)).toBe('');
-    expect(resolver.getDescription(123 as any)).toBe('Unknown event');
+    expect(resolver.getEmoji(123 as any as string)).toBe('');
+    expect(resolver.getDescription(123 as any as string)).toBe('Unknown event');
   });
 });

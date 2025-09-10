@@ -75,7 +75,6 @@ export default tseslint.config(
       'prefer-arrow-callback': 'error',
       'arrow-spacing': 'error',
       'no-duplicate-imports': 'off', // Handled by TypeScript
-      '@typescript-eslint/no-duplicate-type-imports': 'error',
       'no-useless-rename': 'error',
       'object-shorthand': 'error',
       'prefer-destructuring': ['error', { 
