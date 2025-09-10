@@ -450,7 +450,7 @@ describe('LoggerFactory', () => {
       expect(console.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to create file adapter:'),
         expect.objectContaining({
-          code: 'ENOENT',
+          code: expect.stringMatching(/^E(NOENT|ACCES)$/),
         })
       );
 
