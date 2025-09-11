@@ -182,8 +182,8 @@ const logger = LoggerFactory.createFromEnvironment();
 
 **Python**
 ```bash
-export MOSAIC_LOG_LEVEL=INFO
-export MOSAIC_LOG_EMOJIS=true
+export ARTISSIST_LOG_LEVEL=INFO
+export ARTISSIST_LOG_EMOJIS=true
 ```
 
 ### Programmatic Configuration
