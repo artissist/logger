@@ -10,11 +10,6 @@ on:
         required: true
         type: string
   workflow_call:
-    inputs:
-      version:
-        description: 'Version to publish (e.g., 0.1.0)'
-        required: true
-        type: string
 
 jobs:
   build-and-publish:
@@ -43,19 +38,12 @@ jobs:
         java-version: '21'
         cache: gradle
     
-    - name: Set version from input or tag
+    - name: Get version from root package.json
       run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          VERSION="${{ github.event.inputs.version }}"
-        elif [ "${{ github.event_name }}" = "workflow_call" ]; then
-          VERSION="${{ inputs.version }}"
-        else
-          VERSION="${{ github.ref_name }}"
-        fi
-        # Remove 'v' prefix if present
-        VERSION=${VERSION#v}
+        # Read version from root package.json
+        VERSION=$(jq -r '.version' package.json)
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
-        echo "Publishing version: ${VERSION}"
+        echo "Publishing TypeScript client version: ${VERSION} (from root package.json)"
 
     - name: Install dependencies
       working-directory: clients/typescript

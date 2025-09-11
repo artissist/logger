@@ -10,11 +10,6 @@ on:
         required: true
         type: string
   workflow_call:
-    inputs:
-      version:
-        description: 'Version to publish (e.g., 0.1.0)'
-        required: true
-        type: string
 
 jobs:
   build-and-publish:
@@ -36,15 +31,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine
     
-    - name: Set version from input or tag
+    - name: Get version from root package.json
       run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          VERSION="${{ github.event.inputs.version }}"
-        else
-          VERSION="${{ github.ref_name }}"
-        fi
+        # Read version from root package.json
+        VERSION=$(jq -r '.version' package.json)
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
-        echo "Publishing version: ${VERSION}"
+        echo "Publishing Python client version: ${VERSION} (from root package.json)"
     
     - name: Update version in pyproject.toml
       run: |

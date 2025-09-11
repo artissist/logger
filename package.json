@@ -1,9 +1,12 @@
 {
   "name": "@artissist/logger-monorepo",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "Artissist Logger - Unified logging library monorepo",
   "scripts": {
+    "version": "./scripts/sync-versions.sh && git add clients/*/package.json clients/*/setup.py",
+    "postversion": "git push && git push --tags",
+    "sync-versions": "./scripts/sync-versions.sh",
     "lint": "pnpm run lint:ts && pnpm run lint:py",
     "lint:ts": "cd clients/typescript && pnpm run lint",
     "lint:py": "./scripts/lint-python.sh",
