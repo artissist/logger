@@ -50,6 +50,8 @@ jobs:
       working-directory: clients/python
       run: |
         mkdir -p ../../dist
+        pwd dist
+        ls -la dist
         cp -r dist/* ../../dist/
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
