@@ -47,8 +47,9 @@ jobs:
       run: python -m build
     
     - name: copy dist to expected location
+      working-directory: clients/python
       run: |
-        mkdir -p dist
-        cp -r clients/python/dist/* dist/
+        mkdir -p ../../dist
+        cp -r dist/* ../../dist/
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
