@@ -47,20 +47,25 @@ jobs:
       run: |
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           VERSION="${{ github.event.inputs.version }}"
+        elif [ "${{ github.event_name }}" = "workflow_call" ]; then
+          VERSION="${{ inputs.version }}"
         else
           VERSION="${{ github.ref_name }}"
         fi
+        # Remove 'v' prefix if present
+        VERSION=${VERSION#v}
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
         echo "Publishing version: ${VERSION}"
-    
+
     - name: Install dependencies
       working-directory: clients/typescript
       run: pnpm install --frozen-lockfile
-    
+
     - name: Update version in package.json
       working-directory: clients/typescript
       run: |
-        pnpm version ${VERSION} --no-git-tag-version --allow-same-version
+        echo "Setting version to: ${VERSION}"
+        pnpm version "${VERSION}" --no-git-tag-version --allow-same-version
     
     - name: Build package
       working-directory: clients/typescript
