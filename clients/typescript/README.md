@@ -36,6 +36,10 @@ logger.error('Database unavailable', {
 });
 ```
 
+
+The `Logger` exposes convenience methods for each level (`debug`, `info`, `warn`, `error`, etc.). Use `logger.log(level, message, data)` only when the level must be chosen dynamically.
+
+
 ## Context Management
 
 ```typescript

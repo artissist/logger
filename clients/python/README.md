@@ -50,6 +50,8 @@ await logger.info(
 )
 ```
 
+The Logger exposes convenience methods for each level (`debug`, `info`, `warn`, `error`, etc.). Use `logger.log(level, message, **kwargs)` only when the level must be chosen dynamically.
+
 ## Logger Types
 
 ### Backend Logger

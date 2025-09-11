@@ -38,7 +38,7 @@ const logger = LoggerFactory.createFrontendLogger({
 });
 
 logger.info('Application started', { version: '1.0.0' });
-logger.log('INFO', 'User login', {
+logger.info('User login', {
   event: LogEvent.USER_AUTH,
   metadata: { userId: 'user123' }
 });
@@ -207,6 +207,7 @@ logger = LoggerFactory.create_logger(**config)
 ```
 
 ## Synchronous Usage (Python)
+
 
 Fire-and-forget helpers are available when `await` isn't possible:
 ```python
