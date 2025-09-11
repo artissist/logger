@@ -48,12 +48,6 @@ jobs:
     - name: Install dependencies
       working-directory: clients/typescript
       run: pnpm install --frozen-lockfile
-
-    - name: Update version in package.json
-      working-directory: clients/typescript
-      run: |
-        echo "Setting version to: ${VERSION}"
-        pnpm version "${VERSION}" --no-git-tag-version --allow-same-version
     
     - name: Build package
       working-directory: clients/typescript
