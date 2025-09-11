@@ -1,6 +1,6 @@
-# Mosaic Logger - Python Client
+# Artissist Logger - Python Client
 
-Platform-agnostic logging client for the Mosaic Artist Assistant platform.
+Platform-agnostic logging client for the Artissist platform.
 
 ## Features
 
@@ -16,7 +16,7 @@ Platform-agnostic logging client for the Mosaic Artist Assistant platform.
 ## Installation
 
 ```bash
-pip install mosaic-logger
+pip install artissist-logger
 ```
 
 ### Development Installation
@@ -28,7 +28,7 @@ pip install -e .[dev]
 ## Quick Start
 
 ```python
-from mosaic_logger import LoggerFactory, LogEvent
+from artissist_logger import LoggerFactory, LogEvent
 
 # Create a backend logger
 logger = LoggerFactory.create_backend_logger(
@@ -49,6 +49,8 @@ await logger.info(
     metrics={"auth_duration_ms": 150}
 )
 ```
+
+The Logger exposes convenience methods for each level (`debug`, `info`, `warn`, `error`, etc.). Use `logger.log(level, message, **kwargs)` only when the level must be chosen dynamically.
 
 ## Logger Types
 
@@ -83,7 +85,7 @@ logger = LoggerFactory.create_infrastructure_logger(
 
 ### Global Context
 ```python
-from mosaic_logger import ContextManager
+from artissist_logger import ContextManager, LoggerContext
 
 # Set global context
 ContextManager.set_context(LoggerContext(
@@ -136,7 +138,7 @@ LogEvent.PERFORMANCE_METRIC # ⚡ Performance measurements
 
 ### Custom Events
 ```python
-from mosaic_logger import EmojiResolver, EmojiMapping
+from artissist_logger import EmojiResolver, EmojiMapping
 
 # Create custom emoji mappings
 resolver = EmojiResolver()
@@ -161,7 +163,7 @@ await logger.info("Payment completed", custom_event="payment_processed")
 ## Error Handling
 
 ```python
-from mosaic_logger import ErrorInfo
+from artissist_logger import ErrorInfo
 
 try:
     # Some operation that might fail
@@ -182,7 +184,7 @@ except Exception as e:
 ## Metrics
 
 ```python
-from mosaic_logger import LogMetrics
+from artissist_logger import LogMetrics
 
 # Performance metrics
 await logger.info(
@@ -265,9 +267,9 @@ logger.error_sync("Connection failed", event=LogEvent.ERROR_OCCURRED)
 
 ### Environment Variables
 ```bash
-export MOSAIC_LOG_LEVEL=INFO
-export MOSAIC_LOG_EMOJIS=true
-export MOSAIC_LOG_FORMAT=json
+export ARTISSIST_LOG_LEVEL=INFO
+export ARTISSIST_LOG_EMOJIS=true
+export ARTISSIST_LOG_FORMAT=json
 ```
 
 ### Programmatic Configuration
@@ -291,14 +293,14 @@ logger = LoggerFactory.create_logger(**config)
 ### Running Tests
 ```bash
 pytest
-pytest --cov=mosaic_logger  # With coverage
+pytest --cov=artissist_logger  # With coverage
 ```
 
 ### Code Formatting
 ```bash
-black mosaic_logger/
-mypy mosaic_logger/
-flake8 mosaic_logger/
+black artissist_logger/
+mypy artissist_logger/
+flake8 artissist_logger/
 ```
 
 ### Build Package
