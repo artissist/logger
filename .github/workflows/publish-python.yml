@@ -44,9 +44,8 @@ jobs:
         sed -i "s/^version = .*/version = \"${VERSION}\"/" pyproject.toml
     
     - name: Build package
-      run: python -m build
+      run: pnpm run build:py
     
     - name: Publish to PyPI
-      working-directory: ${{ github.workspace }}/clients/python
       run: |
-        python -m twine upload dist/*
+        python -m twine upload ${{ github.workspace }}/clients/python/dist/*

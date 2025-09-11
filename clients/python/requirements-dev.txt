@@ -9,3 +9,4 @@ flake8>=5.0.0
 pylint>=2.0.0
 aiofiles>=22.0.0
 boto3>=1.26.0
+build>=1.0.0
