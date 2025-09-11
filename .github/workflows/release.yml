@@ -68,6 +68,9 @@ jobs:
   
   publish-python:
     needs: create-release
+    permissions:
+      id-token: write
+      contents: read
     uses: ./.github/workflows/publish-python.yml
     with:
       version: ${{ needs.create-release.outputs.version }}
@@ -75,6 +78,9 @@ jobs:
   
   publish-npm:
     needs: create-release
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/publish-npm.yml
     with:
       version: ${{ needs.create-release.outputs.version }}
