@@ -189,10 +189,13 @@ export class LoggerFactory {
    * Resolve configuration with defaults
    */
   private static resolveConfig(config: LoggerConfig): Required<LoggerConfig> {
+    // Handle empty strings as falsy for service and environment
+    const service = config.service?.trim() ? config.service.trim() : undefined;
+    const environment = config.environment?.trim() ? config.environment.trim() : undefined;
+
     return {
-      service: config.service ?? LoggerFactory.defaultConfig.defaultService ?? 'unknown-service',
-      environment:
-        config.environment ?? LoggerFactory.defaultConfig.defaultEnvironment ?? 'development',
+      service: service ?? LoggerFactory.defaultConfig.defaultService ?? 'unknown-service',
+      environment: environment ?? LoggerFactory.defaultConfig.defaultEnvironment ?? 'development',
       emojis: config.emojis ?? LoggerFactory.defaultConfig.defaultEmojis ?? false,
       adapters: config.adapters ?? LoggerFactory.defaultConfig.defaultAdapters ?? ['console'],
       level: config.level ?? LoggerFactory.defaultConfig.defaultLevel ?? 'INFO',
