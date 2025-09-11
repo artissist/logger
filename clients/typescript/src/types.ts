@@ -1,159 +1,153 @@
 // Type definitions for Mosaic Logger TypeScript client
 // These types mirror the Smithy model definitions
 
-export type LogLevel =
-    | 'TRACE'
-    | 'DEBUG'
-    | 'INFO'
-    | 'WARN'
-    | 'ERROR'
-    | 'FATAL';
+export type LogLevel = 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
 
 export type LogEvent =
-    | 'SYSTEM_START'
-    | 'SYSTEM_STOP'
-    | 'USER_AUTH'
-    | 'USER_AUTHZ'
-    | 'PROJECT_LIFECYCLE'
-    | 'DATABASE_OPERATION'
-    | 'API_REQUEST'
-    | 'PERFORMANCE_METRIC'
-    | 'ERROR_OCCURRED'
-    | 'WARNING_ISSUED'
-    | 'CONFIG_CHANGE'
-    | 'ANALYTICS_EVENT'
-    | 'AGENT_PROCESSING'
-    | 'CONVERSATION_EVENT'
-    | 'ASSET_PROCESSING'
-    | 'INSPIRATION_EVENT'
-    | 'INFRASTRUCTURE_DEPLOY'
-    | 'BUSINESS_METRIC'
-    | 'SEARCH_OPERATION'
-    | 'BACKGROUND_JOB'
-    | 'NOTIFICATION_SENT'
-    | 'SECURITY_EVENT'
-    | 'SCHEDULED_TASK'
-    | 'EXTERNAL_SERVICE'
-    | 'AUDIT_TRAIL';
+  | 'SYSTEM_START'
+  | 'SYSTEM_STOP'
+  | 'USER_AUTH'
+  | 'USER_AUTHZ'
+  | 'PROJECT_LIFECYCLE'
+  | 'DATABASE_OPERATION'
+  | 'API_REQUEST'
+  | 'PERFORMANCE_METRIC'
+  | 'ERROR_OCCURRED'
+  | 'WARNING_ISSUED'
+  | 'CONFIG_CHANGE'
+  | 'ANALYTICS_EVENT'
+  | 'AGENT_PROCESSING'
+  | 'CONVERSATION_EVENT'
+  | 'ASSET_PROCESSING'
+  | 'INSPIRATION_EVENT'
+  | 'INFRASTRUCTURE_DEPLOY'
+  | 'BUSINESS_METRIC'
+  | 'SEARCH_OPERATION'
+  | 'BACKGROUND_JOB'
+  | 'NOTIFICATION_SENT'
+  | 'SECURITY_EVENT'
+  | 'SCHEDULED_TASK'
+  | 'EXTERNAL_SERVICE'
+  | 'AUDIT_TRAIL';
 
 export interface LogEntry {
-    logId: string;
-    timestamp: Date;
-    level: LogLevel;
-    message: string;
-    service: string;
-    environment: string;
-    event?: LogEvent;
-    includeEmoji?: boolean;
-    context?: LoggingContext;
-    metadata?: LogMetadata;
-    metrics?: PerformanceMetrics;
-    error?: ErrorDetails;
+  logId: string;
+  timestamp: Date;
+  level: LogLevel;
+  message: string;
+  service: string;
+  environment: string;
+  event?: LogEvent;
+  includeEmoji?: boolean;
+  context?: LoggingContext;
+  metadata?: LogMetadata;
+  metrics?: PerformanceMetrics;
+  error?: ErrorDetails;
 }
 
 export interface LoggingContext {
-    correlationId?: string;
-    traceId?: string;
-    spanId?: string;
-    userId?: string;
-    sessionId?: string;
-    requestId?: string;
-    parentCorrelationId?: string;
+  correlationId?: string;
+  traceId?: string;
+  spanId?: string;
+  userId?: string;
+  sessionId?: string;
+  requestId?: string;
+  parentCorrelationId?: string;
 }
 
 export interface LogMetadata {
-    tags?: Record<string, string>;
-    data?: any;
-    component?: string;
-    operation?: string;
-    version?: string;
-    customEventMappings?: CustomEventMap;
+  tags?: Record<string, string>;
+  data?: any;
+  component?: string;
+  operation?: string;
+  version?: string;
+  customEventMappings?: CustomEventMap;
 }
 
 export interface PerformanceMetrics {
-    durationMs?: number;
-    memoryBytes?: number;
-    cpuPercent?: number;
-    counters?: Record<string, number>;
+  durationMs?: number;
+  memoryBytes?: number;
+  cpuPercent?: number;
+  counters?: Record<string, number>;
 }
 
 export interface ErrorDetails {
-    type: string;
-    message: string;
-    stackTrace?: string;
-    code?: string;
-    context?: ErrorContext;
+  type: string;
+  message: string;
+  stackTrace?: string;
+  code?: string;
+  context?: ErrorContext;
 }
 
 export interface ErrorContext {
-    file?: string;
-    line?: number;
-    function?: string;
-    data?: any;
+  file?: string;
+  line?: number;
+  function?: string;
+  data?: any;
 }
 
 export interface EmojiMapping {
-    emoji: string;
-    description: string;
-    isDefault?: boolean;
+  emoji: string;
+  description: string;
+  isDefault?: boolean;
 }
 
 export type CustomEventMap = Record<string, EmojiMapping>;
 
 // Logger configuration interfaces
 export interface LoggerConfig {
-    service?: string;
-    environment?: string;
-    emojis?: boolean;
-    context?: Partial<LoggingContext>;
-    adapters?: string[];
-    level?: LogLevel;
+  service?: string;
+  environment?: string;
+  emojis?: boolean;
+  context?: Partial<LoggingContext>;
+  adapters?: string[];
+  level?: LogLevel;
 }
 
 export interface AdapterConfig {
-    type: string;
-    options?: Record<string, any>;
+  type: string;
+  options?: Record<string, any>;
 }
 
 // Adapter interface
 export interface LogAdapter {
-    write(entry: LogEntry): Promise<void> | void;
-    flush?(): Promise<void> | void;
-    close?(): Promise<void> | void;
+  write(entry: LogEntry): Promise<void> | void;
+  flush?(): Promise<void> | void;
+  close?(): Promise<void> | void;
 }
 
 // Log entry builder interface
 export interface LogEntryBuilder {
-    level(level: LogLevel): LogEntryBuilder;
-    message(message: string): LogEntryBuilder;
-    event(event: LogEvent): LogEntryBuilder;
-    context(context: Partial<LoggingContext>): LogEntryBuilder;
-    metadata(metadata: Partial<LogMetadata>): LogEntryBuilder;
-    metrics(metrics: Partial<PerformanceMetrics>): LogEntryBuilder;
-    error(error: Partial<ErrorDetails>): LogEntryBuilder;
-    tags(tags: Record<string, string>): LogEntryBuilder;
-    tag(key: string, value: string): LogEntryBuilder;
-    build(): LogEntry;
-    log(): void;
+  level(level: LogLevel): LogEntryBuilder;
+  message(message: string): LogEntryBuilder;
+  event(event: LogEvent): LogEntryBuilder;
+  context(context: Partial<LoggingContext>): LogEntryBuilder;
+  metadata(metadata: Partial<LogMetadata>): LogEntryBuilder;
+  metrics(metrics: Partial<PerformanceMetrics>): LogEntryBuilder;
+  error(error: Partial<ErrorDetails>): LogEntryBuilder;
+  tags(tags: Record<string, string>): LogEntryBuilder;
+  tag(key: string, value: string): LogEntryBuilder;
+  build(): LogEntry;
+  log(): void;
 }
 
 // Factory interfaces
 export interface LoggerFactoryConfig {
-    defaultService?: string;
-    defaultEnvironment?: string;
-    defaultEmojis?: boolean;
-    defaultAdapters?: string[];
-    defaultLevel?: LogLevel;
+  defaultService?: string;
+  defaultEnvironment?: string;
+  defaultEmojis?: boolean;
+  defaultAdapters?: string[];
+  defaultLevel?: LogLevel;
 }
 
 export interface Logger {
-    trace(message: string, data?: Partial<LogEntry>): void;
-    debug(message: string, data?: Partial<LogEntry>): void;
-    info(message: string, data?: Partial<LogEntry>): void;
-    warn(message: string, data?: Partial<LogEntry>): void;
-    error(message: string, data?: Partial<LogEntry>): void;
-    fatal(message: string, data?: Partial<LogEntry>): void;
-    log(level: LogLevel, message: string, data?: Partial<LogEntry>): void;
-    child(context: Partial<LoggingContext>): Logger;
-    flush(): Promise<void>;
+  trace(message: string, data?: Partial<LogEntry>): void;
+  debug(message: string, data?: Partial<LogEntry>): void;
+  info(message: string, data?: Partial<LogEntry>): void;
+  warn(message: string, data?: Partial<LogEntry>): void;
+  error(message: string, data?: Partial<LogEntry>): void;
+  fatal(message: string, data?: Partial<LogEntry>): void;
+  log(level: LogLevel, message: string, data?: Partial<LogEntry>): void;
+  child(context: Partial<LoggingContext>): Logger;
+  flush(): Promise<void>;
 }

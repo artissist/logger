@@ -7,15 +7,15 @@ export * from './emoji';
 
 // Export core types and interfaces
 export type {
-    LogLevel,
-    LogEvent,
-    LogEntry,
-    LoggingContext,
-    LogMetadata,
-    PerformanceMetrics,
-    ErrorDetails,
-    EmojiMapping,
-    CustomEventMap
+  LogLevel,
+  LogEvent,
+  LogEntry,
+  LoggingContext,
+  LogMetadata,
+  PerformanceMetrics,
+  ErrorDetails,
+  EmojiMapping,
+  CustomEventMap,
 } from './types';
 
 // Export factory and logger classes
