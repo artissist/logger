@@ -1,18 +1,21 @@
 {
   "name": "@artissist/logger",
-  "version": "0.0.5-b2",
+  "version": "0.0.5-b3",
   "type": "module",
   "description": "Unified logging library for Artissist with emoji support and distributed tracing",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
+  "browser": "dist/index.browser.js",
   "exports": {
     ".": {
+      "browser": "./dist/index.browser.js",
       "require": "./dist/index.js",
       "import": "./dist/index.esm.js",
       "types": "./dist/index.d.ts"
     },
     "./adapters": {
+      "browser": "./dist/adapters/console.js",
       "require": "./dist/adapters/index.js", 
       "import": "./dist/adapters/index.esm.js",
       "types": "./dist/adapters/index.d.ts"
