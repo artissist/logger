@@ -88,3 +88,7 @@ temp/
 #pythong env
 .venv/
 venv/
+
+
+# Ignore custom ignore file
+build-report.md
