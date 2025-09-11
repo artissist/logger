@@ -57,7 +57,7 @@ export interface LoggingContext {
 
 export interface LogMetadata {
   tags?: Record<string, string>;
-  data?: any;
+  data?: unknown;
   component?: string;
   operation?: string;
   version?: string;
@@ -83,7 +83,7 @@ export interface ErrorContext {
   file?: string;
   line?: number;
   function?: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface EmojiMapping {
@@ -106,7 +106,7 @@ export interface LoggerConfig {
 
 export interface AdapterConfig {
   type: string;
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
 }
 
 // Adapter interface

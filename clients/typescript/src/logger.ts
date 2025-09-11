@@ -104,8 +104,11 @@ export class Logger implements ILogger {
    */
   async flush(): Promise<void> {
     const flushPromises = this.adapters
-      .filter((adapter) => adapter.flush)
-      .map((adapter) => adapter.flush!());
+      .filter(
+        (adapter): adapter is LogAdapter & { flush: NonNullable<LogAdapter['flush']> } =>
+          adapter.flush !== undefined
+      )
+      .map((adapter) => adapter.flush());
 
     await Promise.all(flushPromises);
   }
@@ -122,13 +125,11 @@ export class Logger implements ILogger {
     const context: LoggingContext = {
       ...this.baseContext,
       ...currentContext,
-      ...(data?.context || {}),
+      ...(data?.context ?? {}),
     };
 
     // Ensure we have a correlation ID
-    if (!context.correlationId) {
-      context.correlationId = createCorrelationId();
-    }
+    context.correlationId ??= createCorrelationId();
 
     const entry: LogEntry = {
       logId,
@@ -167,9 +168,17 @@ export class Logger implements ILogger {
   private writeToAdapters(entry: LogEntry): void {
     this.adapters.forEach((adapter) => {
       try {
-        adapter.write(entry);
+        const result = adapter.write(entry);
+        if (result && typeof result === 'object' && 'then' in result) {
+          void Promise.resolve(result).catch((error) => {
+            // Don't let adapter errors break logging
+            // eslint-disable-next-line no-console
+            console.error('Logger adapter error:', error);
+          });
+        }
       } catch (error) {
         // Don't let adapter errors break logging
+        // eslint-disable-next-line no-console
         console.error('Logger adapter error:', error);
       }
     });
@@ -233,8 +242,11 @@ export class Logger implements ILogger {
 
     // Close adapters that support it
     const closePromises = this.adapters
-      .filter((adapter) => adapter.close)
-      .map((adapter) => adapter.close!());
+      .filter(
+        (adapter): adapter is LogAdapter & { close: NonNullable<LogAdapter['close']> } =>
+          adapter.close !== undefined
+      )
+      .map((adapter) => adapter.close());
 
     await Promise.all(closePromises);
   }

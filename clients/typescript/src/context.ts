@@ -264,13 +264,13 @@ export async function withContext<T>(
  * Decorator for automatically adding correlation context to functions
  */
 export function withCorrelation(
-  _target: any,
+  _target: unknown,
   _propertyName: string,
   descriptor: PropertyDescriptor
 ) {
-  const method = descriptor.value;
+  const method = descriptor.value as (...args: unknown[]) => unknown;
 
-  descriptor.value = function (...args: any[]) {
+  descriptor.value = function (this: unknown, ...args: unknown[]) {
     const context = globalContextManager.createNewContext();
     return withContext(context, () => method.apply(this, args));
   };

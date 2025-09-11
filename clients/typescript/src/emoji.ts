@@ -91,7 +91,7 @@ export class EmojiResolver {
    * @param fallbackEmoji - Optional fallback emoji if event not found
    * @returns The emoji string or empty string if disabled/not found
    */
-  getEmoji(event: LogEvent | string, fallbackEmoji?: string): string {
+  getEmoji(event: string, fallbackEmoji?: string): string {
     if (!this.enabled) {
       return '';
     }
@@ -107,18 +107,17 @@ export class EmojiResolver {
       return DEFAULT_EMOJI_MAPPINGS[logEvent].emoji;
     }
 
-    if (typeof event !== 'string' && DEFAULT_EMOJI_MAPPINGS[event]) {
-      return (DEFAULT_EMOJI_MAPPINGS as any)[event].emoji;
-    }
+    // Already checked as string above, so this is redundant
+    // Type narrowing ensures we only deal with strings
 
     // Return fallback or empty string
-    return fallbackEmoji || '';
+    return fallbackEmoji ?? '';
   }
 
   /**
    * Get description for a given event
    */
-  getDescription(event: LogEvent | string): string {
+  getDescription(event: string): string {
     // Check custom mappings first
     if (typeof event === 'string' && this.customMappings[event]) {
       return this.customMappings[event].description;
@@ -130,9 +129,7 @@ export class EmojiResolver {
       return DEFAULT_EMOJI_MAPPINGS[logEvent].description;
     }
 
-    if (typeof event !== 'string' && DEFAULT_EMOJI_MAPPINGS[event]) {
-      return (DEFAULT_EMOJI_MAPPINGS as any)[event].description;
-    }
+    // Already checked as string above, so this is redundant
 
     return 'Unknown event';
   }
@@ -140,7 +137,7 @@ export class EmojiResolver {
   /**
    * Format a log message with emoji prefix
    */
-  formatMessage(message: string, event?: LogEvent | string, fallbackEmoji?: string): string {
+  formatMessage(message: string, event?: string, fallbackEmoji?: string): string {
     if (!this.enabled || !event) {
       return message;
     }
@@ -201,11 +198,11 @@ export const EventEmojiMapping = new EmojiResolver();
  */
 export function formatLogMessage(
   message: string,
-  event?: LogEvent | string,
+  event?: string,
   enableEmojis = false,
   customResolver?: EmojiResolver
 ): string {
-  const resolver = customResolver || EventEmojiMapping;
+  const resolver = customResolver ?? EventEmojiMapping;
 
   if (!enableEmojis) {
     return message;
