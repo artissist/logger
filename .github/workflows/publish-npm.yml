@@ -9,6 +9,12 @@ on:
         description: 'Version to publish (e.g., 0.1.0)'
         required: true
         type: string
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.0)'
+        required: true
+        type: string
 
 jobs:
   build-and-publish:
@@ -34,6 +40,7 @@ jobs:
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
+        java-version: '21'
         cache: gradle
     
     - name: Set version from input or tag
