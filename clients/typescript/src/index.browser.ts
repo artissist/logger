@@ -1,8 +1,8 @@
-// Main entry point for Mosaic Logger TypeScript client
-export * from './factory';
+// Browser-compatible entry point for Mosaic Logger TypeScript client
+// Excludes Node.js-only modules like FileAdapter
+
 export * from './types';
 export * from './context';
-export * from './adapters';
 export * from './emoji';
 
 // Export core types and interfaces
@@ -22,9 +22,8 @@ export type {
 export { LoggerFactory } from './factory';
 export { Logger } from './logger';
 
-// Export adapters
+// Export browser-compatible adapters only
 export { ConsoleAdapter } from './adapters/console';
-export { FileAdapter } from './adapters/file';
 
 // Export context utilities
 export { ContextManager, createCorrelationId } from './context';

@@ -44,10 +44,6 @@ logger.info('User login', {
 });
 ```
 
-All standard levels (`trace`, `debug`, `info`, `warn`, `error`, `fatal`) have
-dedicated methods. Use `logger.log(level, message, data)` only when the level
-is determined dynamically.
-
 ### Python
 ```python
 from artissist_logger import LoggerFactory, LogEvent
@@ -211,6 +207,7 @@ logger = LoggerFactory.create_logger(**config)
 ```
 
 ## Synchronous Usage (Python)
+
 
 Fire-and-forget helpers are available when `await` isn't possible:
 ```python

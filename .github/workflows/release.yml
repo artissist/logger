@@ -79,5 +79,6 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # Required for npm trusted publishing
     uses: ./.github/workflows/publish-npm.yml
     secrets: inherit
