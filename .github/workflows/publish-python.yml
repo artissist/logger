@@ -46,12 +46,7 @@ jobs:
     - name: Build package
       run: python -m build
     
-    - name: copy dist to expected location
-      working-directory: clients/python
+    - name: Publish to PyPI
+      working-directory: ${{ github.workspace }}/clients/python
       run: |
-        mkdir -p ../../dist
-        pwd dist
-        ls -la dist
-        cp -r dist/* ../../dist/
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+        python -m twine upload dist/*
