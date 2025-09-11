@@ -1,6 +1,6 @@
 {
   "name": "@artissist/logger-monorepo",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "private": true,
   "description": "Artissist Logger - Unified logging library monorepo",
   "scripts": {
