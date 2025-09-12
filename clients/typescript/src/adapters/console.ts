@@ -63,15 +63,18 @@ export class ConsoleAdapter implements LogAdapter {
    * Write a log entry to the console
    */
   write(entry: LogEntry): void {
+    // Coalesce null/undefined level to default 'INFO' before filtering and switching
+    const level = entry.level ?? 'INFO';
+
     // Check if this log entry should be output based on log level
-    if (!entry.level || !this.shouldLog(entry.level)) {
+    if (!this.shouldLog(level)) {
       return;
     }
 
     const formattedMessage = this.formatLogEntry(entry);
 
     // Choose appropriate console method based on log level
-    switch (entry.level) {
+    switch (level) {
       case 'TRACE':
       case 'DEBUG':
         // eslint-disable-next-line no-console
@@ -148,7 +151,9 @@ export class ConsoleAdapter implements LogAdapter {
 
     // Message with optional emoji
     let message = entry.message ?? '';
-    if (this.options.enableEmojis && entry.event) {
+    // Respect entry.includeEmoji if set, otherwise fall back to adapter configuration
+    const shouldIncludeEmoji = entry.includeEmoji ?? this.options.enableEmojis;
+    if (shouldIncludeEmoji && entry.event) {
       message = this.emojiResolver.formatMessage(message, entry.event);
     }
 

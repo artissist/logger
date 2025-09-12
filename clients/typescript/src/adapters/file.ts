@@ -74,8 +74,11 @@ export class FileAdapter implements LogAdapter {
    * Write a log entry to the file
    */
   write(entry: LogEntry): void {
+    // Coalesce null/undefined level to default 'INFO' before filtering
+    const level = entry.level ?? 'INFO';
+
     // Check if this log entry should be output based on log level
-    if (!entry.level || !this.shouldLog(entry.level)) {
+    if (!this.shouldLog(level)) {
       return;
     }
 
@@ -209,7 +212,9 @@ export class FileAdapter implements LogAdapter {
   private formatMessage(entry: LogEntry): string {
     let message = entry.message ?? '';
 
-    if (this.options.enableEmojis && entry.event) {
+    // Respect entry.includeEmoji if set, otherwise fall back to adapter configuration
+    const shouldIncludeEmoji = entry.includeEmoji ?? this.options.enableEmojis;
+    if (shouldIncludeEmoji && entry.event) {
       message = this.emojiResolver.formatMessage(message, entry.event);
     }
 
