@@ -284,23 +284,10 @@ export class ConsoleAdapter implements LogAdapter {
    * Format metadata
    */
   private formatMetadata(metadata: LogMetadata): string {
-    const parts: string[] = [];
-
-    if (metadata.component) {
-      parts.push(`component=${metadata.component}`);
-    }
-    if (metadata.operation) {
-      parts.push(`operation=${metadata.operation}`);
-    }
-    if (metadata.version) {
-      parts.push(`version=${metadata.version}`);
-    }
-    if (metadata.tags && Object.keys(metadata.tags).length > 0) {
-      const tagStr = Object.entries(metadata.tags)
-        .map(([key, value]) => `${key}=${value}`)
-        .join(',');
-      parts.push(`tags=[${tagStr}]`);
-    }
+    const parts = Object.entries(metadata).map(([key, value]) => {
+      const formatted = value && typeof value === 'object' ? JSON.stringify(value) : String(value);
+      return `${key}=${formatted}`;
+    });
 
     if (parts.length === 0) {
       return '';

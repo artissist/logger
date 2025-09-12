@@ -437,7 +437,7 @@ describe('LoggerFactory', () => {
 
       // Mock file adapter to throw error
       const originalEnv = process.env.LOG_FILE;
-      process.env.LOG_FILE = '/invalid/path/that/does/not/exist/test.log';
+      process.env.LOG_FILE = '/proc/1/test.log';
 
       expect(() => {
         LoggerFactory.create({
@@ -450,7 +450,7 @@ describe('LoggerFactory', () => {
       expect(console.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to create file adapter:'),
         expect.objectContaining({
-          code: expect.stringMatching(/^E(NOENT|ACCES)$/),
+          code: expect.stringMatching(/^E(NOENT|ACCES|PERM)$/),
         })
       );
 

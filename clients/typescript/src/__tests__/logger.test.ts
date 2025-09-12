@@ -165,6 +165,18 @@ describe('Logger error handling', () => {
     });
   });
 
+  describe('metadata handling', () => {
+    it('should allow arbitrary metadata key-value pairs', () => {
+      const logger = createTestLogger();
+
+      logger.info('hello', { metadata: { foo: 'bar', count: 42 } });
+
+      expect(loggedEntries).toHaveLength(1);
+      const entry = loggedEntries[0];
+      expect(entry.metadata).toEqual({ foo: 'bar', count: 42 });
+    });
+  });
+
   describe('nullable field handling', () => {
     it('should accept LogEntry with null values for all fields', () => {
       const logger = createTestLogger();
