@@ -31,18 +31,18 @@ export type LogEvent =
   | 'AUDIT_TRAIL';
 
 export interface LogEntry {
-  logId: string;
-  timestamp: Date;
-  level: LogLevel;
-  message: string;
-  service: string;
-  environment: string;
-  event?: LogEvent;
-  includeEmoji?: boolean;
-  context?: LoggingContext;
-  metadata?: LogMetadata;
-  metrics?: PerformanceMetrics;
-  error?: ErrorDetails;
+  logId?: string | null;
+  timestamp?: Date | null;
+  level?: LogLevel | null;
+  message?: string | null;
+  service?: string | null;
+  environment?: string | null;
+  event?: LogEvent | null;
+  includeEmoji?: boolean | null;
+  context?: LoggingContext | null;
+  metadata?: LogMetadata | null;
+  metrics?: PerformanceMetrics | null;
+  error?: ErrorDetails | null;
 }
 
 export interface LoggingContext {
