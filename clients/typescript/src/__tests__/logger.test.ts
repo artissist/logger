@@ -434,9 +434,9 @@ describe('Logger error handling', () => {
     });
 
     it('should respect entry.includeEmoji when set to false even if adapter has emojis enabled', () => {
-      const consoleAdapter = new ConsoleAdapter({ 
+      const consoleAdapter = new ConsoleAdapter({
         logLevel: 'INFO',
-        enableEmojis: true  // Adapter has emojis enabled
+        enableEmojis: true, // Adapter has emojis enabled
       });
 
       const mockConsoleInfo = jest.fn();
@@ -463,16 +463,18 @@ describe('Logger error handling', () => {
 
       // Should have been called
       expect(mockConsoleInfo).toHaveBeenCalled();
-      
+
       // Message should not contain emoji even though adapter has emojis enabled
       const loggedMessage = mockConsoleInfo.mock.calls[0][0];
-      expect(loggedMessage).not.toMatch(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u);
+      expect(loggedMessage).not.toMatch(
+        /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u
+      );
     });
 
     it('should respect entry.includeEmoji when set to true even if adapter has emojis disabled', () => {
-      const consoleAdapter = new ConsoleAdapter({ 
+      const consoleAdapter = new ConsoleAdapter({
         logLevel: 'INFO',
-        enableEmojis: false  // Adapter has emojis disabled
+        enableEmojis: false, // Adapter has emojis disabled
       });
 
       const mockConsoleInfo = jest.fn();
@@ -502,9 +504,9 @@ describe('Logger error handling', () => {
     });
 
     it('should fall back to adapter emoji setting when entry.includeEmoji is null', () => {
-      const consoleAdapter = new ConsoleAdapter({ 
+      const consoleAdapter = new ConsoleAdapter({
         logLevel: 'INFO',
-        enableEmojis: true  // Adapter has emojis enabled
+        enableEmojis: true, // Adapter has emojis enabled
       });
 
       const mockConsoleInfo = jest.fn();
@@ -534,9 +536,9 @@ describe('Logger error handling', () => {
     });
 
     it('should fall back to adapter emoji setting when entry.includeEmoji is undefined', () => {
-      const consoleAdapter = new ConsoleAdapter({ 
+      const consoleAdapter = new ConsoleAdapter({
         logLevel: 'INFO',
-        enableEmojis: false  // Adapter has emojis disabled
+        enableEmojis: false, // Adapter has emojis disabled
       });
 
       const mockConsoleInfo = jest.fn();
@@ -563,10 +565,12 @@ describe('Logger error handling', () => {
 
       // Should have been called and should use adapter's emoji setting (disabled)
       expect(mockConsoleInfo).toHaveBeenCalled();
-      
+
       // Message should not contain emoji since adapter has emojis disabled
       const loggedMessage = mockConsoleInfo.mock.calls[0][0];
-      expect(loggedMessage).not.toMatch(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u);
+      expect(loggedMessage).not.toMatch(
+        /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u
+      );
     });
 
     it('should respect entry.includeEmoji in FileAdapter', () => {
