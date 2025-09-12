@@ -363,5 +363,74 @@ describe('Logger error handling', () => {
       // Clean up
       void fileAdapter.close();
     });
+
+    it('should handle all nullable fields in ConsoleAdapter', () => {
+      const consoleAdapter = new ConsoleAdapter({ logLevel: 'INFO' });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry with ALL fields null or undefined to test complete nullable handling
+      const entryWithAllNullFields = {
+        logId: null,
+        timestamp: null,
+        level: null, // This should default to 'INFO'
+        message: null,
+        service: null,
+        environment: null,
+        event: null,
+        includeEmoji: null,
+        context: null,
+        metadata: null,
+        metrics: null,
+        error: null,
+      };
+
+      // This should not throw and should write using defaults
+      expect(() => {
+        consoleAdapter.write(entryWithAllNullFields);
+      }).not.toThrow();
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // Should have been called (logged)
+      expect(mockConsoleInfo).toHaveBeenCalled();
+    });
+
+    it('should handle all undefined fields in FileAdapter', () => {
+      // Create a temporary file for testing
+      const testFilePath = '/tmp/test_all_undefined.log';
+      const fileAdapter = new FileAdapter({
+        filePath: testFilePath,
+        logLevel: 'INFO',
+        bufferSize: 1, // Flush immediately for testing
+      });
+
+      // Create a log entry with ALL fields undefined to test complete nullable handling
+      const entryWithAllUndefinedFields = {
+        logId: undefined,
+        timestamp: undefined,
+        level: undefined, // This should default to 'INFO'
+        message: undefined,
+        service: undefined,
+        environment: undefined,
+        event: undefined,
+        includeEmoji: undefined,
+        context: undefined,
+        metadata: undefined,
+        metrics: undefined,
+        error: undefined,
+      };
+
+      // This should not throw and should write using defaults
+      expect(() => {
+        fileAdapter.write(entryWithAllUndefinedFields);
+      }).not.toThrow();
+
+      // Clean up
+      void fileAdapter.close();
+    });
   });
 });
