@@ -151,7 +151,9 @@ export class ConsoleAdapter implements LogAdapter {
 
     // Message with optional emoji
     let message = entry.message ?? '';
-    if (this.options.enableEmojis && entry.event) {
+    // Respect entry.includeEmoji if set, otherwise fall back to adapter configuration
+    const shouldIncludeEmoji = entry.includeEmoji ?? this.options.enableEmojis;
+    if (shouldIncludeEmoji && entry.event) {
       message = this.emojiResolver.formatMessage(message, entry.event);
     }
 

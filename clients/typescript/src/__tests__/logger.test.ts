@@ -432,5 +432,173 @@ describe('Logger error handling', () => {
       // Clean up
       void fileAdapter.close();
     });
+
+    it('should respect entry.includeEmoji when set to false even if adapter has emojis enabled', () => {
+      const consoleAdapter = new ConsoleAdapter({ 
+        logLevel: 'INFO',
+        enableEmojis: true  // Adapter has emojis enabled
+      });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry that explicitly disables emojis for this entry
+      const entryWithEmojiDisabled = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: 'INFO' as const,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        event: 'USER_AUTH' as const,
+        includeEmoji: false, // Entry explicitly disables emojis
+        context: {},
+      };
+
+      consoleAdapter.write(entryWithEmojiDisabled);
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // Should have been called
+      expect(mockConsoleInfo).toHaveBeenCalled();
+      
+      // Message should not contain emoji even though adapter has emojis enabled
+      const loggedMessage = mockConsoleInfo.mock.calls[0][0];
+      expect(loggedMessage).not.toMatch(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u);
+    });
+
+    it('should respect entry.includeEmoji when set to true even if adapter has emojis disabled', () => {
+      const consoleAdapter = new ConsoleAdapter({ 
+        logLevel: 'INFO',
+        enableEmojis: false  // Adapter has emojis disabled
+      });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry that explicitly enables emojis for this entry
+      const entryWithEmojiEnabled = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: 'INFO' as const,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        event: 'USER_AUTH' as const,
+        includeEmoji: true, // Entry explicitly enables emojis
+        context: {},
+      };
+
+      consoleAdapter.write(entryWithEmojiEnabled);
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // Should have been called
+      expect(mockConsoleInfo).toHaveBeenCalled();
+    });
+
+    it('should fall back to adapter emoji setting when entry.includeEmoji is null', () => {
+      const consoleAdapter = new ConsoleAdapter({ 
+        logLevel: 'INFO',
+        enableEmojis: true  // Adapter has emojis enabled
+      });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry with null includeEmoji - should use adapter setting
+      const entryWithNullEmoji = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: 'INFO' as const,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        event: 'USER_AUTH' as const,
+        includeEmoji: null, // Entry doesn't specify, should use adapter setting
+        context: {},
+      };
+
+      consoleAdapter.write(entryWithNullEmoji);
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // Should have been called and should use adapter's emoji setting (enabled)
+      expect(mockConsoleInfo).toHaveBeenCalled();
+    });
+
+    it('should fall back to adapter emoji setting when entry.includeEmoji is undefined', () => {
+      const consoleAdapter = new ConsoleAdapter({ 
+        logLevel: 'INFO',
+        enableEmojis: false  // Adapter has emojis disabled
+      });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry with undefined includeEmoji - should use adapter setting
+      const entryWithUndefinedEmoji = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: 'INFO' as const,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        event: 'USER_AUTH' as const,
+        includeEmoji: undefined, // Entry doesn't specify, should use adapter setting
+        context: {},
+      };
+
+      consoleAdapter.write(entryWithUndefinedEmoji);
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // Should have been called and should use adapter's emoji setting (disabled)
+      expect(mockConsoleInfo).toHaveBeenCalled();
+      
+      // Message should not contain emoji since adapter has emojis disabled
+      const loggedMessage = mockConsoleInfo.mock.calls[0][0];
+      expect(loggedMessage).not.toMatch(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u);
+    });
+
+    it('should respect entry.includeEmoji in FileAdapter', () => {
+      // Create a temporary file for testing
+      const testFilePath = '/tmp/test_emoji.log';
+      const fileAdapter = new FileAdapter({
+        filePath: testFilePath,
+        logLevel: 'INFO',
+        enableEmojis: true, // Adapter has emojis enabled
+        bufferSize: 1, // Flush immediately for testing
+      });
+
+      // Create a log entry that explicitly disables emojis for this entry
+      const entryWithEmojiDisabled = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: 'INFO' as const,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        event: 'USER_AUTH' as const,
+        includeEmoji: false, // Entry explicitly disables emojis
+        context: {},
+      };
+
+      // This should not throw and should respect the entry's emoji setting
+      expect(() => {
+        fileAdapter.write(entryWithEmojiDisabled);
+      }).not.toThrow();
+
+      // Clean up
+      void fileAdapter.close();
+    });
   });
 });
