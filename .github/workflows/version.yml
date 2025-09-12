@@ -1,0 +1,48 @@
+name: Version Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.2.3)'
+        required: true
+        type: string
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+      with:
+        ref: main
+        fetch-depth: 0
+    - name: Verify admin permissions
+      env:
+        REPO: ${{ github.repository }}
+        ACTOR: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        perm=$(curl -s -H "Authorization: token $TOKEN" \
+          https://api.github.com/repos/$REPO/collaborators/$ACTOR/permission | jq -r '.permission')
+        if [ "$perm" != "admin" ]; then
+          echo "User $ACTOR does not have admin permissions: $perm"
+          exit 1
+        fi
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+    - name: Configure git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    - name: Run pnpm version
+      run: pnpm version ${{ inputs.version }}
+    - name: Push version commit and tag
+      run: |
+        git push origin HEAD:main --follow-tags
