@@ -32,10 +32,11 @@ const logger = LoggerFactory.createBackendLogger({
 logger.info('Service booting', { event: LogEvent.SYSTEM_START });
 logger.error('Database unavailable', {
   event: LogEvent.ERROR_OCCURRED,
-  metadata: { retry: true }
+  metadata: { retry: true, host: 'db-primary' }
 });
 ```
 
+The `metadata` field is a simple record of key-value pairs, so you can attach any custom context needed for your application.
 
 The `Logger` exposes convenience methods for each level (`debug`, `info`, `warn`, `error`, etc.). Use `logger.log(level, message, data)` only when the level must be chosen dynamically.
 

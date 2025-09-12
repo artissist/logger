@@ -9,6 +9,7 @@ Unified, platform-agnostic logging library with emoji-based events and rich cont
 - **Context propagation** with correlation IDs and scoped context managers
 - **Multiple adapters** (console, file, and extensible for others)
 - **Distributed tracing ready** with structured metadata and metrics
+- **Flexible metadata** for arbitrary key-value context
 - **Async & sync APIs** (Python) and promise-friendly TypeScript API
 
 ## Installation
@@ -40,9 +41,11 @@ const logger = LoggerFactory.createFrontendLogger({
 logger.info('Application started', { version: '1.0.0' });
 logger.info('User login', {
   event: LogEvent.USER_AUTH,
-  metadata: { userId: 'user123' }
+  metadata: { userId: 'user123', method: 'oauth' }
 });
 ```
+
+The `metadata` object accepts any custom fields, making it simple to enrich logs with application-specific context.
 
 ### Python
 ```python
@@ -58,7 +61,7 @@ await logger.info("Service initialized", event=LogEvent.SYSTEM_START)
 await logger.info(
     "User authenticated",
     event=LogEvent.USER_AUTH,
-    metadata={"user_id": "user123"}
+    metadata={"user_id": "user123", "method": "oauth"}
 )
 ```
 

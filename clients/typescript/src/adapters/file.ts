@@ -141,6 +141,9 @@ export class FileAdapter implements LogAdapter {
       fs.mkdirSync(dir, { recursive: true });
     }
 
+    // Ensure directory is writable; throws if not
+    fs.accessSync(dir, fs.constants.W_OK);
+
     // Get current file size if file exists
     if (fs.existsSync(this.options.filePath)) {
       const stats = fs.statSync(this.options.filePath);

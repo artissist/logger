@@ -55,14 +55,7 @@ export interface LoggingContext {
   parentCorrelationId?: string;
 }
 
-export interface LogMetadata {
-  tags?: Record<string, string>;
-  data?: unknown;
-  component?: string;
-  operation?: string;
-  version?: string;
-  customEventMappings?: CustomEventMap;
-}
+export type LogMetadata = Record<string, unknown>;
 
 export interface PerformanceMetrics {
   durationMs?: number;
@@ -122,7 +115,7 @@ export interface LogEntryBuilder {
   message(message: string): LogEntryBuilder;
   event(event: LogEvent): LogEntryBuilder;
   context(context: Partial<LoggingContext>): LogEntryBuilder;
-  metadata(metadata: Partial<LogMetadata>): LogEntryBuilder;
+  metadata(metadata: LogMetadata): LogEntryBuilder;
   metrics(metrics: Partial<PerformanceMetrics>): LogEntryBuilder;
   error(error: Partial<ErrorDetails>): LogEntryBuilder;
   tags(tags: Record<string, string>): LogEntryBuilder;
