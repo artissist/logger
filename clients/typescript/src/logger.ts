@@ -1,5 +1,13 @@
 // Core Logger class for Mosaic Logger
-import type { Logger as ILogger, LogAdapter, LogEntry, LogLevel, LoggingContext } from './types';
+import type {
+  ErrorContext,
+  ErrorDetails,
+  Logger as ILogger,
+  LogAdapter,
+  LogEntry,
+  LogLevel,
+  LoggingContext,
+} from './types';
 import type { EmojiResolver } from './emoji';
 import { ContextManager, createCorrelationId } from './context';
 
@@ -114,6 +122,63 @@ export class Logger implements ILogger {
   }
 
   /**
+   * Validate and sanitize error objects to ensure they conform to ErrorDetails interface
+   */
+  private sanitizeError(error: unknown): ErrorDetails | undefined {
+    if (error === null || error === undefined) {
+      return undefined;
+    }
+
+    // Handle JavaScript Error instances
+    if (error instanceof Error) {
+      return {
+        type: error.constructor.name,
+        message: error.message,
+        stackTrace: error.stack,
+      };
+    }
+
+    // Handle string errors
+    if (typeof error === 'string') {
+      return {
+        type: 'Unknown',
+        message: error,
+      };
+    }
+
+    // Handle object-like errors
+    if (typeof error === 'object') {
+      const errorObj = error as Record<string, unknown>;
+
+      // Check if it has the minimum required fields for ErrorDetails
+      if (typeof errorObj.type === 'string' && typeof errorObj.message === 'string') {
+        const sanitized: ErrorDetails = {
+          type: errorObj.type,
+          message: errorObj.message,
+        };
+
+        // Add optional fields if present and valid
+        if (typeof errorObj.stackTrace === 'string') {
+          sanitized.stackTrace = errorObj.stackTrace;
+        }
+        if (typeof errorObj.code === 'string') {
+          sanitized.code = errorObj.code;
+        }
+        if (typeof errorObj.context === 'object' && errorObj.context !== null) {
+          sanitized.context = errorObj.context as ErrorContext;
+        }
+
+        return sanitized;
+      }
+
+      // If it's an object but doesn't have required fields, ignore it
+      return undefined;
+    }
+
+    // For any other type, ignore it
+    return undefined;
+  }
+  /**
    * Create a complete log entry
    */
   private createLogEntry(level: LogLevel, message: string, data?: Partial<LogEntry>): LogEntry {
@@ -131,6 +196,9 @@ export class Logger implements ILogger {
     // Ensure we have a correlation ID
     context.correlationId ??= createCorrelationId();
 
+    // Sanitize error object
+    const sanitizedError = data?.error ? this.sanitizeError(data.error) : undefined;
+
     const entry: LogEntry = {
       logId,
       timestamp,
@@ -143,7 +211,7 @@ export class Logger implements ILogger {
       ...(data?.event && { event: data.event }),
       ...(data?.metadata && { metadata: data.metadata }),
       ...(data?.metrics && { metrics: data.metrics }),
-      ...(data?.error && { error: data.error }),
+      ...(sanitizedError && { error: sanitizedError }),
     };
 
     return entry;
