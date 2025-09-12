@@ -162,4 +162,95 @@ describe('Logger error handling', () => {
       expect(entry.error).toBeUndefined();
     });
   });
+
+  describe('nullable field handling', () => {
+    it('should accept LogEntry with null values for all fields', () => {
+      const logger = createTestLogger();
+
+      // This should compile and work since all fields are now nullable
+      const nullableEntry: LogEntry = {
+        logId: null,
+        timestamp: null,
+        level: null,
+        message: null,
+        service: null,
+        environment: null,
+        event: null,
+        includeEmoji: null,
+        context: null,
+        metadata: null,
+        metrics: null,
+        error: null,
+      };
+
+      // The logger should still function with nullable fields in partial data
+      expect(() => {
+        logger.info('Test message', nullableEntry);
+      }).not.toThrow();
+
+      expect(loggedEntries).toHaveLength(1);
+      const entry = loggedEntries[0];
+
+      // The logger should still provide sensible defaults for core fields
+      expect(entry.level).toBe('INFO');
+      expect(entry.message).toBe('Test message');
+      expect(entry.service).toBe('test-service');
+      expect(entry.environment).toBe('test');
+      expect(typeof entry.logId).toBe('string');
+      expect(entry.timestamp).toBeInstanceOf(Date);
+    });
+
+    it('should accept LogEntry with undefined values for all fields', () => {
+      const logger = createTestLogger();
+
+      // This should compile and work since all fields are now nullable
+      const undefinedEntry: LogEntry = {
+        logId: undefined,
+        timestamp: undefined,
+        level: undefined,
+        message: undefined,
+        service: undefined,
+        environment: undefined,
+        event: undefined,
+        includeEmoji: undefined,
+        context: undefined,
+        metadata: undefined,
+        metrics: undefined,
+        error: undefined,
+      };
+
+      expect(() => {
+        logger.warn('Warning message', undefinedEntry);
+      }).not.toThrow();
+
+      expect(loggedEntries).toHaveLength(1);
+      const entry = loggedEntries[0];
+
+      // The logger should still provide sensible defaults for core fields
+      expect(entry.level).toBe('WARN');
+      expect(entry.message).toBe('Warning message');
+      expect(entry.service).toBe('test-service');
+      expect(entry.environment).toBe('test');
+    });
+
+    it('should accept empty LogEntry object', () => {
+      const logger = createTestLogger();
+
+      // This should compile now that all fields are optional
+      const emptyEntry: LogEntry = {};
+
+      expect(() => {
+        logger.error('Error message', emptyEntry);
+      }).not.toThrow();
+
+      expect(loggedEntries).toHaveLength(1);
+      const entry = loggedEntries[0];
+
+      // The logger should still provide sensible defaults
+      expect(entry.level).toBe('ERROR');
+      expect(entry.message).toBe('Error message');
+      expect(entry.service).toBe('test-service');
+      expect(entry.environment).toBe('test');
+    });
+  });
 });

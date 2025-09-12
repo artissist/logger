@@ -64,7 +64,7 @@ export class ConsoleAdapter implements LogAdapter {
    */
   write(entry: LogEntry): void {
     // Check if this log entry should be output based on log level
-    if (!this.shouldLog(entry.level)) {
+    if (!entry.level || !this.shouldLog(entry.level)) {
       return;
     }
 
@@ -126,7 +126,7 @@ export class ConsoleAdapter implements LogAdapter {
     const parts: string[] = [];
 
     // Timestamp
-    const timestamp = this.formatTimestamp(entry.timestamp);
+    const timestamp = this.formatTimestamp(entry.timestamp ?? new Date());
     if (this.options.enableColors) {
       parts.push(`${ConsoleAdapter.COLORS.DIM}${timestamp}${ConsoleAdapter.COLORS.RESET}`);
     } else {
@@ -134,18 +134,20 @@ export class ConsoleAdapter implements LogAdapter {
     }
 
     // Log level with color
-    const levelStr = this.formatLogLevel(entry.level);
+    const levelStr = this.formatLogLevel(entry.level ?? 'INFO');
     parts.push(levelStr);
 
     // Service name
     if (this.options.enableColors) {
-      parts.push(`${ConsoleAdapter.COLORS.DIM}[${entry.service}]${ConsoleAdapter.COLORS.RESET}`);
+      parts.push(
+        `${ConsoleAdapter.COLORS.DIM}[${entry.service ?? 'unknown'}]${ConsoleAdapter.COLORS.RESET}`
+      );
     } else {
-      parts.push(`[${entry.service}]`);
+      parts.push(`[${entry.service ?? 'unknown'}]`);
     }
 
     // Message with optional emoji
-    let { message } = entry;
+    let message = entry.message ?? '';
     if (this.options.enableEmojis && entry.event) {
       message = this.emojiResolver.formatMessage(message, entry.event);
     }

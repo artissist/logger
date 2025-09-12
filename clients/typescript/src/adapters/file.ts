@@ -75,7 +75,7 @@ export class FileAdapter implements LogAdapter {
    */
   write(entry: LogEntry): void {
     // Check if this log entry should be output based on log level
-    if (!this.shouldLog(entry.level)) {
+    if (!entry.level || !this.shouldLog(entry.level)) {
       return;
     }
 
@@ -187,12 +187,12 @@ export class FileAdapter implements LogAdapter {
    */
   private formatLogEntry(entry: LogEntry): string {
     const logRecord = {
-      timestamp: this.formatTimestamp(entry.timestamp),
-      level: entry.level,
-      service: entry.service,
-      environment: entry.environment,
+      timestamp: this.formatTimestamp(entry.timestamp ?? new Date()),
+      level: entry.level ?? 'INFO',
+      service: entry.service ?? 'unknown',
+      environment: entry.environment ?? 'unknown',
       message: this.formatMessage(entry),
-      logId: entry.logId,
+      logId: entry.logId ?? 'unknown',
       ...(entry.event && { event: entry.event }),
       ...(entry.context && { context: entry.context }),
       ...(entry.metadata && { metadata: entry.metadata }),
@@ -207,7 +207,7 @@ export class FileAdapter implements LogAdapter {
    * Format message with optional emoji
    */
   private formatMessage(entry: LogEntry): string {
-    let { message } = entry;
+    let message = entry.message ?? '';
 
     if (this.options.enableEmojis && entry.event) {
       message = this.emojiResolver.formatMessage(message, entry.event);
