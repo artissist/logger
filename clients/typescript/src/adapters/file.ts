@@ -74,8 +74,11 @@ export class FileAdapter implements LogAdapter {
    * Write a log entry to the file
    */
   write(entry: LogEntry): void {
+    // Coalesce null/undefined level to default 'INFO' before filtering
+    const level = entry.level ?? 'INFO';
+
     // Check if this log entry should be output based on log level
-    if (!entry.level || !this.shouldLog(entry.level)) {
+    if (!this.shouldLog(level)) {
       return;
     }
 

@@ -1,6 +1,8 @@
 // Unit tests for Logger error handling
 import { Logger } from '../logger';
 import { EmojiResolver } from '../emoji';
+import { ConsoleAdapter } from '../adapters/console';
+import { FileAdapter } from '../adapters/file';
 import type { LogAdapter, LogEntry } from '../types';
 
 describe('Logger error handling', () => {
@@ -251,6 +253,115 @@ describe('Logger error handling', () => {
       expect(entry.message).toBe('Error message');
       expect(entry.service).toBe('test-service');
       expect(entry.environment).toBe('test');
+    });
+
+    it('should log entries with null level using method default level', () => {
+      const logger = createTestLogger();
+
+      logger.info('Info with null level', { level: null });
+      expect(loggedEntries).toHaveLength(1);
+      const entry = loggedEntries[0];
+      expect(entry.level).toBe('INFO');
+      expect(entry.message).toBe('Info with null level');
+    });
+
+    it('should log entries with undefined level using method default level', () => {
+      const logger = createTestLogger();
+
+      logger.warn('Warning with undefined level', { level: undefined });
+      expect(loggedEntries).toHaveLength(1);
+      const entry = loggedEntries[0];
+      expect(entry.level).toBe('WARN');
+      expect(entry.message).toBe('Warning with undefined level');
+    });
+  });
+
+  describe('adapter filtering with null/undefined levels', () => {
+    it('should reject entries with null level before fix', () => {
+      // This test demonstrates what happened before the fix
+      const consoleAdapter = new ConsoleAdapter({ logLevel: 'INFO' });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry with null level directly
+      const entryWithNullLevel = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: null, // This should now be handled gracefully
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        includeEmoji: false,
+        context: {},
+      };
+
+      consoleAdapter.write(entryWithNullLevel);
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // After the fix, the adapter should log the entry using default 'INFO' level
+      expect(mockConsoleInfo).toHaveBeenCalled();
+    });
+
+    it('should handle undefined level gracefully in ConsoleAdapter', () => {
+      const consoleAdapter = new ConsoleAdapter({ logLevel: 'INFO' });
+
+      const mockConsoleInfo = jest.fn();
+      const originalConsoleInfo = console.info;
+      console.info = mockConsoleInfo;
+
+      // Create a log entry with undefined level
+      const entryWithUndefinedLevel = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: undefined,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        includeEmoji: false,
+        context: {},
+      };
+
+      consoleAdapter.write(entryWithUndefinedLevel);
+
+      // Restore console.info
+      console.info = originalConsoleInfo;
+
+      // After the fix, the adapter should log the entry using default 'INFO' level
+      expect(mockConsoleInfo).toHaveBeenCalled();
+    });
+
+    it('should handle null level gracefully in FileAdapter', () => {
+      // Create a temporary file for testing
+      const testFilePath = '/tmp/test.log';
+      const fileAdapter = new FileAdapter({
+        filePath: testFilePath,
+        logLevel: 'INFO',
+        bufferSize: 1, // Flush immediately for testing
+      });
+
+      // Create a log entry with null level
+      const entryWithNullLevel = {
+        logId: 'test_123',
+        timestamp: new Date(),
+        level: null,
+        message: 'Test message',
+        service: 'test-service',
+        environment: 'test',
+        includeEmoji: false,
+        context: {},
+      };
+
+      // This should not throw and should write to the buffer
+      expect(() => {
+        fileAdapter.write(entryWithNullLevel);
+      }).not.toThrow();
+
+      // Clean up
+      void fileAdapter.close();
     });
   });
 });
