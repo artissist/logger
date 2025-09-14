@@ -1,6 +1,6 @@
 {
   "name": "@artissist/logger-monorepo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Artissist Logger - Unified logging library monorepo",
   "scripts": {
@@ -21,13 +21,15 @@
     "install:py": "./scripts/install-python.sh",
     "install:py:ci": "./scripts/install-python.sh --no-venv",
     "clean": "./scripts/clean.sh",
-    "validate": "pnpm run lint && pnpm run test"
+    "validate": "pnpm run lint && pnpm run test",
+    "changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s"
   },
   "workspaces": [
     "clients/typescript"
   ],
   "devDependencies": {
     "@eslint/js": "^9.34.0",
+    "conventional-changelog-cli": "^5.0.0",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",

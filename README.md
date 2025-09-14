@@ -2,6 +2,21 @@
 
 Unified, platform-agnostic logging library with emoji-based events and rich context support for both Python and TypeScript projects.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Logger Types](#logger-types)
+- [Context Management](#context-management)
+- [Events & Emojis](#events--emojis)
+- [Adapters](#adapters)
+- [Configuration](#configuration)
+- [API Guide](#api-guide)
+- [Synchronous Usage (Python)](#synchronous-usage-python)
+- [Development](#development)
+- [License](#license)
+
 ## Features
 
 - **25 predefined events** with configurable emoji mappings for quick visual scanning
@@ -208,6 +223,67 @@ config = {
 }
 logger = LoggerFactory.create_logger(**config)
 ```
+
+## API Guide
+
+### Python
+
+#### LoggerFactory
+
+`LoggerFactory.create_logger(service, environment, adapters, emojis=False, context=None, adapter_configs=None, emoji_resolver=None)`
+
+- `service` (str): Service name.
+- `environment` (str): Deployment environment.
+- `adapters` (list[str]): Adapter names (`"console"`, `"file"`).
+- `emojis` (bool): Enable emoji prefixes.
+- `context` (`LoggerContext`): Base context.
+- `adapter_configs` (dict): Settings per adapter.
+  - console: `colors`, `use_stderr`
+  - file: `file_path`, `format`, `rotate`, `max_size_mb`, `max_files`
+- `emoji_resolver` (`EmojiResolver`): Custom emoji mapping.
+
+`create_frontend_logger(service, environment, emojis=False, context=None, adapters=None)`
+
+`create_backend_logger(service, environment, emojis=False, context=None, adapters=None)`
+
+`create_agent_logger(config)` where `config` includes `agent_id`, `agent_type`, `environment`, `emojis`, `context`, `adapters`
+
+`create_infrastructure_logger(component, environment, emojis=False, context=None, adapters=None)`
+
+#### Logger Methods
+
+`logger.debug|info|warn|error(message, *, event=None, custom_event=None, metadata=None, metrics=None, error=None, tags=None, context=None)`
+
+- `event` (`LogEvent`): Predefined event type.
+- `custom_event` (str): Custom event key.
+- `metadata` (dict): Arbitrary key/value pairs.
+- `metrics` (`LogMetrics`): `duration_ms`, `count`, `bytes_processed`, `cpu_usage`, `memory_usage`, `custom_metrics`.
+- `error` (`ErrorInfo`): `type`, `message`, `stack_trace`, `context`.
+- `tags` (list[str]): Optional labels.
+- `context` (`LoggerContext`): `correlation_id`, `user_id`, `session_id`, `request_id`, `trace_id`, `span_id`, plus custom fields.
+
+### TypeScript
+
+#### LoggerFactory
+
+`LoggerFactory.create({ service?, environment?, emojis?, adapters?, context?, level? })`
+
+`LoggerFactory.createFrontendLogger({ service, environment, emojis?, context?, adapters? })`
+
+`LoggerFactory.createBackendLogger({ service, environment, emojis?, context?, adapters?, logFile? })`
+
+`LoggerFactory.createAgentLogger({ agentId, agentType?, environment, emojis?, context?, adapters? })`
+
+`LoggerFactory.createInfrastructureLogger({ stackName?, deploymentId?, environment, emojis?, context?, adapters? })`
+
+#### Logger Methods
+
+`logger.trace|debug|info|warn|error|fatal(message, { event?, context?, metadata?, metrics?, error? })`
+
+- `context`: `correlationId`, `traceId`, `spanId`, `userId`, `sessionId`, `requestId`, `parentCorrelationId`.
+- `metadata`: Record<string, unknown>.
+- `metrics`: `durationMs`, `memoryBytes`, `cpuPercent`, `counters`.
+- `error`: `type`, `message`, `stackTrace`, `code`, `context` ({`file`, `line`, `function`, `data`} ).
 
 ## Synchronous Usage (Python)
 

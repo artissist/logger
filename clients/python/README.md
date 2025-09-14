@@ -2,6 +2,24 @@
 
 Platform-agnostic logging client for the Artissist platform.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Guide](#api-guide)
+- [Logger Types](#logger-types)
+- [Context Management](#context-management)
+- [Events and Emojis](#events-and-emojis)
+- [Error Handling](#error-handling)
+- [Metrics](#metrics)
+- [Adapters](#adapters)
+- [Synchronous Usage](#synchronous-usage)
+- [Configuration](#configuration)
+- [Development](#development)
+- [Integration Examples](#integration-examples)
+- [License](#license)
+
 ## Features
 
 - 🎯 **Pre-defined Events**: 25 built-in event types with emoji support
@@ -51,6 +69,42 @@ await logger.info(
 ```
 
 The Logger exposes convenience methods for each level (`debug`, `info`, `warn`, `error`, etc.). Use `logger.log(level, message, **kwargs)` only when the level must be chosen dynamically.
+
+## API Guide
+
+### Factory Functions
+
+`LoggerFactory.create_logger(service, environment, adapters, emojis=False, context=None, adapter_configs=None, emoji_resolver=None)`
+
+- `service` (str): Service name.
+- `environment` (str): Deployment environment.
+- `adapters` (list[str]): Adapter names (`"console"`, `"file"`).
+- `emojis` (bool): Enable emoji prefixes.
+- `context` (`LoggerContext`): Base context values.
+- `adapter_configs` (dict): Adapter options.
+  - console: `colors`, `use_stderr`
+  - file: `file_path`, `format`, `rotate`, `max_size_mb`, `max_files`
+- `emoji_resolver` (`EmojiResolver`): Custom emoji mappings.
+
+`LoggerFactory.create_frontend_logger(service, environment, emojis=False, context=None, adapters=None)`
+
+`LoggerFactory.create_backend_logger(service, environment, emojis=False, context=None, adapters=None)`
+
+`LoggerFactory.create_agent_logger(config)` where `config` includes `agent_id`, `agent_type`, `environment`, `emojis`, `context`, and `adapters`
+
+`LoggerFactory.create_infrastructure_logger(component, environment, emojis=False, context=None, adapters=None)`
+
+### Logger Methods
+
+`logger.debug|info|warn|error(message, *, event=None, custom_event=None, metadata=None, metrics=None, error=None, tags=None, context=None)`
+
+- `event` (`LogEvent`): Predefined event type.
+- `custom_event` (str): Custom event key.
+- `metadata` (dict): Arbitrary key/value pairs.
+- `metrics` (`LogMetrics`): `duration_ms`, `count`, `bytes_processed`, `cpu_usage`, `memory_usage`, `custom_metrics`.
+- `error` (`ErrorInfo`): `type`, `message`, `stack_trace`, `context`.
+- `tags` (list[str]): Optional labels.
+- `context` (`LoggerContext`): `correlation_id`, `user_id`, `session_id`, `request_id`, `trace_id`, `span_id`, plus custom fields.
 
 ## Logger Types
 

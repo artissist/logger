@@ -25,7 +25,20 @@ jobs:
       version: ${{ steps.version.outputs.version }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
     
     - name: Determine version
       id: version
@@ -37,6 +50,19 @@ jobs:
         fi
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
         echo "Version: ${VERSION}"
+
+    - name: Generate changelog
+      run: pnpm changelog
+
+    - name: Commit changelog
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add CHANGELOG.md
+        if ! git diff --cached --quiet; then
+          git commit -m "docs(changelog): update for v${{ steps.version.outputs.version }}"
+          git push origin HEAD:main
+        fi
     
     - name: Create Release
       if: github.event_name == 'push' || inputs.create_release
