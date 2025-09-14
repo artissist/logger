@@ -16,7 +16,7 @@ long_description = (
 
 setup(
     name="artissist-logger",
-    version="0.1.1",
+    version="0.1.2",
     description="Platform-agnostic logging client for Artissist",
     long_description=long_description,
     long_description_content_type="text/markdown",
