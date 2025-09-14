@@ -28,8 +28,13 @@ jobs:
         perm=$(curl -s -H "Authorization: token $TOKEN" \
           https://api.github.com/repos/$REPO/collaborators/$ACTOR/permission | jq -r '.permission')
         if [ "$perm" != "admin" ]; then
-          echo "User $ACTOR does not have admin permissions: $perm"
-          exit 1
+          ORG=$(echo "$REPO" | cut -d'/' -f1)
+          org_role=$(curl -s -H "Authorization: token $TOKEN" \
+            https://api.github.com/orgs/$ORG/memberships/$ACTOR | jq -r '.role')
+          if [ "$org_role" != "admin" ] && [ "$org_role" != "owner" ]; then
+            echo "User $ACTOR does not have admin permissions: repo=$perm, org=$org_role"
+            exit 1
+          fi
         fi
     - name: Setup Node.js
       uses: actions/setup-node@v4
