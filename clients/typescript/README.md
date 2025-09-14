@@ -3,6 +3,18 @@
 TypeScript implementation of the Artissist Logger for browser and Node.js
 applications.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Guide](#api-guide)
+- [Context Management](#context-management)
+- [Custom Events](#custom-events)
+- [Adapters](#adapters)
+- [Development](#development)
+- [License](#license)
+
 ## Features
 
 - 🚀 **Factory helpers** for frontend, backend, and agent environments
@@ -40,6 +52,43 @@ The `metadata` field is a simple record of key-value pairs, so you can attach an
 
 The `Logger` exposes convenience methods for each level (`debug`, `info`, `warn`, `error`, etc.). Use `logger.log(level, message, data)` only when the level must be chosen dynamically.
 
+
+## API Guide
+
+### Factory Functions
+
+`LoggerFactory.create(config)`
+
+- `service`?: Service name
+- `environment`?: Environment name
+- `emojis`?: Enable emoji output
+- `context`?: Partial<LoggingContext>
+- `adapters`?: string[]
+- `level`?: `LogLevel`
+
+`LoggerFactory.createFrontendLogger({ service, environment, emojis?, context?, adapters? })`
+
+`LoggerFactory.createBackendLogger({ service, environment, emojis?, context?, adapters?, logFile? })`
+
+`LoggerFactory.createAgentLogger({ agentId, agentType?, environment, emojis?, context?, adapters? })`
+
+`LoggerFactory.createInfrastructureLogger({ stackName?, deploymentId?, environment, emojis?, context?, adapters? })`
+
+`LoggerFactory.createFromEnvironment(config?)`
+
+### Logger Methods
+
+`logger.trace|debug|info|warn|error|fatal(message, { event?, context?, metadata?, metrics?, error? })`
+
+- `event` (`LogEvent`): Predefined event type
+- `context`: `correlationId`, `traceId`, `spanId`, `userId`, `sessionId`, `requestId`, `parentCorrelationId`
+- `metadata`: `Record<string, unknown>`
+- `metrics`: `durationMs`, `memoryBytes`, `cpuPercent`, `counters`
+- `error`: `{ type, message, stackTrace?, code?, context? { file?, line?, function?, data? } }`
+
+`logger.child(context)` creates a logger with additional context.
+
+`logger.flush()` waits for all adapters to finish writing.
 
 ## Context Management
 
