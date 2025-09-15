@@ -1,0 +1,31 @@
+#!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+set -e
+
+LICENSE_PATTERN="SPDX-License-Identifier: AGPL-3.0-or-later"
+CHECK_EXTENSIONS="py ts js tsx jsx sh smithy"
+
+new_files=$(git diff --cached --name-status | awk '$1 == "A" {print $2}')
+
+missing_files=()
+
+for file in $new_files; do
+    ext="${file##*.}"
+    if [[ " $CHECK_EXTENSIONS " =~ " $ext " ]]; then
+        if ! head -n 5 "$file" | grep -q "$LICENSE_PATTERN"; then
+            missing_files+=("$file")
+        fi
+    fi
+done
+
+if [ ${#missing_files[@]} -ne 0 ]; then
+    echo "The following new files are missing the required SPDX license header:"
+    for f in "${missing_files[@]}"; do
+        echo "  $f"
+    done
+    echo "Please add 'SPDX-License-Identifier: AGPL-3.0-or-later' to source files."
+    exit 1
+fi
+
+exit 0

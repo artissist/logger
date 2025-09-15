@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Install Python dependencies with optional virtual environment support
 # Usage: ./install-python.sh [--no-venv]

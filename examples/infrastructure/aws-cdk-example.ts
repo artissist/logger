@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 /**
  * Infrastructure deployment integration example using AWS CDK with Artissist Logger

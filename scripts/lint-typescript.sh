@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Lint TypeScript code with eslint
 echo "Running eslint on TypeScript code..."

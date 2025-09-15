@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Auto-fix Python code issues
 echo "🔧 Auto-fixing Python code issues..."

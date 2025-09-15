@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Artissist Logger - Platform-agnostic logging client for Python
 """

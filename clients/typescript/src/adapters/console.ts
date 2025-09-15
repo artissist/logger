@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Console adapter with emoji support for Artissist Logger
 import { LogLevel } from '../types';
 import type { ErrorDetails, LogAdapter, LogEntry, LogMetadata, PerformanceMetrics } from '../types';

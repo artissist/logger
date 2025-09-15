@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Sync client package versions with root package.json version
 # This script ensures all client packages use the same version as the root

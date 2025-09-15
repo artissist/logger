@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Agent processing integration example using Strands Agents with Artissist Logger
 This example demonstrates how to integrate the logger into Strands agent processing workflows

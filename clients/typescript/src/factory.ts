@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // LoggerFactory for creating and managing Logger instances
 import { LogLevel } from './types';
 import type { CustomEventMap, LogAdapter, LoggerConfig, LoggerFactoryConfig } from './types';

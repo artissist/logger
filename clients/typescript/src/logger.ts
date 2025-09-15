@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Core Logger class for Artissist Logger
 import { LogLevel } from './types';
 import type {

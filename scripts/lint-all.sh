@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Lint all code (Python and TypeScript)
 echo "Running linters on all code..."
