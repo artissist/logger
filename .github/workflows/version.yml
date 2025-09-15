@@ -19,53 +19,26 @@ jobs:
       with:
         ref: main
         fetch-depth: 0
-    - name: Install jq
-      run: sudo apt-get update && sudo apt-get install -y jq
-    - name: Verify admin permissions
+    - name: Verify approved user
       env:
-        REPO: ${{ github.repository }}
         ACTOR: ${{ github.actor }}
-        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        APPROVED_USERS: ${{ secrets.VERSION_APPROVED_USERS }}
       run: |
-        # Check if jq is available
-        if ! command -v jq >/dev/null 2>&1; then
-          echo "jq is not installed. Please install jq to proceed."
+        # Check if the actor is in the approved users list
+        if [ -z "$APPROVED_USERS" ]; then
+          echo "No approved users list configured. Please set VERSION_APPROVED_USERS secret."
           exit 1
         fi
-        # Get repo permission
-        perm_resp=$(curl -s -w "%{http_code}" -H "Authorization: token $TOKEN" \
-          "https://api.github.com/repos/$REPO/collaborators/$ACTOR/permission")
-        perm_body=$(echo "$perm_resp" | head -c -3)
-        perm_code=$(echo "$perm_resp" | tail -c 3)
-        if [ "$perm_code" -ne 200 ]; then
-          echo "Failed to fetch repo permission (HTTP $perm_code)."
+
+        # Convert comma-separated list to array and check if actor is approved
+        echo "$APPROVED_USERS" | tr ',' '\n' | grep -q "^$ACTOR$"
+        if [ $? -ne 0 ]; then
+          echo "User $ACTOR is not authorized to run version updates."
+          echo "Approved users: $APPROVED_USERS"
           exit 1
         fi
-        perm=$(echo "$perm_body" | jq -r '.permission')
-        if [ -z "$perm" ] || [ "$perm" = "null" ]; then
-          echo "Failed to parse permission from API response."
-          exit 1
-        fi
-        if [ "$perm" != "admin" ]; then
-          ORG=$(echo "$REPO" | cut -d'/' -f1)
-          org_resp=$(curl -s -w "%{http_code}" -H "Authorization: token $TOKEN" \
-            "https://api.github.com/orgs/$ORG/memberships/$ACTOR")
-          org_body=$(echo "$org_resp" | head -c -3)
-          org_code=$(echo "$org_resp" | tail -c 3)
-          if [ "$org_code" -ne 200 ]; then
-            echo "Failed to fetch org membership (HTTP $org_code)."
-            exit 1
-          fi
-          org_role=$(echo "$org_body" | jq -r '.role')
-          if [ -z "$org_role" ] || [ "$org_role" = "null" ]; then
-            echo "Failed to parse org role from API response."
-            exit 1
-          fi
-          if [ "$org_role" != "admin" ] && [ "$org_role" != "owner" ]; then
-            echo "User $ACTOR does not have admin permissions: repo=$perm, org=$org_role"
-            exit 1
-          fi
-        fi
+
+        echo "User $ACTOR is authorized to run version updates."
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
