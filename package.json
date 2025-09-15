@@ -9,27 +9,25 @@
     "sync-versions": "./scripts/sync-versions.sh",
     "lint": "pnpm run lint:ts && pnpm run lint:py",
     "lint:ts": "eslint -c clients/typescript/eslint.config.mjs 'clients/typescript/src/**/*.ts'",
-    "lint:py": "pnpm run install:py && ./scripts/lint-python.sh",
+    "lint:py": "./scripts/lint-python.sh",
     "lint:fix": "eslint -c clients/typescript/eslint.config.mjs 'clients/typescript/src/**/*.ts' --fix",
     "build": "./scripts/build.sh",
     "build:ts": "cd clients/typescript && pnpm run build",
     "build:py": "cd clients/python && python -m build",
     "test": "pnpm run test:ts && pnpm run test:py",
     "test:ts": "cd clients/typescript && pnpm test",
-    "test:py": "pnpm run install:py && ./scripts/test-python.sh",
+    "test:py": "./scripts/test-python.sh",
     "install:ts": "cd clients/typescript && pnpm install",
     "install:py": "./scripts/install-python.sh",
     "install:py:ci": "./scripts/install-python.sh --no-venv",
     "clean": "./scripts/clean.sh",
-    "validate": "pnpm run lint && pnpm run test",
-    "changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s"
+    "validate": "pnpm run lint && pnpm run test"
   },
   "workspaces": [
     "clients/typescript"
   ],
   "devDependencies": {
     "@eslint/js": "^9.34.0",
-    "conventional-changelog-cli": "^5.0.0",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
