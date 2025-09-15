@@ -1,7 +1,8 @@
-// File adapter for Mosaic Logger
+// File adapter for Artissist Logger
 import * as fs from 'fs';
 import * as path from 'path';
-import type { LogAdapter, LogEntry, LogLevel } from '../types';
+import { LogLevel } from '../types';
+import type { LogAdapter, LogEntry } from '../types';
 import { EmojiResolver } from '../emoji';
 
 export interface FileAdapterOptions {
@@ -52,7 +53,7 @@ export class FileAdapter implements LogAdapter {
       rotateOnSize: options.rotateOnSize ?? true,
       rotateDaily: options.rotateDaily ?? false,
       timestampFormat: options.timestampFormat ?? 'iso',
-      logLevel: options.logLevel ?? 'INFO',
+      logLevel: options.logLevel ?? LogLevel.INFO,
       emojiResolver: options.emojiResolver ?? new EmojiResolver(options.enableEmojis ?? false),
       bufferSize: options.bufferSize ?? 10,
       flushInterval: options.flushInterval ?? 5000, // 5 seconds
@@ -75,7 +76,7 @@ export class FileAdapter implements LogAdapter {
    */
   write(entry: LogEntry): void {
     // Coalesce null/undefined level to default 'INFO' before filtering
-    const level = entry.level ?? 'INFO';
+    const level = entry.level ?? LogLevel.INFO;
 
     // Check if this log entry should be output based on log level
     if (!this.shouldLog(level)) {
@@ -193,7 +194,9 @@ export class FileAdapter implements LogAdapter {
    */
   private formatLogEntry(entry: LogEntry): string {
     const logRecord = {
-      timestamp: this.formatTimestamp(entry.timestamp ?? new Date()),
+      timestamp: this.formatTimestamp(
+        entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp ?? new Date())
+      ),
       level: entry.level ?? 'INFO',
       service: entry.service ?? 'unknown',
       environment: entry.environment ?? 'unknown',

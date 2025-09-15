@@ -1,8 +1,8 @@
 $version: "2"
 
-namespace mosaic.logging
+namespace artissist.logging
 
-/// Unified logging service for Mosaic platform components
+/// Unified logging service for Artissist platform components
 service LoggingService {
     version: "2025-01-01"
     operations: [

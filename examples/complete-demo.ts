@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Complete demo showcasing all Mosaic Logger features
+// Complete demo showcasing all Artissist Logger features
 // Run with: npx ts-node examples/complete-demo.ts
 
 import { LoggerFactory } from '../clients/typescript/src/factory';
@@ -8,7 +8,7 @@ import { EmojiResolver } from '../clients/typescript/src/emoji';
 import { ContextManager } from '../clients/typescript/src/context';
 import { LogEvent } from '../clients/typescript/src/types';
 
-console.log('🚀 Mosaic Logger Complete Demo\n');
+console.log('🚀 Artissist Logger Complete Demo\n');
 
 // Demo 1: Basic Logger with Emojis
 console.log('=== Demo 1: Basic Frontend Logger with Emojis ===');
@@ -99,7 +99,7 @@ console.log('');
 // Demo 4: Infrastructure Logger
 console.log('=== Demo 4: Infrastructure Logger ===');
 const infraLogger = LoggerFactory.createInfrastructureLogger({
-  stackName: 'mosaic-demo-stack',
+  stackName: 'Artissist-demo-stack',
   deploymentId: 'deploy_20250101_123',
   environment: 'development',
   emojis: true
@@ -288,7 +288,7 @@ console.log('');
 
 // Final summary
 console.log('=== Demo Complete ===');
-console.log('✅ All Mosaic Logger features demonstrated:');
+console.log('✅ All Artissist Logger features demonstrated:');
 console.log('   • 25 predefined events with emoji mappings');
 console.log('   • Frontend, backend, agent, and infrastructure loggers');
 console.log('   • Context propagation and correlation IDs');
@@ -299,7 +299,7 @@ console.log('   • Custom event mappings');
 console.log('   • Business metrics and analytics');
 console.log('   • Security and audit logging');
 console.log('');
-console.log('🎉 Mosaic Logger is ready for production use!');
+console.log('🎉 Artissist Logger is ready for production use!');
 
 // Cleanup
 try {

@@ -48,7 +48,7 @@ for file in "$MODELS_DIR"/*.smithy; do
         fi
         
         # Check for namespace declaration
-        if ! grep -q '^namespace mosaic.logging' "$file"; then
+        if ! grep -q '^namespace artissist.logging' "$file"; then
             echo "  ⚠️  Warning: Missing or incorrect namespace declaration"
             ((VALIDATION_ERRORS++))
         fi

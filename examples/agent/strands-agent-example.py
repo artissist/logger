@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Agent processing integration example using Strands Agents with Mosaic Logger
+Agent processing integration example using Strands Agents with Artissist Logger
 This example demonstrates how to integrate the logger into Strands agent processing workflows
 """
 
@@ -44,8 +44,8 @@ class ProcessingResult:
     extracted_data: Dict[str, Any]
 
 
-# Mock Mosaic Logger for Agent (would be imported from actual Python client)
-class MosaicAgentLogger:
+# Mock Artissist Logger for Agent (would be imported from actual Python client)
+class ArtissistAgentLogger:
     """Mock implementation of what the Python Agent Logger would look like"""
 
     def __init__(
@@ -77,7 +77,7 @@ class MosaicAgentLogger:
     def child(self, additional_context: dict):
         """Create child logger with additional context"""
         merged_context = {**self.context, **additional_context}
-        return MosaicAgentLogger(
+        return ArtissistAgentLogger(
             self.agent_id,
             self.environment,
             self.emojis,
@@ -125,7 +125,7 @@ class MosaicAgentLogger:
                 print(f"  EXTRACTED: {metadata['extracted_entities']} entities")
 
 
-class MosaicLoggerFactory:
+class ArtissistLoggerFactory:
     """Mock implementation of Agent LoggerFactory"""
 
     @staticmethod
@@ -137,19 +137,19 @@ class MosaicLoggerFactory:
         context: dict = None,
         session_id: str = None,
     ):
-        return MosaicAgentLogger(agent_id, environment, emojis, context, session_id)
+        return ArtissistAgentLogger(agent_id, environment, emojis, context, session_id)
 
 
 # Conversation Processing Agent
 class ConversationProcessorAgent:
     """
     Example Strands agent that processes conversation observations
-    with integrated Mosaic Logger
+    with integrated Artissist Logger
     """
 
     def __init__(self, agent_id: str = "conversation-processor"):
         self.agent_id = agent_id
-        self.logger = MosaicLoggerFactory.create_agent_logger(
+        self.logger = ArtissistLoggerFactory.create_agent_logger(
             agent_id=agent_id,
             agent_type="conversation_processor",
             environment="development",  # Would come from config
@@ -291,7 +291,7 @@ class ConversationProcessorAgent:
             )
 
     async def _preprocess_content(
-        self, observation: Observation, logger: MosaicAgentLogger
+        self, observation: Observation, logger: ArtissistAgentLogger
     ) -> str:
         """Preprocess observation content"""
         logger.debug(
@@ -320,7 +320,7 @@ class ConversationProcessorAgent:
         return processed
 
     async def _extract_entities(
-        self, content: str, logger: MosaicAgentLogger
+        self, content: str, logger: ArtissistAgentLogger
     ) -> List[Dict[str, Any]]:
         """Extract entities from processed content"""
         logger.debug(
@@ -378,7 +378,7 @@ class ConversationProcessorAgent:
         return entities
 
     async def _recognize_intentions(
-        self, content: str, entities: List[Dict[str, Any]], logger: MosaicAgentLogger
+        self, content: str, entities: List[Dict[str, Any]], logger: ArtissistAgentLogger
     ) -> List[str]:
         """Recognize user intentions from content and entities"""
         logger.debug(
@@ -426,7 +426,7 @@ class ConversationProcessorAgent:
         self,
         observation: Observation,
         entities: List[Dict[str, Any]],
-        logger: MosaicAgentLogger,
+        logger: ArtissistAgentLogger,
     ) -> Dict[str, Any]:
         """Integrate observation with session context"""
         logger.debug(
@@ -478,7 +478,7 @@ class ConversationProcessorAgent:
         self,
         intentions: List[str],
         contextual_data: Dict[str, Any],
-        logger: MosaicAgentLogger,
+        logger: ArtissistAgentLogger,
     ) -> List[Dict[str, Any]]:
         """Execute tool calls based on recognized intentions"""
         logger.debug(
@@ -545,7 +545,7 @@ class ConversationProcessorAgent:
         return tool_calls
 
     async def _call_create_project_tool(
-        self, contextual_data: Dict[str, Any], logger: MosaicAgentLogger
+        self, contextual_data: Dict[str, Any], logger: ArtissistAgentLogger
     ) -> Dict[str, Any]:
         """Simulate project creation tool call"""
         logger.debug(
@@ -576,7 +576,7 @@ class ConversationProcessorAgent:
         return result
 
     async def _call_log_time_tool(
-        self, contextual_data: Dict[str, Any], logger: MosaicAgentLogger
+        self, contextual_data: Dict[str, Any], logger: ArtissistAgentLogger
     ) -> Dict[str, Any]:
         """Simulate time logging tool call"""
         logger.debug(
@@ -610,7 +610,7 @@ class ConversationProcessorAgent:
         return result
 
     async def _call_track_materials_tool(
-        self, contextual_data: Dict[str, Any], logger: MosaicAgentLogger
+        self, contextual_data: Dict[str, Any], logger: ArtissistAgentLogger
     ) -> Dict[str, Any]:
         """Simulate material tracking tool call"""
         logger.debug(
@@ -649,7 +649,7 @@ class SessionManager:
     """Manages conversation sessions with logging"""
 
     def __init__(self):
-        self.logger = MosaicLoggerFactory.create_agent_logger(
+        self.logger = ArtissistLoggerFactory.create_agent_logger(
             agent_id="session-manager",
             agent_type="session_manager",
             environment="development",
@@ -721,9 +721,9 @@ class SessionManager:
 
 # Example usage and demo
 async def main():
-    """Demonstrate agent processing with Mosaic Logger"""
+    """Demonstrate agent processing with Artissist Logger"""
 
-    print("🤖 Mosaic Logger Agent Processing Demo")
+    print("🤖 Artissist Logger Agent Processing Demo")
     print("=" * 50)
 
     # Initialize agent and session manager
@@ -792,7 +792,7 @@ async def main():
     await session_manager.end_session(session_id)
 
     print(f"\n🎉 Demo completed! Processed {len(results)} observations successfully")
-    print("\nAgent processing demonstration with Mosaic Logger integration complete!")
+    print("\nAgent processing demonstration with Artissist Logger integration complete!")
 
 
 if __name__ == "__main__":

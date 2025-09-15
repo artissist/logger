@@ -1,10 +1,10 @@
-// Frontend integration example for Next.js with Mosaic Logger
+// Frontend integration example for Next.js with Artissist Logger
 import React, { useEffect, useState } from 'react';
-import { LoggerFactory, Logger } from '@mosaic/logger';
+import { LoggerFactory, Logger } from '@artissist/logger';
 
 // Initialize logger for frontend application
 const logger = LoggerFactory.createFrontendLogger({
-  service: 'mosaic-frontend',
+  service: 'artissist-frontend',
   environment: process.env.NODE_ENV || 'development',
   emojis: process.env.NODE_ENV === 'development', // Enable emojis in development
   context: {
@@ -324,7 +324,7 @@ export function LoggedErrorBoundary({ children }: { children: React.ReactNode })
 export async function handler(req: any, res: any) {
   // Create logger for API request
   const apiLogger = LoggerFactory.createBackendLogger({
-    service: 'mosaic-api',
+    service: 'artissist-api',
     environment: process.env.NODE_ENV || 'development',
     emojis: false, // Typically disabled in production
     context: {

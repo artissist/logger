@@ -5,7 +5,7 @@ Base adapter interface for Artissist Logger Python client
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
-from ..types import LogMessage
+from ..types import LogEntry
 
 
 class LogAdapter(ABC):
@@ -16,7 +16,7 @@ class LogAdapter(ABC):
         self.config = config
 
     @abstractmethod
-    async def write(self, message: LogMessage, formatted_message: str):
+    async def write(self, message: LogEntry, formatted_message: str):
         """Write formatted log message to output destination"""
         raise NotImplementedError
 
@@ -27,34 +27,44 @@ class LogAdapter(ABC):
 
     def format_message(
         self,
-        message: LogMessage,
+        message: LogEntry,
         include_emoji: bool = False,
         emoji: Optional[str] = None,
     ) -> str:
         """Format log message for output"""
-        timestamp = message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        level = message.level.value.ljust(5)
-        service = f"[{message.service}]"
+        timestamp_str = "unknown"
+        if message.timestamp:
+            if isinstance(message.timestamp, str):
+                timestamp_str = message.timestamp
+            else:
+                timestamp_str = message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+
+        level_str = "INFO"
+        if message.level:
+            level_str = message.level.value.ljust(5)
+        service = f"[{message.service or 'unknown'}]"
 
         # Build message components
-        parts = [timestamp, level, service]
+        parts = [timestamp_str, level_str, service]
 
         # Add emoji if enabled and available
         if include_emoji and emoji:
             parts.append(emoji)
 
-        parts.append(message.message)
+        parts.append(message.message or "")
 
         base_message = " ".join(parts)
 
         # Add context information if available
         context_parts = []
-        if message.correlation_id:
-            context_parts.append(f"correlation_id={message.correlation_id}")
-        if message.user_id:
-            context_parts.append(f"user_id={message.user_id}")
-        if message.request_id:
-            context_parts.append(f"request_id={message.request_id}")
+        if message.context and message.context.correlation_id:
+            context_parts.append(
+                f"correlation_id={message.context.correlation_id}"
+            )
+        if message.context and message.context.user_id:
+            context_parts.append(f"user_id={message.context.user_id}")
+        if message.context and message.context.request_id:
+            context_parts.append(f"request_id={message.context.request_id}")
 
         if context_parts:
             base_message += f" | {', '.join(context_parts)}"

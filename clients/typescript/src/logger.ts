@@ -1,13 +1,18 @@
-// Core Logger class for Mosaic Logger
+// Core Logger class for Artissist Logger
+import { LogLevel } from './types';
 import type {
   ErrorContext,
   ErrorDetails,
   Logger as ILogger,
   LogAdapter,
   LogEntry,
-  LogLevel,
   LoggingContext,
 } from './types';
+
+// Type that allows null values for user convenience
+type NullablePartial<T> = {
+  [P in keyof T]?: T[P] | null;
+};
 import type { EmojiResolver } from './emoji';
 import { ContextManager, createCorrelationId } from './context';
 
@@ -45,49 +50,49 @@ export class Logger implements ILogger {
   /**
    * Log a trace level message
    */
-  trace(message: string, data?: Partial<LogEntry>): void {
-    this.log('TRACE', message, data);
+  trace(message: string, data?: NullablePartial<LogEntry>): void {
+    this.log(LogLevel.TRACE, message, data);
   }
 
   /**
    * Log a debug level message
    */
-  debug(message: string, data?: Partial<LogEntry>): void {
-    this.log('DEBUG', message, data);
+  debug(message: string, data?: NullablePartial<LogEntry>): void {
+    this.log(LogLevel.DEBUG, message, data);
   }
 
   /**
    * Log an info level message
    */
-  info(message: string, data?: Partial<LogEntry>): void {
-    this.log('INFO', message, data);
+  info(message: string, data?: NullablePartial<LogEntry>): void {
+    this.log(LogLevel.INFO, message, data);
   }
 
   /**
    * Log a warn level message
    */
-  warn(message: string, data?: Partial<LogEntry>): void {
-    this.log('WARN', message, data);
+  warn(message: string, data?: NullablePartial<LogEntry>): void {
+    this.log(LogLevel.WARN, message, data);
   }
 
   /**
    * Log an error level message
    */
-  error(message: string, data?: Partial<LogEntry>): void {
-    this.log('ERROR', message, data);
+  error(message: string, data?: NullablePartial<LogEntry>): void {
+    this.log(LogLevel.ERROR, message, data);
   }
 
   /**
    * Log a fatal level message
    */
-  fatal(message: string, data?: Partial<LogEntry>): void {
-    this.log('FATAL', message, data);
+  fatal(message: string, data?: NullablePartial<LogEntry>): void {
+    this.log(LogLevel.FATAL, message, data);
   }
 
   /**
    * Log a message at the specified level
    */
-  log(level: LogLevel, message: string, data?: Partial<LogEntry>): void {
+  log(level: LogLevel, message: string, data?: NullablePartial<LogEntry>): void {
     const entry = this.createLogEntry(level, message, data);
     this.writeToAdapters(entry);
   }
@@ -181,7 +186,11 @@ export class Logger implements ILogger {
   /**
    * Create a complete log entry
    */
-  private createLogEntry(level: LogLevel, message: string, data?: Partial<LogEntry>): LogEntry {
+  private createLogEntry(
+    level: LogLevel,
+    message: string,
+    data?: NullablePartial<LogEntry>
+  ): LogEntry {
     const timestamp = new Date();
     const logId = this.generateLogId();
     const currentContext = this.contextManager.getContext();

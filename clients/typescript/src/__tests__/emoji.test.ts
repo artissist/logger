@@ -8,6 +8,7 @@ import {
   getAllPredefinedEvents,
 } from '../emoji';
 import type { LogEvent } from '../types';
+import { LogEvent as LogEventEnum } from '../types';
 
 describe('EmojiResolver', () => {
   let resolver: EmojiResolver;
@@ -52,11 +53,11 @@ describe('EmojiResolver', () => {
 
     it('should return empty string when disabled', () => {
       resolver.setEnabled(false);
-      expect(resolver.getEmoji('SYSTEM_START')).toBe('');
+      expect(resolver.getEmoji(LogEventEnum.SYSTEM_START)).toBe('');
     });
 
     it('should return correct emoji for predefined events', () => {
-      expect(resolver.getEmoji('SYSTEM_START')).toBe('🚀');
+      expect(resolver.getEmoji(LogEventEnum.SYSTEM_START)).toBe('🚀');
       expect(resolver.getEmoji('ERROR_OCCURRED')).toBe('🐛');
       expect(resolver.getEmoji('USER_AUTH')).toBe('👤');
     });
@@ -70,19 +71,24 @@ describe('EmojiResolver', () => {
     });
 
     it('should prioritize custom mappings over default mappings', () => {
-      resolver.addCustomMapping('SYSTEM_START', {
+      resolver.addCustomMapping(LogEventEnum.SYSTEM_START, {
         emoji: '🎉',
         description: 'Custom system start',
         isDefault: false,
       });
-      expect(resolver.getEmoji('SYSTEM_START')).toBe('🎉');
+      expect(resolver.getEmoji(LogEventEnum.SYSTEM_START)).toBe('🎉');
     });
   });
 
   describe('getDescription', () => {
     it('should return correct description for predefined events', () => {
-      expect(resolver.getDescription('SYSTEM_START')).toBe('System startup or initialization');
-      expect(resolver.getDescription('ERROR_OCCURRED')).toBe('Error conditions and exceptions');
+      // Updated to match standardized unified emoji descriptions
+      expect(resolver.getDescription(LogEventEnum.SYSTEM_START)).toBe(
+        'System startup or initialization events'
+      );
+      expect(resolver.getDescription(LogEventEnum.ERROR_OCCURRED)).toBe(
+        'Error conditions and exceptions'
+      );
     });
 
     it('should return custom description for custom events', () => {
@@ -102,7 +108,9 @@ describe('EmojiResolver', () => {
   describe('formatMessage', () => {
     it('should return original message when disabled', () => {
       resolver.setEnabled(false);
-      expect(resolver.formatMessage('Test message', 'SYSTEM_START')).toBe('Test message');
+      expect(resolver.formatMessage('Test message', LogEventEnum.SYSTEM_START)).toBe(
+        'Test message'
+      );
     });
 
     it('should return original message when no event provided', () => {
@@ -112,7 +120,9 @@ describe('EmojiResolver', () => {
 
     it('should format message with emoji prefix when enabled', () => {
       resolver.setEnabled(true);
-      expect(resolver.formatMessage('System starting', 'SYSTEM_START')).toBe('🚀 System starting');
+      expect(resolver.formatMessage('System starting', LogEventEnum.SYSTEM_START)).toBe(
+        '🚀 System starting'
+      );
     });
 
     it('should use fallback emoji when provided', () => {
@@ -138,14 +148,14 @@ describe('EmojiResolver', () => {
 
     it('should override existing mapping', () => {
       resolver.setEnabled(true);
-      resolver.addCustomMapping('SYSTEM_START', {
+      resolver.addCustomMapping(LogEventEnum.SYSTEM_START, {
         emoji: '⭐',
         description: 'Modified system start',
         isDefault: false,
       });
 
-      expect(resolver.getEmoji('SYSTEM_START')).toBe('⭐');
-      expect(resolver.getDescription('SYSTEM_START')).toBe('Modified system start');
+      expect(resolver.getEmoji(LogEventEnum.SYSTEM_START)).toBe('⭐');
+      expect(resolver.getDescription(LogEventEnum.SYSTEM_START)).toBe('Modified system start');
     });
   });
 
@@ -173,7 +183,7 @@ describe('EmojiResolver', () => {
       });
 
       const mappings = resolver.getAllMappings();
-      expect(mappings).toHaveProperty('SYSTEM_START');
+      expect(mappings).toHaveProperty(LogEventEnum.SYSTEM_START);
       expect(mappings).toHaveProperty('CUSTOM_EVENT');
       expect(mappings.CUSTOM_EVENT.emoji).toBe('🎯');
     });
@@ -241,31 +251,31 @@ describe('DEFAULT_EMOJI_MAPPINGS', () => {
 
   it('should have required predefined events', () => {
     const requiredEvents: LogEvent[] = [
-      'SYSTEM_START',
-      'SYSTEM_STOP',
-      'USER_AUTH',
-      'USER_AUTHZ',
-      'PROJECT_LIFECYCLE',
-      'DATABASE_OPERATION',
-      'API_REQUEST',
-      'PERFORMANCE_METRIC',
-      'ERROR_OCCURRED',
-      'WARNING_ISSUED',
-      'CONFIG_CHANGE',
-      'ANALYTICS_EVENT',
-      'AGENT_PROCESSING',
-      'CONVERSATION_EVENT',
-      'ASSET_PROCESSING',
-      'INSPIRATION_EVENT',
-      'INFRASTRUCTURE_DEPLOY',
-      'BUSINESS_METRIC',
-      'SEARCH_OPERATION',
-      'BACKGROUND_JOB',
-      'NOTIFICATION_SENT',
-      'SECURITY_EVENT',
-      'SCHEDULED_TASK',
-      'EXTERNAL_SERVICE',
-      'AUDIT_TRAIL',
+      LogEventEnum.SYSTEM_START,
+      LogEventEnum.SYSTEM_STOP,
+      LogEventEnum.USER_AUTH,
+      LogEventEnum.USER_AUTHZ,
+      LogEventEnum.PROJECT_LIFECYCLE,
+      LogEventEnum.DATABASE_OPERATION,
+      LogEventEnum.API_REQUEST,
+      LogEventEnum.PERFORMANCE_METRIC,
+      LogEventEnum.ERROR_OCCURRED,
+      LogEventEnum.WARNING_ISSUED,
+      LogEventEnum.CONFIG_CHANGE,
+      LogEventEnum.ANALYTICS_EVENT,
+      LogEventEnum.AGENT_PROCESSING,
+      LogEventEnum.CONVERSATION_EVENT,
+      LogEventEnum.ASSET_PROCESSING,
+      LogEventEnum.INSPIRATION_EVENT,
+      LogEventEnum.INFRASTRUCTURE_DEPLOY,
+      LogEventEnum.BUSINESS_METRIC,
+      LogEventEnum.SEARCH_OPERATION,
+      LogEventEnum.BACKGROUND_JOB,
+      LogEventEnum.NOTIFICATION_SENT,
+      LogEventEnum.SECURITY_EVENT,
+      LogEventEnum.SCHEDULED_TASK,
+      LogEventEnum.EXTERNAL_SERVICE,
+      LogEventEnum.AUDIT_TRAIL,
     ];
 
     requiredEvents.forEach((event) => {
@@ -302,12 +312,12 @@ describe('EventEmojiMapping global instance', () => {
 describe('Utility functions', () => {
   describe('formatLogMessage', () => {
     it('should format message when emojis enabled', () => {
-      const result = formatLogMessage('Test message', 'SYSTEM_START', true);
+      const result = formatLogMessage('Test message', LogEventEnum.SYSTEM_START, true);
       expect(result).toBe('🚀 Test message');
     });
 
     it('should return original message when emojis disabled', () => {
-      const result = formatLogMessage('Test message', 'SYSTEM_START', false);
+      const result = formatLogMessage('Test message', LogEventEnum.SYSTEM_START, false);
       expect(result).toBe('Test message');
     });
 
@@ -340,7 +350,7 @@ describe('Utility functions', () => {
       const events = getAllPredefinedEvents();
       const eventTypes = events.map((e) => e.event);
 
-      expect(eventTypes).toContain('SYSTEM_START');
+      expect(eventTypes).toContain(LogEventEnum.SYSTEM_START);
       expect(eventTypes).toContain('ERROR_OCCURRED');
       expect(eventTypes).toContain('USER_AUTH');
     });
@@ -362,7 +372,7 @@ describe('Utility functions', () => {
       const registry = createCustomEventRegistry();
       registry.setEnabled(true);
 
-      expect(registry.getEmoji('SYSTEM_START')).toBe('🚀'); // Should still have defaults
+      expect(registry.getEmoji(LogEventEnum.SYSTEM_START)).toBe('🚀'); // Should still have defaults
     });
   });
 });

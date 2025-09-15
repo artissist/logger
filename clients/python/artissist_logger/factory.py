@@ -10,7 +10,12 @@ from .adapters.file import FileAdapter
 from .context import LoggerContext
 from .emoji import EmojiResolver
 from .logger import Logger
-from .types import AgentLoggerConfig, LoggerConfig
+from .generated_types import (
+    AgentLoggerConfig,
+    LoggerConfig,
+    LoggingContext,
+    AdapterName,
+)
 
 
 class LoggerFactory:
@@ -24,7 +29,6 @@ class LoggerFactory:
         emojis: bool = False,
         context: Optional[LoggerContext] = None,
         adapter_configs: Optional[Dict[str, Dict[str, Any]]] = None,
-        emoji_resolver: Optional[EmojiResolver] = None,
     ) -> Logger:
         """
         Create a logger with specified configuration
@@ -36,32 +40,50 @@ class LoggerFactory:
             emojis: Enable emoji support
             context: Base context
             adapter_configs: Configuration for each adapter
-            emoji_resolver: Custom emoji resolver
         """
         adapter_configs = adapter_configs or {}
         adapter_instances: List[LogAdapter] = []
+        adapter_names: List[AdapterName] = []
 
+        # Convert string adapter names to AdapterName enums
+        # and create instances
         for adapter_name in adapters:
             adapter_config = adapter_configs.get(adapter_name, {})
 
             if adapter_name == "console":
+                adapter_names.append(AdapterName.CONSOLE)
                 adapter_instances.append(ConsoleAdapter(adapter_config))
             elif adapter_name == "file":
+                adapter_names.append(AdapterName.FILE)
                 if "file_path" not in adapter_config:
                     adapter_config["file_path"] = f"logs/{service}.log"
                 adapter_instances.append(FileAdapter(adapter_config))
             else:
                 raise ValueError(f"Unknown adapter: {adapter_name}")
 
+        # Convert LoggerContext to LoggingContext for Smithy compatibility
+        logging_context = None
+        if context:
+            logging_context = LoggingContext(
+                correlation_id=context.correlation_id,
+                trace_id=context.trace_id,
+                span_id=context.span_id,
+                user_id=context.user_id,
+                session_id=context.session_id,
+                request_id=context.request_id,
+            )
+
+        # Create Smithy-compatible config
         config = LoggerConfig(
             service=service,
             environment=environment,
-            adapters=adapter_instances,
+            adapters=adapter_names,
             emojis=emojis,
-            context=context,
-            emoji_resolver=emoji_resolver,
+            context=logging_context,
         )
-        return Logger(config)
+
+        # Pass adapter instances separately to Logger
+        return Logger(config, adapter_instances)
 
     @staticmethod
     def create_frontend_logger(
@@ -152,13 +174,29 @@ class LoggerFactory:
         service = f"agent-{config.agent_type}"
 
         # Agent context includes agent-specific information
-        agent_context = config.context or LoggerContext()
+        if config.context:
+            # Convert LoggingContext to LoggerContext
+            agent_context = LoggerContext(
+                correlation_id=config.context.correlation_id,
+                user_id=config.context.user_id,
+                session_id=config.context.session_id,
+                request_id=config.context.request_id,
+                trace_id=config.context.trace_id,
+                span_id=config.context.span_id,
+            )
+        else:
+            agent_context = LoggerContext()
+
         agent_context.custom_context.update(
             {"agent_id": config.agent_id, "agent_type": config.agent_type}
         )
 
-        # Agents typically use console and file
-        adapters = config.adapters or ["console", "file"]
+        # Convert AdapterName enums to strings
+        adapters = []
+        if config.adapters:
+            adapters = [adapter.value.lower() for adapter in config.adapters]
+        else:
+            adapters = ["console", "file"]
 
         adapter_configs: Dict[str, Dict[str, Any]] = {
             "console": {
@@ -178,9 +216,9 @@ class LoggerFactory:
 
         return LoggerFactory.create_logger(
             service=service,
-            environment=config.environment,
+            environment=config.environment or "dev",
             adapters=adapters,
-            emojis=config.emojis,
+            emojis=config.emojis or False,
             context=agent_context,
             adapter_configs=adapter_configs,
         )

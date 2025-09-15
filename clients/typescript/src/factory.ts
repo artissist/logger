@@ -1,4 +1,5 @@
 // LoggerFactory for creating and managing Logger instances
+import { LogLevel } from './types';
 import type { CustomEventMap, LogAdapter, LoggerConfig, LoggerFactoryConfig } from './types';
 import { Logger } from './logger';
 import { EmojiResolver } from './emoji';
@@ -15,7 +16,7 @@ export class LoggerFactory {
     defaultEnvironment: 'development',
     defaultEmojis: false,
     defaultAdapters: ['console'],
-    defaultLevel: 'INFO',
+    defaultLevel: LogLevel.INFO,
   };
 
   private static globalEmojiResolver?: EmojiResolver;
@@ -180,7 +181,7 @@ export class LoggerFactory {
       defaultEnvironment: 'development',
       defaultEmojis: false,
       defaultAdapters: ['console'],
-      defaultLevel: 'INFO',
+      defaultLevel: LogLevel.INFO,
     };
     LoggerFactory.globalEmojiResolver = undefined;
   }
@@ -198,7 +199,7 @@ export class LoggerFactory {
       environment: environment ?? LoggerFactory.defaultConfig.defaultEnvironment ?? 'development',
       emojis: config.emojis ?? LoggerFactory.defaultConfig.defaultEmojis ?? false,
       adapters: config.adapters ?? LoggerFactory.defaultConfig.defaultAdapters ?? ['console'],
-      level: config.level ?? LoggerFactory.defaultConfig.defaultLevel ?? 'INFO',
+      level: config.level ?? LoggerFactory.defaultConfig.defaultLevel ?? LogLevel.INFO,
       context: config.context ?? {},
     };
   }

@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional
 
 from .types import LogEvent
+from .generated_types import TYPED_EMOJI_MAPPINGS
 
 
 @dataclass
@@ -21,77 +22,81 @@ class EmojiResolver:
     """Resolves log events to emoji representations"""
 
     # Default emoji mappings for all pre-defined events
+    # Now uses generated Smithy types for consistency across languages
     DEFAULT_MAPPINGS: Dict[LogEvent, EmojiMapping] = {
+        event: EmojiMapping(
+            str(config["emoji"]),
+            str(config["description"]),
+            bool(config["is_default"]),
+        )
+        for event, config in TYPED_EMOJI_MAPPINGS.items()
+    }
+
+    # Legacy emoji mappings for backwards compatibility
+    # Contains the old Python-specific emoji mappings
+    LEGACY_MAPPINGS: Dict[LogEvent, EmojiMapping] = {
         LogEvent.SYSTEM_START: EmojiMapping(
             "🚀", "System startup or initialization"
+        ),
+        LogEvent.SYSTEM_STOP: EmojiMapping(
+            "🛑", "System shutdown or termination"
+        ),
+        LogEvent.USER_AUTH: EmojiMapping("👤", "User authentication events"),
+        LogEvent.USER_AUTHZ: EmojiMapping(
+            "🔐", "Authorization and permission events"
+        ),
+        LogEvent.PROJECT_LIFECYCLE: EmojiMapping(
+            "📁", "Project lifecycle events"
+        ),
+        LogEvent.DATABASE_OPERATION: EmojiMapping("💾", "Database operations"),
+        LogEvent.API_REQUEST: EmojiMapping(
+            "🔄", "API request/response events"
+        ),
+        LogEvent.PERFORMANCE_METRIC: EmojiMapping(
+            "⚡", "Performance metrics and timing"
         ),
         LogEvent.ERROR_OCCURRED: EmojiMapping(
             "🐛", "Error conditions and exceptions"
         ),
-        LogEvent.API_REQUEST: EmojiMapping("🔄", "API requests and responses"),
-        LogEvent.DATABASE_OPERATION: EmojiMapping(
-            "💾", "Database queries and operations"
+        LogEvent.WARNING_ISSUED: EmojiMapping("⚠️", "Warning conditions"),
+        LogEvent.CONFIG_CHANGE: EmojiMapping("🔧", "Configuration changes"),
+        LogEvent.ANALYTICS_EVENT: EmojiMapping(
+            "📊", "Analytics and tracking events"
         ),
-        LogEvent.USER_AUTH: EmojiMapping(
-            "👤", "User authentication and authorization"
-        ),
-        LogEvent.PROJECT_LIFECYCLE: EmojiMapping(
-            "📁", "Project creation, updates, and status changes"
-        ),
-        LogEvent.PERFORMANCE_METRIC: EmojiMapping(
-            "⚡", "Performance measurements and metrics"
-        ),
-        LogEvent.WARNING_ISSUED: EmojiMapping(
-            "⚠️", "Warning conditions and alerts"
-        ),
-        LogEvent.SECURITY_EVENT: EmojiMapping(
-            "🔐", "Security-related events and violations"
-        ),
-        LogEvent.AI_INFERENCE: EmojiMapping(
-            "🧠", "AI model inference and processing"
+        LogEvent.AGENT_PROCESSING: EmojiMapping(
+            "🤖", "Agent processing events"
         ),
         LogEvent.CONVERSATION_EVENT: EmojiMapping(
-            "💬", "Conversation logging and transcript events"
+            "💬", "Conversation and interaction events"
         ),
-        LogEvent.AGENT_LIFECYCLE: EmojiMapping(
-            "🤖", "Agent creation, updates, and task management"
-        ),
-        LogEvent.TASK_EXECUTION: EmojiMapping(
-            "⚙️", "Task execution and workflow processing"
-        ),
-        LogEvent.BUSINESS_METRIC: EmojiMapping(
-            "📊", "Business KPIs and analytics"
+        # BREAKING CHANGE: These emojis have been unified with TypeScript
+        LogEvent.ASSET_PROCESSING: EmojiMapping(
+            "🖼️", "Asset upload and processing"  # was 🖼️, now 📸
         ),
         LogEvent.INSPIRATION_EVENT: EmojiMapping(
-            "💡", "Inspiration capture and management"
+            "💡", "Inspiration capture events"  # was 💡, now 🎨
         ),
-        LogEvent.WORKFLOW_EVENT: EmojiMapping(
-            "🔀", "Workflow state transitions and automation"
+        LogEvent.INFRASTRUCTURE_DEPLOY: EmojiMapping(
+            "🚢", "Infrastructure deployment events"  # was 🚢, now 🏗️
         ),
-        LogEvent.INTEGRATION_EVENT: EmojiMapping(
-            "🔌", "Third-party integrations and API calls"
+        LogEvent.BUSINESS_METRIC: EmojiMapping("📈", "Business metric events"),
+        LogEvent.SEARCH_OPERATION: EmojiMapping(
+            "🔍", "Search and discovery events"
         ),
-        LogEvent.CONFIGURATION_CHANGE: EmojiMapping(
-            "🔧", "Configuration updates and settings"
+        LogEvent.BACKGROUND_JOB: EmojiMapping(
+            "⚙️", "Background job processing"
         ),
-        LogEvent.DEPLOYMENT_EVENT: EmojiMapping(
-            "🚢", "Deployment and release events"
+        LogEvent.NOTIFICATION_SENT: EmojiMapping(
+            "📢", "Notification events"  # was 📢, now 📧
         ),
-        LogEvent.BACKUP_OPERATION: EmojiMapping(
-            "💿", "Backup and recovery operations"
+        LogEvent.SECURITY_EVENT: EmojiMapping("🔒", "Security-related events"),
+        LogEvent.SCHEDULED_TASK: EmojiMapping(
+            "⏰", "Scheduled task execution"
         ),
-        LogEvent.MAINTENANCE_EVENT: EmojiMapping(
-            "🔨", "System maintenance and updates"
+        LogEvent.EXTERNAL_SERVICE: EmojiMapping(
+            "🔌", "External service integration"  # was 🔌, now 🌐
         ),
-        LogEvent.USER_INTERACTION: EmojiMapping(
-            "👆", "User interface interactions and clicks"
-        ),
-        LogEvent.DATA_PROCESSING: EmojiMapping(
-            "🔄", "Data processing and transformation"
-        ),
-        LogEvent.CUSTOM_EVENT: EmojiMapping(
-            "✨", "Custom application-specific events"
-        ),
+        LogEvent.AUDIT_TRAIL: EmojiMapping("📋", "Audit trail events"),
     }
 
     def __init__(

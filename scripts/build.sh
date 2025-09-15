@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Master build script for Mosaic Logger
+# Master build script for Artissist Logger
 # This script orchestrates the entire build process
 
 set -e  # Exit on any error
@@ -10,7 +10,7 @@ LOGGER_DIR="$(dirname "$SCRIPT_DIR")"
 SMITHY_DIR="$LOGGER_DIR/smithy"
 CLIENTS_DIR="$LOGGER_DIR/clients"
 
-echo "🏗️  Mosaic Logger Build Script"
+echo "🏗️  Artissist Logger Build Script"
 echo "=============================="
 echo "Logger directory: $LOGGER_DIR"
 echo ""
@@ -301,7 +301,7 @@ print_status "Generating build report..."
 
 BUILD_REPORT="$LOGGER_DIR/build-report.md"
 cat > "$BUILD_REPORT" << EOF
-# Mosaic Logger Build Report
+# Artissist Logger Build Report
 
 **Build Date**: $(date)
 **Build Mode**: $BUILD_MODE
@@ -406,7 +406,7 @@ if [ "$SKIP_PYTHON" = false ] && [ -d "$CLIENTS_DIR/python" ]; then
 fi
 
 echo ""
-print_success "🚀 Mosaic Logger build completed successfully!"
+print_success "🚀 Artissist Logger build completed successfully!"
 echo ""
 echo "Next steps:"
 echo "  - Review build report: $BUILD_REPORT"

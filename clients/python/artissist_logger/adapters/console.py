@@ -5,7 +5,7 @@ Console output adapter for Artissist Logger Python client
 import sys
 from typing import Any, Dict
 
-from ..types import LogLevel, LogMessage
+from ..types import LogLevel, LogEntry
 from .base import LogAdapter
 
 
@@ -28,12 +28,12 @@ class ConsoleAdapter(LogAdapter):
             sys.stderr if config.get("use_stderr", False) else sys.stdout
         )
 
-    async def write(self, message: LogMessage, formatted_message: str):
+    async def write(self, message: LogEntry, formatted_message: str):
         """Write message to console with optional color formatting"""
         output_message = formatted_message
 
         if self.use_colors and sys.stdout.isatty():
-            color = self.COLORS.get(message.level, "")
+            color = self.COLORS.get(message.level or LogLevel.INFO, "")
             output_message = f"{color}{formatted_message}{self.RESET}"
 
         print(output_message, file=self.output_stream)
@@ -51,7 +51,13 @@ class ConsoleAdapter(LogAdapter):
 
         # Add metrics if present
         if message.metrics:
-            metrics_dict = message.metrics.to_dict()
+            from dataclasses import asdict
+
+            metrics_dict = asdict(message.metrics)
+            # Filter out None values
+            metrics_dict = {
+                k: v for k, v in metrics_dict.items() if v is not None
+            }
             if metrics_dict:
                 metrics_output = "  METRICS: " + ", ".join(
                     f"{k}={v}" for k, v in metrics_dict.items()

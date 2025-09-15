@@ -7,26 +7,76 @@ from datetime import datetime
 
 from .context import ContextManager, LoggerContext
 from .emoji import EmojiResolver
-from .types import LogEntryParams, LoggerConfig, LogLevel, LogMessage
+from .types import LogEntryParams, LogLevel, LogEntry
+from .generated_types import LoggingContext, LoggerConfig
 
 
 class Logger:
     """Core logger implementation with emoji support and context management"""
 
-    def __init__(self, config: LoggerConfig):
+    def __init__(self, config: LoggerConfig, adapter_instances=None):
         """
         Initialize logger
 
         Args:
             config: Logger configuration containing service, environment,
-                adapters
+                adapter names
+            adapter_instances: Pre-created adapter instances (for factory use)
         """
-        self.service = config.service
-        self.environment = config.environment
-        self.adapters = config.adapters
-        self.emojis = config.emojis
-        self.base_context = config.context or LoggerContext()
-        self.emoji_resolver = config.emoji_resolver or EmojiResolver()
+        self.service = config.service or "unknown"
+        self.environment = config.environment or "dev"
+        self.emojis = config.emojis or False
+
+        # Convert LoggingContext to LoggerContext for internal use
+        if config.context:
+            self.base_context = LoggerContext(
+                correlation_id=config.context.correlation_id,
+                user_id=config.context.user_id,
+                session_id=config.context.session_id,
+                request_id=config.context.request_id,
+                trace_id=config.context.trace_id,
+                span_id=config.context.span_id,
+            )
+        else:
+            self.base_context = LoggerContext()
+
+        # Use provided adapter instances or resolve from adapter names
+        if adapter_instances:
+            self.adapters = adapter_instances
+        else:
+            self.adapters = self._resolve_adapters(config.adapters or [])
+
+        self.emoji_resolver = EmojiResolver()
+
+    def _resolve_adapters(self, adapter_names):
+        """Resolve adapter names to adapter instances"""
+        from .adapters.console import ConsoleAdapter
+        from .adapters.file import FileAdapter
+
+        adapter_instances = []
+        for adapter_name in adapter_names:
+            if adapter_name == "console" or adapter_name.value == "console":
+                adapter_instances.append(ConsoleAdapter({}))
+            elif adapter_name == "file" or adapter_name.value == "file":
+                adapter_instances.append(
+                    FileAdapter({"file_path": f"logs/{self.service}.log"})
+                )
+            # Add other adapters as needed
+        return adapter_instances
+
+    def _convert_to_adapter_names(self):
+        """Convert current adapter instances back to AdapterName enums"""
+        from .generated_types import AdapterName
+
+        adapter_names = []
+        for adapter in self.adapters:
+            adapter_class_name = adapter.__class__.__name__.lower()
+            if "console" in adapter_class_name:
+                adapter_names.append(AdapterName.CONSOLE)
+            elif "file" in adapter_class_name:
+                adapter_names.append(AdapterName.FILE)
+            # Add other adapter mappings as needed
+        return adapter_names
 
     async def log(self, params: LogEntryParams):
         """
@@ -43,21 +93,27 @@ class Logger:
         if params.context:
             final_context = final_context.merge(params.context)
 
+        # Convert LoggerContext to LoggingContext for LogEntry
+        logging_context = LoggingContext(
+            correlation_id=final_context.correlation_id,
+            trace_id=final_context.trace_id,
+            span_id=final_context.span_id,
+            user_id=final_context.user_id,
+            session_id=final_context.session_id,
+            request_id=final_context.request_id,
+        )
+
         # Create log message
-        log_message = LogMessage(
-            timestamp=datetime.utcnow(),
+        log_message = LogEntry(
+            timestamp=datetime.utcnow().isoformat(),
             level=params.level,
             message=params.message,
             service=self.service,
             event=params.event,
-            correlation_id=final_context.correlation_id,
-            user_id=final_context.user_id,
-            session_id=final_context.session_id,
-            request_id=final_context.request_id,
+            context=logging_context,
             metadata=params.metadata,
             metrics=params.metrics,
             error=params.error,
-            tags=params.tags,
         )
 
         # Get emoji if enabled
@@ -159,13 +215,23 @@ class Logger:
 
         merged_context = new_context.merge(context_update)
 
+        # Convert LoggerContext to LoggingContext for Smithy compatibility
+        logging_context = LoggingContext(
+            correlation_id=merged_context.correlation_id,
+            trace_id=merged_context.trace_id,
+            span_id=merged_context.span_id,
+            user_id=merged_context.user_id,
+            session_id=merged_context.session_id,
+            request_id=merged_context.request_id,
+        )
+
         return Logger(
             LoggerConfig(
                 service=self.service,
                 environment=self.environment,
-                adapters=self.adapters,
+                adapters=self._convert_to_adapter_names(),
                 emojis=self.emojis,
-                context=merged_context,
-                emoji_resolver=self.emoji_resolver,
-            )
+                context=logging_context,
+            ),
+            self.adapters,  # Pass current adapter instances
         )
