@@ -6,21 +6,15 @@ echo "🔍 Running Python linting and type checking..."
 
 cd "$(dirname "$0")/../clients/python"
 
-# Activate virtual environment if it exists and is functional
-if [ -d "venv" ] && [ -x "venv/bin/python" ]; then
-    source venv/bin/activate
-    PYTHON="venv/bin/python"
-    PIP="venv/bin/pip"
-else
-    PYTHON="python3"
-    PIP="pip3"
-fi
+# Use python3 directly since tools are installed system-wide
+PYTHON="python3"
+PIP="pip3"
 
 LINT_ERRORS=0
 
 # 1. Run Black formatter check
 echo "📝 Checking code formatting with Black..."
-if [ -f "venv/bin/black" ] || command -v black &> /dev/null; then
+if $PYTHON -c "import black" 2>/dev/null; then
     if ! $PYTHON -m black --check artissist_logger/; then
         echo "❌ Black formatting issues found"
         LINT_ERRORS=$((LINT_ERRORS + 1))
@@ -33,7 +27,7 @@ fi
 
 # 2. Run MyPy type checking
 echo "🔬 Running type checking with MyPy..."
-if [ -f "venv/bin/mypy" ] || command -v mypy &> /dev/null; then
+if $PYTHON -c "import mypy" 2>/dev/null; then
     if ! $PYTHON -m mypy artissist_logger/; then
         echo "❌ MyPy type checking found issues"
         LINT_ERRORS=$((LINT_ERRORS + 1))
@@ -46,7 +40,7 @@ fi
 
 # 3. Run Flake8 style checking
 echo "📏 Running style checking with Flake8..."
-if [ -f "venv/bin/flake8" ] || command -v flake8 &> /dev/null; then
+if $PYTHON -c "import flake8" 2>/dev/null; then
     if ! $PYTHON -m flake8 artissist_logger/; then
         echo "❌ Flake8 style issues found"
         LINT_ERRORS=$((LINT_ERRORS + 1))
@@ -59,7 +53,7 @@ fi
 
 # 4. Run Pylint comprehensive linting
 echo "🔍 Running comprehensive linting with Pylint..."
-if [ -f "venv/bin/pylint" ] || command -v pylint &> /dev/null; then
+if $PYTHON -c "import pylint" 2>/dev/null; then
     if ! $PYTHON -m pylint artissist_logger/; then
         echo "❌ Pylint found issues"
         LINT_ERRORS=$((LINT_ERRORS + 1))
