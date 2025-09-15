@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Context management for distributed tracing in Artissist Logger Python client
 """

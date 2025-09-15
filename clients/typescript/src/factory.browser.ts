@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Browser-compatible factory for creating Logger instances
 import type { LogAdapter, LoggerConfig, LoggerFactoryConfig } from './types';
 import { Logger } from './logger';

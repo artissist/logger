@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // File adapter for Mosaic Logger
 import * as fs from 'fs';
 import * as path from 'path';

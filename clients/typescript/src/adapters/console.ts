@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Console adapter with emoji support for Mosaic Logger
 import type {
   ErrorDetails,

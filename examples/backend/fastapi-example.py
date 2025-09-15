@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Backend API integration example using FastAPI with Artissist Logger
 This example demonstrates how to integrate artissist-logger into a Python FastAPI backend
