@@ -1,0 +1,103 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+repos:
+  # Pre-commit built-in hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '(\.md$|^scripts/|^examples/)'
+      - id: end-of-file-fixer
+        exclude: '(\.md$|^scripts/|^examples/)'
+      - id: check-yaml
+        args: ['--unsafe']
+      - id: check-json
+        exclude: 'tsconfig.*\.json$'
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # TypeScript/JavaScript formatting and linting
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.10.0
+    hooks:
+      - id: eslint
+        files: \.(js|ts|tsx)$
+        exclude: '^(scripts|examples)/|jest\.setup\.js$'
+        args: [--fix]
+        additional_dependencies:
+          - '@eslint/js@^9.34.0'
+          - 'eslint@^9.34.0'
+          - 'eslint-config-prettier@^10.1.8'
+          - 'eslint-plugin-prettier@^5.5.4'
+          - 'typescript-eslint@^8.42.0'
+
+  # Python formatting and linting
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3
+        files: \.py$
+        exclude: '^(scripts|examples)/'
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        files: \.py$
+        exclude: '^(scripts|examples)/'
+        args: ['--per-file-ignores=clients/python/artissist_logger/types.py:F401,setup.py:E501']
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        files: \.py$
+        exclude: '^(scripts|examples)/'
+        args: [--ignore-missing-imports, --install-types, --non-interactive]
+
+  # Custom local hooks
+  - repo: local
+    hooks:
+      # SPDX License header check (converted from existing git hook)
+      - id: license-header-check
+        name: Check SPDX license headers
+        entry: scripts/check-license-headers.sh
+        language: script
+        files: \.(py|ts|js|tsx|jsx|sh|smithy)$
+        exclude: '^(scripts|examples)/'
+        pass_filenames: true
+
+      # TypeScript type checking
+      - id: typescript-check
+        name: TypeScript type check
+        entry: bash -c 'cd clients/typescript && pnpm run typecheck'
+        language: system
+        files: \.ts$
+        pass_filenames: false
+
+      # Python lint comprehensive check
+      - id: python-lint-check
+        name: Python comprehensive lint
+        entry: ./scripts/lint-python.sh
+        language: script
+        files: \.py$
+        pass_filenames: false
+
+      # Smithy model validation
+      - id: smithy-validate
+        name: Validate Smithy models
+        entry: bash -c './scripts/validate-models.sh'
+        language: system
+        files: \.smithy$
+        pass_filenames: false
+
+  # Commitizen for conventional commits
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.29.1
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

@@ -16,13 +16,13 @@
     },
     "./adapters": {
       "browser": "./dist/adapters/console.js",
-      "require": "./dist/adapters/index.js", 
+      "require": "./dist/adapters/index.js",
       "import": "./dist/adapters/index.esm.js",
       "types": "./dist/adapters/index.d.ts"
     },
     "./context": {
       "require": "./dist/context.js",
-      "import": "./dist/context.esm.js", 
+      "import": "./dist/context.esm.js",
       "types": "./dist/context.d.ts"
     },
     "./emoji": {
@@ -58,7 +58,7 @@
   "keywords": [
     "logging",
     "logger",
-    "observability", 
+    "observability",
     "distributed-tracing",
     "emoji",
     "smithy",

@@ -64,10 +64,10 @@ structure CreateLogEntryRequest {
 structure CreateLogEntryResponse {
     @required
     logId: LogId
-    
+
     @required
     timestamp: Timestamp
-    
+
     status: String
 }
 
@@ -82,10 +82,10 @@ structure CreateBatchLogEntriesRequest {
 structure CreateBatchLogEntriesResponse {
     @required
     processedCount: Integer
-    
+
     @required
     successfulIds: LogIdList
-    
+
     failedEntries: FailedLogEntryList
 }
 
@@ -94,40 +94,40 @@ structure QueryLogsRequest {
     /// Service name filter
     @httpQuery("service")
     service: ServiceName
-    
-    /// Environment filter  
+
+    /// Environment filter
     @httpQuery("environment")
     environment: Environment
-    
+
     /// Log level filter (minimum level)
     @httpQuery("minLevel")
     minLevel: LogLevel
-    
+
     /// Time range start
     @httpQuery("startTime")
     startTime: Timestamp
-    
+
     /// Time range end
     @httpQuery("endTime")
     endTime: Timestamp
-    
+
     /// Correlation ID filter
     @httpQuery("correlationId")
     correlationId: String
-    
+
     /// User ID filter
     @httpQuery("userId")
     userId: UserId
-    
+
     /// Event type filter
     @httpQuery("event")
     event: LogEvent
-    
+
     /// Maximum results to return
     @httpQuery("limit")
     @range(min: 1, max: 1000)
     limit: Integer
-    
+
     /// Pagination token
     @httpQuery("nextToken")
     nextToken: String
@@ -137,9 +137,9 @@ structure QueryLogsRequest {
 structure QueryLogsResponse {
     @required
     logEntries: LogEntryList
-    
+
     nextToken: String
-    
+
     @required
     totalCount: Integer
 }
@@ -164,21 +164,21 @@ structure GetLogEntryResponse {
 structure ValidationError {
     @required
     message: String
-    
+
     field: String
-    
+
     code: String
 }
 
 /// Server error for service failures
-@error("server") 
+@error("server")
 @httpError(500)
 structure ServiceError {
     @required
     message: String
-    
+
     @required
     requestId: String
-    
+
     code: String
 }

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Frontend integration example for Next.js with Artissist Logger
 import React, { useEffect, useState } from 'react';
 import { LoggerFactory, Logger } from '@artissist/logger';
@@ -38,7 +39,7 @@ export default function ProjectCreationPage() {
 
   const loadProjects = async () => {
     const startTime = performance.now();
-    
+
     logger.debug('Loading user projects', {
       event: 'API_REQUEST',
       metadata: { operation: 'load-projects' }
@@ -47,9 +48,9 @@ export default function ProjectCreationPage() {
     try {
       const response = await fetch('/api/projects');
       const projectData = await response.json();
-      
+
       setProjects(projectData);
-      
+
       logger.info('Projects loaded successfully', {
         event: 'API_REQUEST',
         metrics: {
@@ -61,7 +62,7 @@ export default function ProjectCreationPage() {
           data: { projectCount: projectData.length }
         }
       });
-      
+
     } catch (error) {
       logger.error('Failed to load projects', {
         event: 'ERROR_OCCURRED',
@@ -91,7 +92,7 @@ export default function ProjectCreationPage() {
 
     setIsCreating(true);
     const startTime = performance.now();
-    
+
     // Create child logger for this operation with additional context
     const operationLogger = logger.child({
       correlationId: generateCorrelationId(),
@@ -133,7 +134,7 @@ export default function ProjectCreationPage() {
         event: 'PROJECT_LIFECYCLE',
         metadata: {
           operation: 'create-project',
-          data: { 
+          data: {
             projectId: newProject.id,
             projectName: newProject.name
           }
@@ -213,7 +214,7 @@ export default function ProjectCreationPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Create New Project</h1>
-      
+
       <div className="mb-6">
         <label htmlFor="projectName" className="block text-sm font-medium mb-2">
           Project Name
@@ -248,8 +249,8 @@ export default function ProjectCreationPage() {
           <h2 className="text-xl font-semibold mb-4">Existing Projects</h2>
           <div className="space-y-2">
             {projects.map((project: any) => (
-              <div 
-                key={project.id} 
+              <div
+                key={project.id}
                 className="p-3 bg-gray-50 rounded border"
                 onClick={() => handleUserInteraction('click', `project-${project.id}`)}
               >
@@ -351,7 +352,7 @@ export async function handler(req: any, res: any) {
     if (req.method === 'POST') {
       // Handle project creation
       const { name, type, description } = req.body;
-      
+
       const project = {
         id: `proj_${Date.now()}`,
         name,

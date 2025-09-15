@@ -793,7 +793,9 @@ async def main():
     await session_manager.end_session(session_id)
 
     print(f"\n🎉 Demo completed! Processed {len(results)} observations successfully")
-    print("\nAgent processing demonstration with Artissist Logger integration complete!")
+    print(
+        "\nAgent processing demonstration with Artissist Logger integration complete!"
+    )
 
 
 if __name__ == "__main__":

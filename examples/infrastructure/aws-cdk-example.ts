@@ -64,17 +64,17 @@ class MockInfrastructureLogger {
 
     const prefix = this.emojis && emojiMap[event] ? `${emojiMap[event]} ` : '';
     const correlationId = this.context.correlationId || 'N/A';
-    
+
     console.log(`[${level}] [INFRA:${this.service}] ${prefix}${message} | correlation_id=${correlationId}`);
-    
+
     if (data.error) {
       console.log(`  ERROR: ${data.error.type}: ${data.error.message}`);
     }
-    
+
     if (data.metadata) {
       console.log(`  METADATA: ${JSON.stringify(data.metadata, null, 2)}`);
     }
-    
+
     if (data.metrics) {
       console.log(`  METRICS: ${JSON.stringify(data.metrics, null, 2)}`);
     }
@@ -82,9 +82,9 @@ class MockInfrastructureLogger {
 
   child(additionalContext: any) {
     return new MockInfrastructureLogger(
-      this.service, 
-      this.environment, 
-      this.emojis, 
+      this.service,
+      this.environment,
+      this.emojis,
       { ...this.context, ...additionalContext }
     );
   }
@@ -112,7 +112,7 @@ export class ArtissistDataStack extends cdk.Stack {
     super(scope, id, props);
 
     this.deploymentStartTime = Date.now();
-    
+
     // Initialize infrastructure logger
     this.logger = MockLoggerFactory.createInfrastructureLogger({
       stackName: 'artissist-data-stack',
@@ -167,20 +167,20 @@ export class ArtissistDataStack extends cdk.Stack {
     try {
       // Create DynamoDB table for projects
       const projectsTable = this.createProjectsTable();
-      
+
       // Create S3 buckets for assets
       const assetsBucket = this.createAssetsBucket();
       const analyticsBucket = this.createAnalyticsBucket();
-      
+
       // Create Lambda functions
       const apiLambda = this.createApiLambda(projectsTable, assetsBucket);
-      
+
       // Create API Gateway
       const api = this.createApiGateway(apiLambda);
-      
+
       // Create CloudWatch Log Groups
       this.createLogGroups();
-      
+
       // Create IAM roles and policies
       this.createIamResources(projectsTable, assetsBucket);
 
@@ -243,8 +243,8 @@ export class ArtissistDataStack extends cdk.Stack {
           type: dynamodb.AttributeType.STRING
         },
         billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-        removalPolicy: this.getEnvironment() === 'production' 
-          ? cdk.RemovalPolicy.RETAIN 
+        removalPolicy: this.getEnvironment() === 'production'
+          ? cdk.RemovalPolicy.RETAIN
           : cdk.RemovalPolicy.DESTROY,
         pointInTimeRecovery: this.getEnvironment() === 'production',
         encryption: dynamodb.TableEncryption.AWS_MANAGED,
@@ -323,8 +323,8 @@ export class ArtissistDataStack extends cdk.Stack {
         encryption: s3.BucketEncryption.S3_MANAGED,
         blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
         versioned: this.getEnvironment() === 'production',
-        removalPolicy: this.getEnvironment() === 'production' 
-          ? cdk.RemovalPolicy.RETAIN 
+        removalPolicy: this.getEnvironment() === 'production'
+          ? cdk.RemovalPolicy.RETAIN
           : cdk.RemovalPolicy.DESTROY,
         lifecycleRules: [
           {
@@ -548,12 +548,12 @@ export class ArtissistDataStack extends cdk.Stack {
 
     // Add Lambda integration
     const integration = new apigateway.LambdaIntegration(lambdaFunction);
-    
+
     // Add routes
     const projects = api.root.addResource('projects');
     projects.addMethod('GET', integration);
     projects.addMethod('POST', integration);
-    
+
     const project = projects.addResource('{id}');
     project.addMethod('GET', integration);
     project.addMethod('PUT', integration);

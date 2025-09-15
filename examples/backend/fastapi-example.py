@@ -16,7 +16,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # Import the real artissist-logger
-from artissist_logger import LoggerFactory, LogEvent, LoggerContext, ErrorInfo, LogMetrics
+from artissist_logger import (
+    LoggerFactory,
+    LogEvent,
+    LoggerContext,
+    ErrorInfo,
+    LogMetrics,
+)
 
 
 # Remove the mock implementation - using real artissist-logger now
@@ -37,6 +43,8 @@ class ArtissistLoggerWrapper:
 
     async def debug(self, message: str, **kwargs):
         await self.logger.debug(message, **kwargs)
+
+
 # FastAPI application setup
 app = FastAPI(
     title="Artissist Backend API",
@@ -112,7 +120,7 @@ async def logging_middleware(request: Request, call_next):
         user_id=user_id,
         request_id=f"req_{int(time.time() * 1000)}",
     )
-    
+
     request_logger = logger.with_context(
         correlation_id=correlation_id,
         user_id=user_id,
@@ -146,7 +154,7 @@ async def logging_middleware(request: Request, call_next):
             event=LogEvent.API_REQUEST,
             metrics=LogMetrics(
                 duration_ms=round(duration_ms, 2),
-                custom_metrics={"status_code": response.status_code}
+                custom_metrics={"status_code": response.status_code},
             ),
         )
 
@@ -193,9 +201,9 @@ async def startup_event():
 @app.get("/health")
 async def health_check(request_logger: ArtissistLoggerWrapper = Depends(get_logger)):
     await request_logger.debug(
-        "Health check requested", 
-        event=LogEvent.API_REQUEST, 
-        metadata={"endpoint": "/health"}
+        "Health check requested",
+        event=LogEvent.API_REQUEST,
+        metadata={"endpoint": "/health"},
     )
 
     return {
@@ -248,7 +256,8 @@ async def list_projects(request_logger: ArtissistLoggerWrapper = Depends(get_log
 
 @app.post("/api/projects", response_model=Project)
 async def create_project(
-    project_data: ProjectCreate, request_logger: ArtissistLoggerWrapper = Depends(get_logger)
+    project_data: ProjectCreate,
+    request_logger: ArtissistLoggerWrapper = Depends(get_logger),
 ):
     start_time = time.time()
     project_id = f"proj_{uuid.uuid4().hex[:8]}"
@@ -424,7 +433,9 @@ async def login(
                     "user_id": user_id,
                     "username": username,
                 },
-                metrics=LogMetrics(duration_ms=round((time.time() - start_time) * 1000, 2)),
+                metrics=LogMetrics(
+                    duration_ms=round((time.time() - start_time) * 1000, 2)
+                ),
             )
 
             return {
@@ -441,7 +452,9 @@ async def login(
                     "security_issue": "invalid_credentials",
                     "username": username,
                 },
-                metrics=LogMetrics(duration_ms=round((time.time() - start_time) * 1000, 2)),
+                metrics=LogMetrics(
+                    duration_ms=round((time.time() - start_time) * 1000, 2)
+                ),
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -452,9 +465,7 @@ async def login(
             f"Login system error: {str(e)}",
             event=LogEvent.ERROR_OCCURRED,
             error=ErrorInfo(
-                type=type(e).__name__, 
-                message=str(e), 
-                context={"operation": "login"}
+                type=type(e).__name__, message=str(e), context={"operation": "login"}
             ),
             metrics=LogMetrics(duration_ms=round((time.time() - start_time) * 1000, 2)),
         )

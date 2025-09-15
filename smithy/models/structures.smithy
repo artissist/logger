@@ -52,12 +52,12 @@ structure LoggingContext {
     @pattern("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
     correlationId: String
 
-    /// OpenTelemetry trace identifier  
+    /// OpenTelemetry trace identifier
     @pattern("^[a-fA-F0-9]{32}$")
     traceId: String
 
     /// OpenTelemetry span identifier
-    @pattern("^[a-fA-F0-9]{16}$") 
+    @pattern("^[a-fA-F0-9]{16}$")
     spanId: String
 
     /// User context if applicable
@@ -66,7 +66,7 @@ structure LoggingContext {
     /// Session context if applicable
     sessionId: SessionId
 
-    /// Request context if applicable  
+    /// Request context if applicable
     requestId: RequestId
 
     /// Parent correlation ID for nested operations
@@ -89,7 +89,7 @@ structure LogMetadata {
 
     /// Version of the service/component
     version: String
-    
+
     /// Custom event mappings for extensible event system
     customEventMappings: CustomEventMap
 }
@@ -119,7 +119,7 @@ structure ErrorDetails {
     type: String
 
     /// Detailed error message
-    @required 
+    @required
     @length(min: 1, max: 2048)
     message: String
 
@@ -137,13 +137,13 @@ structure ErrorDetails {
 structure ErrorContext {
     /// File where error occurred
     file: String
-    
+
     /// Line number where error occurred
     line: Integer
-    
-    /// Function/method where error occurred  
+
+    /// Function/method where error occurred
     function: String
-    
+
     /// Additional context data
     data: Document
 }
@@ -153,11 +153,11 @@ structure EmojiMapping {
     /// Unicode emoji character
     @required
     emoji: String
-    
+
     /// Human-readable description of the event
     @required
     description: String
-    
+
     /// Whether this emoji should be used by default
     isDefault: Boolean
 }
@@ -166,7 +166,7 @@ structure EmojiMapping {
 structure FailedLogEntry {
     @required
     entry: LogEntry
-    
+
     @required
     reason: String
 }

@@ -41,19 +41,19 @@ for file in "$MODELS_DIR"/*.smithy; do
     if [ -f "$file" ]; then
         filename=$(basename "$file")
         echo "Validating $filename..."
-        
+
         # Check for version declaration
         if ! grep -q '^\$version: "2"' "$file"; then
             echo "  ⚠️  Warning: Missing or incorrect version declaration"
             ((VALIDATION_ERRORS++))
         fi
-        
+
         # Check for namespace declaration
         if ! grep -q '^namespace artissist.logging' "$file"; then
             echo "  ⚠️  Warning: Missing or incorrect namespace declaration"
             ((VALIDATION_ERRORS++))
         fi
-        
+
         # Check for basic structure validity (balanced braces)
         open_braces=$(grep -o '{' "$file" | wc -l)
         close_braces=$(grep -o '}' "$file" | wc -l)
@@ -61,13 +61,13 @@ for file in "$MODELS_DIR"/*.smithy; do
             echo "  ❌ Error: Unbalanced braces (open: $open_braces, close: $close_braces)"
             ((VALIDATION_ERRORS++))
         fi
-        
+
         # Check for common syntax issues
         if grep -q '^\s*///' "$file"; then
             # Triple slash comments should be fine, this is just a check
             :
         fi
-        
+
         echo "  ✅ $filename passed basic validation"
     fi
 done
@@ -81,7 +81,7 @@ echo "🔧 Checking model completeness..."
 REQUIRED_STRUCTURES=(
     "LogEntry"
     "LogLevel"
-    "LogEvent" 
+    "LogEvent"
     "LoggingContext"
     "LogMetadata"
     "PerformanceMetrics"

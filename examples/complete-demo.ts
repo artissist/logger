@@ -23,17 +23,17 @@ const frontendLogger = LoggerFactory.createFrontendLogger({
   }
 });
 
-frontendLogger.info('Application starting up', { 
+frontendLogger.info('Application starting up', {
   event: 'SYSTEM_START',
   metadata: { component: 'App', version: '1.0.0' }
 });
 
-frontendLogger.info('User authenticated successfully', { 
+frontendLogger.info('User authenticated successfully', {
   event: 'USER_AUTH',
   metadata: { method: 'oauth', provider: 'google' }
 });
 
-frontendLogger.info('New project created', { 
+frontendLogger.info('New project created', {
   event: 'PROJECT_LIFECYCLE',
   metadata: { projectId: 'proj_demo', projectType: 'artwork' }
 });
@@ -52,12 +52,12 @@ const backendLogger = LoggerFactory.createBackendLogger({
   }
 });
 
-backendLogger.info('Database connection established', { 
+backendLogger.info('Database connection established', {
   event: 'DATABASE_OPERATION',
   metrics: { durationMs: 150, connectionPool: 10 }
 });
 
-backendLogger.warn('High memory usage detected', { 
+backendLogger.warn('High memory usage detected', {
   event: 'WARNING_ISSUED',
   metrics: { memoryBytes: 512 * 1024 * 1024, cpuPercent: 85.5 }
 });
@@ -77,18 +77,18 @@ const agentLogger = LoggerFactory.createAgentLogger({
   }
 });
 
-agentLogger.info('Starting observation processing', { 
+agentLogger.info('Starting observation processing', {
   event: 'AGENT_PROCESSING',
-  metadata: { 
+  metadata: {
     operation: 'process-observation',
     observationType: 'conversation',
     confidence: 0.92
   }
 });
 
-agentLogger.info('Entities extracted successfully', { 
+agentLogger.info('Entities extracted successfully', {
   event: 'AGENT_PROCESSING',
-  metadata: { 
+  metadata: {
     entitiesCount: 5,
     processingTimeMs: 234
   },
@@ -106,17 +106,17 @@ const infraLogger = LoggerFactory.createInfrastructureLogger({
   emojis: true
 });
 
-infraLogger.info('Stack deployment initiated', { 
+infraLogger.info('Stack deployment initiated', {
   event: 'INFRASTRUCTURE_DEPLOY',
-  metadata: { 
+  metadata: {
     resourcesCount: 15,
     estimatedDuration: '5 minutes'
   }
 });
 
-infraLogger.info('Database table created', { 
+infraLogger.info('Database table created', {
   event: 'DATABASE_OPERATION',
-  metadata: { 
+  metadata: {
     tableName: 'Projects',
     billingMode: 'PAY_PER_REQUEST'
   }
@@ -129,8 +129,8 @@ console.log('=== Demo 5: Error Handling and Performance Metrics ===');
 try {
   // Simulate an operation that might fail
   const startTime = performance.now();
-  
-  frontendLogger.trace('Starting complex operation', { 
+
+  frontendLogger.trace('Starting complex operation', {
     event: 'PERFORMANCE_METRIC',
     metadata: { operation: 'complex-calculation' }
   });
@@ -143,7 +143,7 @@ try {
 
 } catch (error) {
   const duration = performance.now();
-  
+
   frontendLogger.error('Operation failed with error', {
     event: 'ERROR_OCCURRED',
     error: {
@@ -182,17 +182,17 @@ const childLogger = parentLogger.child({
   operation: 'nested-operation'
 });
 
-parentLogger.info('Parent operation started', { 
+parentLogger.info('Parent operation started', {
   event: 'API_REQUEST',
   metadata: { endpoint: '/api/demo' }
 });
 
-childLogger.info('Child operation processing', { 
+childLogger.info('Child operation processing', {
   event: 'API_REQUEST',
   metadata: { step: 'validation' }
 });
 
-childLogger.info('Child operation completed', { 
+childLogger.info('Child operation completed', {
   event: 'API_REQUEST',
   metadata: { step: 'response' },
   metrics: { durationMs: 45 }
@@ -224,7 +224,7 @@ customLogger.getEmojiResolver().addCustomMapping('DEMO_EVENT', {
 
 // Log with custom event (Note: This would need the event added to LogEvent type)
 customLogger.info('Demo completed successfully', {
-  metadata: { 
+  metadata: {
     customEvent: 'DEMO_EVENT',
     totalSteps: 7,
     allTestsPassed: true
