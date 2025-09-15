@@ -1,6 +1,6 @@
 {
   "name": "@artissist/logger",
-  "version": "0.1.2",
+  "version": "0.2.1",
   "type": "module",
   "description": "Unified logging library for Artissist with emoji support and distributed tracing",
   "main": "dist/index.js",
