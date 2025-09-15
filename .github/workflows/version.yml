@@ -76,8 +76,14 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    - name: Generate CHANGELOG
+      run: pnpm run changelog
     - name: Run pnpm version
       run: pnpm version ${{ inputs.version }}
+    - name: Add CHANGELOG to version commit
+      run: |
+        git add CHANGELOG.md
+        git commit --amend --no-edit
     - name: Push version commit and tag
       run: |
         git push origin main --follow-tags
