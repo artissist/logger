@@ -420,11 +420,11 @@ export interface LogEntry {
   /** Timestamp when the log entry was created */
   timestamp?: Timestamp | null;
   /** Severity level of the log entry */
-  level?: LogLevel | null;
+  level: LogLevel;
   /** Human-readable log message */
-  message?: string | null;
+  message: string;
   /** Service or component that generated this log entry */
-  service?: ServiceName | null;
+  service: ServiceName;
   /** Deployment environment (dev, staging, prod) */
   environment?: Environment | null;
   /** Pre-defined event type for consistent categorization */
