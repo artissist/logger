@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 // Complete demo showcasing all Artissist Logger features
 // Run with: npx ts-node examples/complete-demo.ts

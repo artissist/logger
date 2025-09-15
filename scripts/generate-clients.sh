@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Client generation script for Artissist Logger
 # This script generates TypeScript and Python clients from Smithy models

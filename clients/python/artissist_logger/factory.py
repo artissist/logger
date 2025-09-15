@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Logger factory for creating specialized loggers in different contexts
 """

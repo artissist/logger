@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Context management utilities for distributed tracing and correlation
 import type { LoggingContext } from './types';
 

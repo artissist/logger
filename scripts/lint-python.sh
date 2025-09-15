@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Comprehensive Python linting script
 echo "🔍 Running Python linting and type checking..."

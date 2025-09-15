@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Emoji mapping utilities for Artissist Logger
 import type { CustomEventMap, EmojiMapping, LogEvent } from './types';
 import { TYPED_EMOJI_MAPPINGS } from './generated-types';

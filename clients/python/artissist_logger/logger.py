@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Core Logger implementation for Artissist Logger Python client
 """

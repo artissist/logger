@@ -373,4 +373,4 @@ See the `examples/` directory for complete integration examples:
 
 ## License
 
-MIT License - see LICENSE file for details.
+GNU Affero General Public License v3.0 or later - see LICENSE file for details.

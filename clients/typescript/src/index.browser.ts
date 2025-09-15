@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Browser-compatible entry point for Artissist Logger TypeScript client
 // Excludes Node.js-only modules like FileAdapter
 
