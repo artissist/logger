@@ -23,15 +23,22 @@ class EmojiResolver:
 
     # Default emoji mappings for all pre-defined events
     # Now uses generated Smithy types for consistency across languages
-    DEFAULT_MAPPINGS: Dict[LogEvent, EmojiMapping] = {
-        event: EmojiMapping(
-            str(config["emoji"]),
-            str(config["description"]),
-            bool(config["is_default"]),
-        )
-        for event, config in TYPED_EMOJI_MAPPINGS.items()
-    }
 
+    def __init__(self):
+        self._default_mappings: Optional[Dict[LogEvent, EmojiMapping]] = None
+
+    @property
+    def default_mappings(self) -> Dict[LogEvent, EmojiMapping]:
+        if self._default_mappings is None:
+            self._default_mappings = {
+                event: EmojiMapping(
+                    str(config["emoji"]),
+                    str(config["description"]),
+                    bool(config["is_default"]),
+                )
+                for event, config in TYPED_EMOJI_MAPPINGS.items()
+            }
+        return self._default_mappings
     # Legacy emoji mappings for backwards compatibility
     # Contains the old Python-specific emoji mappings
     LEGACY_MAPPINGS: Dict[LogEvent, EmojiMapping] = {
