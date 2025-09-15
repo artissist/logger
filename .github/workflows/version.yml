@@ -80,4 +80,4 @@ jobs:
       run: pnpm version ${{ inputs.version }}
     - name: Push version commit and tag
       run: |
-        git push origin HEAD:main --follow-tags
+        git push origin main --follow-tags
