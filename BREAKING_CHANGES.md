@@ -1,10 +1,12 @@
 # Breaking Changes and Migration Guide
 
-## Version 0.2.0 - Configuration and Emoji Unification
+## Version 0.2.0 - Smithy IDL Unification
 
 ### Overview
 
-This release introduces major unification improvements by extending the Smithy IDL to generate consistent configuration structures and emoji mappings across TypeScript and Python clients. While most core APIs remain backwards compatible, there are some important changes that may affect advanced usage patterns.
+This release introduces **major architectural changes** by migrating from hand-written types to **Smithy IDL-generated types** for complete consistency across TypeScript and Python clients. This is a foundational change that enables better type safety, cross-language compatibility, and future extensibility.
+
+**⚠️ IMPORTANT**: This is a **breaking change release** that affects type definitions, import paths, and some API signatures. While core logging functionality remains the same, **upgrade testing is strongly recommended**.
 
 ## 🚨 Breaking Changes
 
@@ -65,14 +67,73 @@ adapter_config = ConsoleAdapterConfig(
 )
 ```
 
-### 3. Factory Method Standardization
+### 3. Type Import Changes (MEDIUM IMPACT)
+
+**What Changed:** All types now import from generated Smithy types instead of hand-written definitions.
+
+#### TypeScript Changes:
+```diff
+// Before - Hand-written types
+- export type LogLevel = 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
+- export type LogEvent = 'SYSTEM_START' | 'ERROR_OCCURRED' | ...;
+
+// After - Smithy-generated enums
++ export enum LogLevel { TRACE = 'TRACE', DEBUG = 'DEBUG', ... }
++ export enum LogEvent { SYSTEM_START = 'SYSTEM_START', ... }
+```
+
+#### Python Changes:
+```diff
+// Before - Hand-written classes
+- class LogLevel(Enum): DEBUG = "DEBUG", INFO = "INFO", ...
+- class LogEvent(Enum): SYSTEM_START = "SYSTEM_START", ...
+
+// After - Smithy-generated imports
++ from .generated_types import LogLevel, LogEvent, LogEntry, ...
+```
+
+**Impact:** Code that relied on specific type behavior may need adjustments. Enum usage remains the same but underlying implementation changed.
+
+### 4. Logger API Enhancement (LOW IMPACT)
+
+**What Changed:** Logger methods now accept `null` values more gracefully.
+
+#### TypeScript Changes:
+```diff
+// Before - Required non-null values
+- log(level: LogLevel, message: string, data?: Partial<LogEntry>): void
+
+// After - Null-friendly for user convenience
++ log(level: LogLevel, message: string, data?: NullablePartial<LogEntry>): void
+```
+
+This allows users to pass `null` values without TypeScript errors:
+```typescript
+// Now works without type assertion
+logger.info("Hello", { context: null, metadata: null });
+```
+
+### 5. Factory Method Standardization
 
 **What Changed:** Factory method signatures and parameter names are now consistent between languages.
 
 **Python Changes:**
-- Added missing `create_from_environment()` method for feature parity with TypeScript
-- Standardized parameter names to match Smithy-generated types
-- Some optional parameters may have changed names (camelCase → snake_case conversion)
+- **BREAKING**: Logger constructor now accepts `adapter_instances` parameter
+- Adapter resolution logic moved from factory to logger class
+- Some method signatures updated to use Smithy-generated types
+
+### 6. Generated Types File (NEW)
+
+**What Changed:** New auto-generated type files are now included in both languages.
+
+#### Files Added:
+- TypeScript: `src/generated-types.ts` (906+ lines of Smithy-generated types)
+- Python: `artissist_logger/generated_types.py` (1055+ lines of Smithy-generated types)
+
+**Impact:**
+- **DO NOT EDIT** these files - they are auto-generated
+- Import from these files for maximum type consistency
+- Contains all cross-language compatible type definitions
 
 ## ✅ Backwards Compatibility Maintained
 
@@ -99,10 +160,12 @@ The following areas maintain full backwards compatibility:
    pip install git+https://github.com/artissist/logger.git@v0.2.0
    ```
 
-2. **No Code Changes Needed** for basic usage:
+2. **Test Basic Usage** (should work with minimal changes):
    ```typescript
-   // This still works exactly the same
-   const logger = LoggerFactory.create({
+   // Basic usage still works, but types are now enums
+   import { LoggerFactory, LogEvent } from '@artissist/logger';
+
+   const logger = LoggerFactory.createFrontendLogger({
      service: 'my-service',
      environment: 'production',
      emojis: true
