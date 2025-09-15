@@ -21,24 +21,6 @@ class EmojiMapping:
 class EmojiResolver:
     """Resolves log events to emoji representations"""
 
-    # Default emoji mappings for all pre-defined events
-    # Now uses generated Smithy types for consistency across languages
-
-    def __init__(self):
-        self._default_mappings: Optional[Dict[LogEvent, EmojiMapping]] = None
-
-    @property
-    def default_mappings(self) -> Dict[LogEvent, EmojiMapping]:
-        if self._default_mappings is None:
-            self._default_mappings = {
-                event: EmojiMapping(
-                    str(config["emoji"]),
-                    str(config["description"]),
-                    bool(config["is_default"]),
-                )
-                for event, config in TYPED_EMOJI_MAPPINGS.items()
-            }
-        return self._default_mappings
     # Legacy emoji mappings for backwards compatibility
     # Contains the old Python-specific emoji mappings
     LEGACY_MAPPINGS: Dict[LogEvent, EmojiMapping] = {
@@ -111,6 +93,21 @@ class EmojiResolver:
     ):
         """Initialize with optional custom emoji mappings"""
         self.custom_mappings = custom_mappings or {}
+        self._default_mappings: Optional[Dict[LogEvent, EmojiMapping]] = None
+
+    @property
+    def default_mappings(self) -> Dict[LogEvent, EmojiMapping]:
+        """Get default emoji mappings from generated Smithy types"""
+        if self._default_mappings is None:
+            self._default_mappings = {
+                event: EmojiMapping(
+                    str(config["emoji"]),
+                    str(config["description"]),
+                    bool(config["is_default"]),
+                )
+                for event, config in TYPED_EMOJI_MAPPINGS.items()
+            }
+        return self._default_mappings
 
     def get_emoji(
         self, event: Optional[LogEvent], custom_event: Optional[str] = None
@@ -125,8 +122,8 @@ class EmojiResolver:
         Returns:
             Emoji string or None if not found
         """
-        if event and event in self.DEFAULT_MAPPINGS:
-            return self.DEFAULT_MAPPINGS[event].emoji
+        if event and event in self.default_mappings:
+            return self.default_mappings[event].emoji
 
         if custom_event and custom_event in self.custom_mappings:
             return self.custom_mappings[custom_event].emoji
@@ -146,8 +143,8 @@ class EmojiResolver:
         Returns:
             Description string or None if not found
         """
-        if event and event in self.DEFAULT_MAPPINGS:
-            return self.DEFAULT_MAPPINGS[event].description
+        if event and event in self.default_mappings:
+            return self.default_mappings[event].description
 
         if custom_event and custom_event in self.custom_mappings:
             return self.custom_mappings[custom_event].description
@@ -170,7 +167,7 @@ class EmojiResolver:
         result = {}
 
         # Add default mappings
-        for event, mapping in self.DEFAULT_MAPPINGS.items():
+        for event, mapping in self.default_mappings.items():
             result[event.value] = mapping
 
         # Add custom mappings
