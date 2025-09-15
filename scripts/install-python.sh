@@ -33,7 +33,7 @@ if [ "$USE_VENV" = true ]; then
         fi
         $PYTHON -m venv venv
     fi
-    
+
     # Activate virtual environment
     echo "Activating virtual environment..."
     if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
@@ -41,11 +41,11 @@ if [ "$USE_VENV" = true ]; then
     else
         source venv/bin/activate
     fi
-    
+
     # Ensure pip is installed and upgraded in the venv
     echo "Ensuring pip is available and up to date..."
     python -m ensurepip --upgrade 2>/dev/null || python -m pip install --upgrade pip
-    
+
     echo "Installing dependencies in virtual environment..."
 else
     echo "Installing dependencies without virtual environment (CI/Docker mode)..."

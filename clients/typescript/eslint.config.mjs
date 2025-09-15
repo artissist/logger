@@ -7,14 +7,14 @@ import prettierPlugin from 'eslint-plugin-prettier';
 export default tseslint.config(
   // Base ESLint recommended rules
   eslint.configs.recommended,
-  
+
   // TypeScript ESLint recommended rules
   ...tseslint.configs.recommendedTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
-  
+
   // Prettier config to disable conflicting rules
   prettierConfig,
-  
+
   // Global ignores
   {
     ignores: [
@@ -30,7 +30,7 @@ export default tseslint.config(
       'generated/**'
     ]
   },
-  
+
   // TypeScript files configuration
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.mts'],
@@ -46,9 +46,9 @@ export default tseslint.config(
     rules: {
       // Prettier integration
       'prettier/prettier': 'error',
-      
+
       // TypeScript specific rules
-      '@typescript-eslint/no-unused-vars': ['error', { 
+      '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }],
@@ -67,7 +67,7 @@ export default tseslint.config(
         fixStyle: 'separate-type-imports'
       }],
       '@typescript-eslint/no-import-type-side-effects': 'error',
-      
+
       // General rules
       'no-console': 'warn',
       'no-debugger': 'error',
@@ -78,9 +78,9 @@ export default tseslint.config(
       'no-duplicate-imports': 'off', // Handled by TypeScript
       'no-useless-rename': 'error',
       'object-shorthand': 'error',
-      'prefer-destructuring': ['error', { 
-        object: true, 
-        array: false 
+      'prefer-destructuring': ['error', {
+        object: true,
+        array: false
       }],
       'prefer-template': 'error',
       'template-curly-spacing': ['error', 'never'],
@@ -90,13 +90,13 @@ export default tseslint.config(
       // 'comma-dangle' handled by Prettier
       'semi': ['error', 'always'],
       'quotes': ['error', 'single', { avoidEscape: true }],
-      
+
       // Security rules
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-script-url': 'error',
-      
+
       // Import sorting
       'sort-imports': ['error', {
         ignoreCase: false,
@@ -106,7 +106,7 @@ export default tseslint.config(
       }],
     }
   },
-  
+
   // Test files configuration
   {
     files: ['**/__tests__/**/*', '**/*.test.*', '**/*.spec.*'],
@@ -120,7 +120,7 @@ export default tseslint.config(
       'no-console': 'off',
     }
   },
-  
+
   // Example files configuration
   {
     files: ['examples/**/*'],
@@ -130,7 +130,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': 'off',
     }
   },
-  
+
   // Configuration files
   {
     files: ['*.config.js', '*.config.ts', '*.config.mjs'],

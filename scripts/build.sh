@@ -119,25 +119,25 @@ echo ""
 # Clean build artifacts if requested
 if [ "$CLEAN" = true ]; then
     print_status "Cleaning build artifacts..."
-    
+
     # Clean Smithy generated code
     if [ -d "$LOGGER_DIR/generated" ]; then
         rm -rf "$LOGGER_DIR/generated"
         print_success "Cleaned Smithy generated code"
     fi
-    
+
     # Clean TypeScript build
     if [ -d "$CLIENTS_DIR/typescript/dist" ]; then
         rm -rf "$CLIENTS_DIR/typescript/dist"
         print_success "Cleaned TypeScript build artifacts"
     fi
-    
+
     # Clean TypeScript node_modules if in dev mode
     if [ "$BUILD_MODE" = "development" ] && [ -d "$CLIENTS_DIR/typescript/node_modules" ]; then
         rm -rf "$CLIENTS_DIR/typescript/node_modules"
         print_success "Cleaned TypeScript dependencies"
     fi
-    
+
     # Clean Python build artifacts
     find "$CLIENTS_DIR/python" -name "*.pyc" -delete 2>/dev/null || true
     find "$CLIENTS_DIR/python" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
@@ -145,7 +145,7 @@ if [ "$CLEAN" = true ]; then
         rm -rf "$CLIENTS_DIR/python/dist"
         print_success "Cleaned Python build artifacts"
     fi
-    
+
     print_success "Clean completed"
     echo ""
 fi
@@ -153,9 +153,9 @@ fi
 # Step 1: Validate and build Smithy models
 if [ "$SKIP_SMITHY" = false ]; then
     print_status "Step 1: Building Smithy models..."
-    
+
     cd "$SMITHY_DIR"
-    
+
     # Set Java environment for Smithy build (only if not already set)
     if [ -z "$JAVA_HOME" ] && [ -d "/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home" ]; then
         export JAVA_HOME=/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home
@@ -166,7 +166,7 @@ if [ "$SKIP_SMITHY" = false ]; then
     else
         print_status "Using Java from PATH"
     fi
-    
+
     if [ -f "gradlew" ]; then
         print_status "Using Gradle wrapper"
         ./gradlew clean smithyBuild
@@ -174,17 +174,17 @@ if [ "$SKIP_SMITHY" = false ]; then
         print_status "Using system Gradle"
         gradle clean smithyBuild
     fi
-    
+
     print_success "Smithy models built and validated"
     cd "$LOGGER_DIR"
-    
+
     # Generate TypeScript types from Smithy models
     if [ -f "$SCRIPT_DIR/generate-typescript.js" ]; then
         print_status "Generating TypeScript types from Smithy models..."
         node "$SCRIPT_DIR/generate-typescript.js"
         print_success "TypeScript types generated"
     fi
-    
+
 else
     print_warning "Skipping Smithy model build"
 fi
@@ -194,39 +194,39 @@ echo ""
 # Step 2: Build TypeScript client
 if [ "$SKIP_TYPESCRIPT" = false ]; then
     print_status "Step 2: Building TypeScript client..."
-    
+
     cd "$CLIENTS_DIR/typescript"
-    
+
     # Install dependencies
     if [ ! -d "node_modules" ] || [ "$BUILD_MODE" = "development" ]; then
         print_status "Installing TypeScript dependencies..."
         npm ci
     fi
-    
+
     # Run linting
     print_status "Running TypeScript linter..."
     npm run lint || print_warning "Linting found issues (continuing build)"
-    
+
     # Run type checking
     print_status "Running TypeScript type checking..."
     npm run typecheck
-    
+
     # Run tests
     if [ "$BUILD_MODE" = "development" ]; then
         print_status "Running TypeScript tests..."
         npm test || print_warning "Some tests failed (continuing build)"
     fi
-    
+
     # Build the package
     print_status "Building TypeScript package..."
     npm run build
-    
+
     # Generate documentation in development mode
     if [ "$BUILD_MODE" = "development" ]; then
         print_status "Generating TypeScript documentation..."
         npm run docs || print_warning "Documentation generation failed (continuing)"
     fi
-    
+
     print_success "TypeScript client built successfully"
     cd "$LOGGER_DIR"
 else
@@ -238,9 +238,9 @@ echo ""
 # Step 3: Build Python client (if structure exists)
 if [ "$SKIP_PYTHON" = false ] && [ -d "$CLIENTS_DIR/python" ]; then
     print_status "Step 3: Building Python client..."
-    
+
     cd "$CLIENTS_DIR/python"
-    
+
     # Check if virtual environment should be created
     if [ ! -d "venv" ] && [ "$BUILD_MODE" = "development" ]; then
         print_status "Creating Python virtual environment..."
@@ -250,43 +250,43 @@ if [ "$SKIP_PYTHON" = false ] && [ -d "$CLIENTS_DIR/python" ]; then
         print_status "Activating Python virtual environment..."
         source venv/bin/activate
     fi
-    
+
     # Install dependencies
     if [ -f "requirements.txt" ]; then
         print_status "Installing Python dependencies..."
         pip install -r requirements.txt
     fi
-    
+
     if [ -f "requirements-dev.txt" ] && [ "$BUILD_MODE" = "development" ]; then
         print_status "Installing Python development dependencies..."
         pip install -r requirements-dev.txt
     fi
-    
+
     # Run linting (if available)
     if command -v black &> /dev/null; then
         print_status "Running Python code formatting..."
         black --check . || print_warning "Python formatting issues found"
     fi
-    
+
     if command -v mypy &> /dev/null; then
         print_status "Running Python type checking..."
         # Clean build directory to avoid duplicate module errors
         rm -rf build/
         mypy . || print_warning "Python type checking found issues"
     fi
-    
+
     # Run tests (if available)
     if [ "$BUILD_MODE" = "development" ] && command -v pytest &> /dev/null; then
         print_status "Running Python tests..."
         pytest || print_warning "Some Python tests failed"
     fi
-    
+
     # Build package
     if [ -f "setup.py" ]; then
         print_status "Building Python package..."
         python setup.py bdist_wheel
     fi
-    
+
     print_success "Python client built successfully"
     cd "$LOGGER_DIR"
 elif [ "$SKIP_PYTHON" = false ]; then
@@ -311,7 +311,7 @@ cat > "$BUILD_REPORT" << EOF
 ## Build Configuration
 
 - Skip Smithy: $SKIP_SMITHY
-- Skip TypeScript: $SKIP_TYPESCRIPT  
+- Skip TypeScript: $SKIP_TYPESCRIPT
 - Skip Python: $SKIP_PYTHON
 - Clean Build: $CLEAN
 

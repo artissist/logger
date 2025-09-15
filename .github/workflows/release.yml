@@ -23,10 +23,10 @@ jobs:
       contents: write
     outputs:
       version: ${{ steps.version.outputs.version }}
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Determine version
       id: version
       run: |
@@ -37,7 +37,7 @@ jobs:
         fi
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
         echo "Version: ${VERSION}"
-    
+
     - name: Create Release
       if: github.event_name == 'push' || inputs.create_release
       uses: actions/create-release@v1
@@ -48,24 +48,24 @@ jobs:
         release_name: Release v${{ steps.version.outputs.version }}
         body: |
           ## Artissist Logger v${{ steps.version.outputs.version }}
-          
+
           ### Installation
-          
+
           **Python:**
           ```bash
           pip install artissist-logger==${{ steps.version.outputs.version }}
           ```
-          
+
           **JavaScript/TypeScript:**
           ```bash
           npm install @artissist/logger@${{ steps.version.outputs.version }}
           ```
-          
+
           ### What's Changed
           See [CHANGELOG.md](https://github.com/artissist/logger/blob/main/CHANGELOG.md) for details.
         draft: false
         prerelease: false
-  
+
   publish-python:
     needs: create-release
     permissions:
@@ -73,7 +73,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/publish-python.yml
     secrets: inherit
-  
+
   publish-npm:
     needs: create-release
     permissions:

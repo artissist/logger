@@ -15,3 +15,7 @@ exclude =
 per-file-ignores =
     artissist_logger/types.py:F401
     artissist_logger/__init__.py:F401
+    */artissist_logger/types.py:F401
+    */artissist_logger/__init__.py:F401
+    clients/python/artissist_logger/types.py:F401
+    clients/python/artissist_logger/__init__.py:F401

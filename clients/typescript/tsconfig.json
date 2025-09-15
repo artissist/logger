@@ -1,26 +1,19 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
     "target": "ES2020",
     "lib": ["ES2020", "DOM"],
     "module": "ES2020",
     "moduleResolution": "node",
-
-    /* Bundler mode */
     "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
-
-    /* Output */
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
@@ -28,14 +21,10 @@
     "sourceMap": true,
     "removeComments": false,
     "importHelpers": true,
-
-    /* Interop Constraints */
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-
-    /* Advanced */
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },

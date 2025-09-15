@@ -93,10 +93,10 @@ done
 # Copy generated TypeScript code to client directory
 if [ -d "$GENERATED_DIR/typescript" ]; then
     print_status "Integrating generated TypeScript code..."
-    
+
     TYPESCRIPT_CLIENT_DIR="$LOGGER_DIR/clients/typescript/src/generated"
     mkdir -p "$TYPESCRIPT_CLIENT_DIR"
-    
+
     # Copy generated files
     if [ -d "$GENERATED_DIR/typescript" ]; then
         cp -r "$GENERATED_DIR/typescript"/* "$TYPESCRIPT_CLIENT_DIR/" 2>/dev/null || true
@@ -108,13 +108,13 @@ else
     print_error "TypeScript generation failed - no output directory found"
 fi
 
-# Copy generated Python code to client directory  
+# Copy generated Python code to client directory
 if [ -d "$GENERATED_DIR/python" ]; then
     print_status "Integrating generated Python code..."
-    
+
     PYTHON_CLIENT_DIR="$LOGGER_DIR/clients/python/generated"
     mkdir -p "$PYTHON_CLIENT_DIR"
-    
+
     # Copy generated files
     if [ -d "$GENERATED_DIR/python" ]; then
         cp -r "$GENERATED_DIR/python"/* "$PYTHON_CLIENT_DIR/" 2>/dev/null || true
@@ -184,7 +184,7 @@ To regenerate clients after model changes:
 
 ## Note
 
-This is generated code - do not modify directly. 
+This is generated code - do not modify directly.
 Make changes to the Smithy models in `smithy/models/` instead.
 EOF
 

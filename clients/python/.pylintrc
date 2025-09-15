@@ -9,7 +9,7 @@ disable=too-many-instance-attributes,too-many-function-args,trailing-whitespace,
     broad-exception-caught, duplicate-code,
     import-outside-toplevel,  # C0415 - Used for lazy loading adapters
     unused-import  # W0611 - Used for re-exports in types.py
-    
+
 
 [DESIGN]
 # Allow more instance attributes for dataclasses

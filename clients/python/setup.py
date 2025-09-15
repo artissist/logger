@@ -30,7 +30,8 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: System :: Logging",
-        "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+        "License :: OSI Approved :: "
+        "GNU Affero General Public License v3 or later (AGPLv3+)",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -55,7 +56,7 @@ setup(
             "flake8>=5.0.0",
             "pylint>=2.15.0",
             "types-aiofiles>=22.0.0",
-            "aiofiles>=22.0.0",  # Include aiofiles in dev for proper type checking
+            "aiofiles>=22.0.0",  # Include for proper type checking
         ],
         "file": [
             "aiofiles>=22.0.0",

@@ -11,7 +11,7 @@ timestamp Timestamp
 enum LogLevel {
     /// Detailed tracing information for debugging
     TRACE
-    /// General debugging information  
+    /// General debugging information
     DEBUG
     /// Informational messages during normal operations
     INFO
@@ -27,76 +27,76 @@ enum LogLevel {
 enum LogEvent {
     @documentation("System startup or initialization events")
     SYSTEM_START
-    
+
     @documentation("System shutdown or termination events")
     SYSTEM_STOP
-    
+
     @documentation("User authentication events")
     USER_AUTH
-    
+
     @documentation("Authorization and permission events")
     USER_AUTHZ
-    
+
     @documentation("Project lifecycle events")
     PROJECT_LIFECYCLE
-    
+
     @documentation("Database operations")
     DATABASE_OPERATION
-    
+
     @documentation("API request/response events")
     API_REQUEST
-    
+
     @documentation("Performance metrics and timing")
     PERFORMANCE_METRIC
-    
+
     @documentation("Error conditions and exceptions")
     ERROR_OCCURRED
-    
+
     @documentation("Warning conditions")
     WARNING_ISSUED
-    
+
     @documentation("Configuration changes")
     CONFIG_CHANGE
-    
+
     @documentation("Analytics and tracking events")
     ANALYTICS_EVENT
-    
+
     @documentation("Agent processing events")
     AGENT_PROCESSING
-    
+
     @documentation("Conversation and interaction events")
     CONVERSATION_EVENT
-    
+
     @documentation("Asset upload and processing")
     ASSET_PROCESSING
-    
+
     @documentation("Inspiration capture events")
     INSPIRATION_EVENT
-    
+
     @documentation("Infrastructure deployment events")
     INFRASTRUCTURE_DEPLOY
-    
+
     @documentation("Business metric events")
     BUSINESS_METRIC
-    
+
     @documentation("Search and discovery events")
     SEARCH_OPERATION
-    
+
     @documentation("Background job processing")
     BACKGROUND_JOB
-    
+
     @documentation("Notification events")
     NOTIFICATION_SENT
-    
+
     @documentation("Security-related events")
     SECURITY_EVENT
-    
+
     @documentation("Scheduled task execution")
     SCHEDULED_TASK
-    
+
     @documentation("External service integration")
     EXTERNAL_SERVICE
-    
+
     @documentation("Audit trail events")
     AUDIT_TRAIL
 }
@@ -105,7 +105,7 @@ enum LogEvent {
 @pattern("^[a-zA-Z0-9\\-_]{1,64}$")
 string ServiceName
 
-/// Environment identifier pattern  
+/// Environment identifier pattern
 @pattern("^(dev|test|staging|prod)$")
 string Environment
 
@@ -131,7 +131,7 @@ list LogEntryList {
 }
 
 list LogIdList {
-    member: LogId  
+    member: LogId
 }
 
 list FailedLogEntryList {
