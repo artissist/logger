@@ -86,7 +86,7 @@ class LogLevel(Enum):
 
     # Detailed tracing information for debugging
     TRACE = "TRACE"
-    # General debugging information  
+    # General debugging information
     DEBUG = "DEBUG"
     # Informational messages during normal operations
     INFO = "INFO"
@@ -140,6 +140,7 @@ MetricsMap = Dict[str, float]
 CustomEventMap = Dict[str, "EmojiMapping"]
 
 EmojiMappingMap = Dict[str, "EmojiMapping"]
+
 
 @dataclass
 class AWSContext:
@@ -259,7 +260,7 @@ class CoordinateInfo:
 
     # X coordinate
     x: Optional[int] = None
-    # Y coordinate  
+    # Y coordinate
     y: Optional[int] = None
     # Element-relative X coordinate
     relative_x: Optional[int] = None
@@ -300,7 +301,7 @@ class CreateBatchLogEntriesResponse:
 @dataclass
 class CreateLogEntryRequest:
     """Request/Response Structures
-Request structure for creating a single log entry"""
+    Request structure for creating a single log entry"""
 
     log_entry: Optional["LogEntry"] = None
 
@@ -380,7 +381,7 @@ class ErrorContext:
     file: Optional[str] = None
     # Line number where error occurred
     line: Optional[int] = None
-    # Function/method where error occurred  
+    # Function/method where error occurred
     function: Optional[str] = None
     # Additional context data
     data: Optional["Document"] = None
@@ -434,7 +435,7 @@ class FileAdapterConfig:
 
 @dataclass
 class FrontendLogEntry:
-    """Extension for frontend-specific logging  """
+    """Extension for frontend-specific logging"""
 
     # Base log entry fields
     base_entry: Optional["LogEntry"] = None
@@ -598,7 +599,7 @@ class LoggingContext:
 
     # Primary correlation identifier for request tracking
     correlation_id: Optional[str] = None
-    # OpenTelemetry trace identifier  
+    # OpenTelemetry trace identifier
     trace_id: Optional[str] = None
     # OpenTelemetry span identifier
     span_id: Optional[str] = None
@@ -606,7 +607,7 @@ class LoggingContext:
     user_id: Optional["UserId"] = None
     # Session context if applicable
     session_id: Optional["SessionId"] = None
-    # Request context if applicable  
+    # Request context if applicable
     request_id: Optional["RequestId"] = None
     # Parent correlation ID for nested operations
     parent_correlation_id: Optional[str] = None
@@ -682,7 +683,7 @@ class QueryLogsRequest:
 
     # Service name filter
     service: Optional["ServiceName"] = None
-    # Environment filter  
+    # Environment filter
     environment: Optional["Environment"] = None
     # Log level filter (minimum level)
     min_level: Optional["LogLevel"] = None
@@ -787,12 +788,11 @@ class UserInteractionContext:
 @dataclass
 class ValidationError:
     """Error definitions
-Client error for validation failures"""
+    Client error for validation failures"""
 
     message: Optional[str] = None
     field: Optional[str] = None
     code: Optional[str] = None
-
 
 
 # Standardized emoji mappings - BREAKING CHANGE:
@@ -801,127 +801,127 @@ DEFAULT_EMOJI_MAPPINGS: Dict[str, Dict[str, Union[str, bool]]] = {
     "SYSTEM_START": {
         "emoji": "🚀",
         "description": "System startup or initialization events",
-        "is_default": True
+        "is_default": True,
     },
     "SYSTEM_STOP": {
         "emoji": "🛑",
         "description": "System shutdown or termination events",
-        "is_default": True
+        "is_default": True,
     },
     "USER_AUTH": {
         "emoji": "👤",
         "description": "User authentication events",
-        "is_default": True
+        "is_default": True,
     },
     "USER_AUTHZ": {
         "emoji": "🔐",
         "description": "Authorization and permission events",
-        "is_default": True
+        "is_default": True,
     },
     "PROJECT_LIFECYCLE": {
         "emoji": "📁",
         "description": "Project lifecycle events",
-        "is_default": True
+        "is_default": True,
     },
     "DATABASE_OPERATION": {
         "emoji": "💾",
         "description": "Database operations",
-        "is_default": True
+        "is_default": True,
     },
     "API_REQUEST": {
         "emoji": "🔄",
         "description": "API request/response events",
-        "is_default": True
+        "is_default": True,
     },
     "PERFORMANCE_METRIC": {
         "emoji": "⚡",
         "description": "Performance metrics and timing",
-        "is_default": True
+        "is_default": True,
     },
     "ERROR_OCCURRED": {
         "emoji": "🐛",
         "description": "Error conditions and exceptions",
-        "is_default": True
+        "is_default": True,
     },
     "WARNING_ISSUED": {
         "emoji": "⚠️",
         "description": "Warning conditions",
-        "is_default": True
+        "is_default": True,
     },
     "CONFIG_CHANGE": {
         "emoji": "🔧",
         "description": "Configuration changes",
-        "is_default": True
+        "is_default": True,
     },
     "ANALYTICS_EVENT": {
         "emoji": "📊",
         "description": "Analytics and tracking events",
-        "is_default": True
+        "is_default": True,
     },
     "AGENT_PROCESSING": {
         "emoji": "🤖",
         "description": "Agent processing events",
-        "is_default": True
+        "is_default": True,
     },
     "CONVERSATION_EVENT": {
         "emoji": "💬",
         "description": "Conversation and interaction events",
-        "is_default": True
+        "is_default": True,
     },
     "ASSET_PROCESSING": {
         "emoji": "📸",
         "description": "Asset upload and processing",
-        "is_default": True
+        "is_default": True,
     },
     "INSPIRATION_EVENT": {
         "emoji": "🎨",
         "description": "Inspiration capture events",
-        "is_default": True
+        "is_default": True,
     },
     "INFRASTRUCTURE_DEPLOY": {
         "emoji": "🏗️",
         "description": "Infrastructure deployment events",
-        "is_default": True
+        "is_default": True,
     },
     "BUSINESS_METRIC": {
         "emoji": "📈",
         "description": "Business metric events",
-        "is_default": True
+        "is_default": True,
     },
     "SEARCH_OPERATION": {
         "emoji": "🔍",
         "description": "Search and discovery events",
-        "is_default": True
+        "is_default": True,
     },
     "BACKGROUND_JOB": {
         "emoji": "⚙️",
         "description": "Background job processing",
-        "is_default": True
+        "is_default": True,
     },
     "NOTIFICATION_SENT": {
         "emoji": "📧",
         "description": "Notification events",
-        "is_default": True
+        "is_default": True,
     },
     "SECURITY_EVENT": {
         "emoji": "🔒",
         "description": "Security-related events",
-        "is_default": True
+        "is_default": True,
     },
     "SCHEDULED_TASK": {
         "emoji": "⏰",
         "description": "Scheduled task execution",
-        "is_default": True
+        "is_default": True,
     },
     "EXTERNAL_SERVICE": {
         "emoji": "🌐",
         "description": "External service integration",
-        "is_default": True
+        "is_default": True,
     },
     "AUDIT_TRAIL": {
         "emoji": "📋",
         "description": "Audit trail events",
-        "is_default": True
+        "is_default": True,
     },
 }
 
@@ -930,127 +930,126 @@ TYPED_EMOJI_MAPPINGS: Dict[LogEvent, Dict[str, Union[str, bool]]] = {
     LogEvent.SYSTEM_START: {
         "emoji": "🚀",
         "description": "System startup or initialization events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.SYSTEM_STOP: {
         "emoji": "🛑",
         "description": "System shutdown or termination events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.USER_AUTH: {
         "emoji": "👤",
         "description": "User authentication events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.USER_AUTHZ: {
         "emoji": "🔐",
         "description": "Authorization and permission events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.PROJECT_LIFECYCLE: {
         "emoji": "📁",
         "description": "Project lifecycle events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.DATABASE_OPERATION: {
         "emoji": "💾",
         "description": "Database operations",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.API_REQUEST: {
         "emoji": "🔄",
         "description": "API request/response events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.PERFORMANCE_METRIC: {
         "emoji": "⚡",
         "description": "Performance metrics and timing",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.ERROR_OCCURRED: {
         "emoji": "🐛",
         "description": "Error conditions and exceptions",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.WARNING_ISSUED: {
         "emoji": "⚠️",
         "description": "Warning conditions",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.CONFIG_CHANGE: {
         "emoji": "🔧",
         "description": "Configuration changes",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.ANALYTICS_EVENT: {
         "emoji": "📊",
         "description": "Analytics and tracking events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.AGENT_PROCESSING: {
         "emoji": "🤖",
         "description": "Agent processing events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.CONVERSATION_EVENT: {
         "emoji": "💬",
         "description": "Conversation and interaction events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.ASSET_PROCESSING: {
         "emoji": "📸",
         "description": "Asset upload and processing",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.INSPIRATION_EVENT: {
         "emoji": "🎨",
         "description": "Inspiration capture events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.INFRASTRUCTURE_DEPLOY: {
         "emoji": "🏗️",
         "description": "Infrastructure deployment events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.BUSINESS_METRIC: {
         "emoji": "📈",
         "description": "Business metric events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.SEARCH_OPERATION: {
         "emoji": "🔍",
         "description": "Search and discovery events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.BACKGROUND_JOB: {
         "emoji": "⚙️",
         "description": "Background job processing",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.NOTIFICATION_SENT: {
         "emoji": "📧",
         "description": "Notification events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.SECURITY_EVENT: {
         "emoji": "🔒",
         "description": "Security-related events",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.SCHEDULED_TASK: {
         "emoji": "⏰",
         "description": "Scheduled task execution",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.EXTERNAL_SERVICE: {
         "emoji": "🌐",
         "description": "External service integration",
-        "is_default": True
+        "is_default": True,
     },
     LogEvent.AUDIT_TRAIL: {
         "emoji": "📋",
         "description": "Audit trail events",
-        "is_default": True
+        "is_default": True,
     },
 }
-

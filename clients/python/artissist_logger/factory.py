@@ -8,7 +8,6 @@ from .adapters.base import LogAdapter
 from .adapters.console import ConsoleAdapter
 from .adapters.file import FileAdapter
 from .context import LoggerContext
-from .emoji import EmojiResolver
 from .logger import Logger
 from .generated_types import (
     AgentLoggerConfig,
