@@ -14,7 +14,7 @@ from .generated_types import (
     PerformanceMetrics,
     ErrorDetails,
     LoggingContext,
-    LogEntry,  # Re-exported for adapters and other modules  # noqa: F401
+    LogEntry,  # noqa: F401,W0611  # Re-exported for adapters and other modules
 )
 
 

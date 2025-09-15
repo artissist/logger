@@ -6,7 +6,9 @@
 disable=too-many-instance-attributes,too-many-function-args,trailing-whitespace,
     too-few-public-methods, missing-function-docstring, too-many-arguments, missing-class-docstring,
     too-many-lines, line-too-long, missing-final-newline, too-many-positional-arguments,
-    broad-exception-caught, duplicate-code
+    broad-exception-caught, duplicate-code,
+    import-outside-toplevel,  # C0415 - Used for lazy loading adapters
+    unused-import  # W0611 - Used for re-exports in types.py
     
 
 [DESIGN]
