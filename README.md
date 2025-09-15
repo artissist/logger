@@ -2,6 +2,21 @@
 
 Unified, platform-agnostic logging library with emoji-based events and rich context support for both Python and TypeScript projects.
 
+## ⚠️ Breaking Changes in v0.2.0
+
+**Version 0.2.0 introduces breaking changes** due to migration to Smithy IDL-generated types for complete cross-language consistency. While core logging functionality remains the same, **type definitions and some APIs have changed**.
+
+🔗 **[View Complete Migration Guide →](./BREAKING_CHANGES.md)**
+
+**Quick Summary:**
+- All types now generated from Smithy IDL (better consistency)
+- Enum-based LogLevel/LogEvent instead of string unions
+- Standardized emoji mappings across languages
+- Enhanced null-value handling in TypeScript
+- Some factory method signature changes
+
+**Recommended Action**: Review the migration guide before upgrading from v0.1.x
+
 ## Table of Contents
 
 - [Features](#features)

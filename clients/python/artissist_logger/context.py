@@ -39,8 +39,22 @@ class LoggerContext:
             result.update(self.custom_context)
         return result
 
-    def merge(self, other: "LoggerContext") -> "LoggerContext":
+    def merge(self, other) -> "LoggerContext":
         """Merge with another context, with other taking precedence"""
+        # Handle both LoggerContext and LoggingContext
+        if hasattr(other, "custom_context"):
+            # It's a LoggerContext
+            return LoggerContext(
+                correlation_id=other.correlation_id or self.correlation_id,
+                user_id=other.user_id or self.user_id,
+                session_id=other.session_id or self.session_id,
+                request_id=other.request_id or self.request_id,
+                trace_id=other.trace_id or self.trace_id,
+                span_id=other.span_id or self.span_id,
+                custom_context={**self.custom_context, **other.custom_context},
+            )
+
+        # It's a LoggingContext (from generated types)
         return LoggerContext(
             correlation_id=other.correlation_id or self.correlation_id,
             user_id=other.user_id or self.user_id,
@@ -48,7 +62,7 @@ class LoggerContext:
             request_id=other.request_id or self.request_id,
             trace_id=other.trace_id or self.trace_id,
             span_id=other.span_id or self.span_id,
-            custom_context={**self.custom_context, **other.custom_context},
+            custom_context=self.custom_context,
         )
 
     @classmethod

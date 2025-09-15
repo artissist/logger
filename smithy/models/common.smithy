@@ -1,6 +1,6 @@
 $version: "2"
 
-namespace mosaic.logging
+namespace artissist.logging
 
 /// Timestamp in ISO-8601 format
 @timestampFormat("date-time")

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Infrastructure deployment integration example using AWS CDK with Mosaic Logger
+ * Infrastructure deployment integration example using AWS CDK with Artissist Logger
  * This example demonstrates how to integrate the logger into AWS CDK infrastructure deployments
  */
 
@@ -14,10 +14,10 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 
-// Import Mosaic Logger (would be actual import in production)
-// import { LoggerFactory } from '@mosaic/logger';
+// Import Artissist Logger (would be actual import in production)
+// import { LoggerFactory } from '@artissist/logger';
 
-// Mock Mosaic Logger for CDK example
+// Mock Artissist Logger for CDK example
 class MockInfrastructureLogger {
   private service: string;
   private environment: string;
@@ -101,9 +101,9 @@ class MockLoggerFactory {
 }
 
 /**
- * Mosaic Data Stack - demonstrates infrastructure logging
+ * Artissist Data Stack - demonstrates infrastructure logging
  */
-export class MosaicDataStack extends cdk.Stack {
+export class ArtissistDataStack extends cdk.Stack {
   private logger: MockInfrastructureLogger;
   private deploymentStartTime: number;
 
@@ -114,7 +114,7 @@ export class MosaicDataStack extends cdk.Stack {
     
     // Initialize infrastructure logger
     this.logger = MockLoggerFactory.createInfrastructureLogger({
-      stackName: 'mosaic-data-stack',
+      stackName: 'artissist-data-stack',
       environment: this.getEnvironment(),
       emojis: this.getEnvironment() === 'development',
       context: {
@@ -129,7 +129,7 @@ export class MosaicDataStack extends cdk.Stack {
     });
 
     this.logger.info(
-      'Initiating Mosaic Data Stack deployment',
+      'Initiating Artissist Data Stack deployment',
       {
         event: 'INFRASTRUCTURE_DEPLOY',
         metadata: {
@@ -147,7 +147,7 @@ export class MosaicDataStack extends cdk.Stack {
     // Log deployment completion in constructor
     const deploymentDuration = Date.now() - this.deploymentStartTime;
     this.logger.info(
-      'Mosaic Data Stack deployment completed',
+      'Artissist Data Stack deployment completed',
       {
         event: 'INFRASTRUCTURE_DEPLOY',
         metadata: {
@@ -224,7 +224,7 @@ export class MosaicDataStack extends cdk.Stack {
         event: 'DATABASE_OPERATION',
         metadata: {
           operation: 'create_dynamodb_table',
-          tableName: 'Mosaic-Projects',
+          tableName: 'Artissist-Projects',
           billingMode: 'PAY_PER_REQUEST'
         }
       }
@@ -232,7 +232,7 @@ export class MosaicDataStack extends cdk.Stack {
 
     try {
       const table = new dynamodb.Table(this, 'ProjectsTable', {
-        tableName: `Mosaic-Projects-${this.getEnvironment()}`,
+        tableName: `Artissist-Projects-${this.getEnvironment()}`,
         partitionKey: {
           name: 'PK',
           type: dynamodb.AttributeType.STRING
@@ -318,7 +318,7 @@ export class MosaicDataStack extends cdk.Stack {
 
     try {
       const bucket = new s3.Bucket(this, 'AssetsBucket', {
-        bucketName: `mosaic-assets-${this.getEnvironment()}-${this.account}`,
+        bucketName: `artissist-assets-${this.getEnvironment()}-${this.account}`,
         encryption: s3.BucketEncryption.S3_MANAGED,
         blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
         versioned: this.getEnvironment() === 'production',
@@ -408,7 +408,7 @@ export class MosaicDataStack extends cdk.Stack {
     );
 
     const bucket = new s3.Bucket(this, 'AnalyticsBucket', {
-      bucketName: `mosaic-analytics-${this.getEnvironment()}-${this.account}`,
+      bucketName: `artissist-analytics-${this.getEnvironment()}-${this.account}`,
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       lifecycleRules: [
@@ -466,7 +466,7 @@ export class MosaicDataStack extends cdk.Stack {
     );
 
     const lambdaFunction = new lambda.Function(this, 'ApiFunction', {
-      functionName: `mosaic-api-${this.getEnvironment()}`,
+      functionName: `artissist-api-${this.getEnvironment()}`,
       runtime: lambda.Runtime.NODEJS_18_X,
       architecture: lambda.Architecture.ARM_64,
       handler: 'index.handler',
@@ -476,7 +476,7 @@ export class MosaicDataStack extends cdk.Stack {
           return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: 'Mosaic API Lambda function' })
+            body: JSON.stringify({ message: 'Artissist API Lambda function' })
           };
         };
       `),
@@ -529,9 +529,9 @@ export class MosaicDataStack extends cdk.Stack {
       }
     );
 
-    const api = new apigateway.RestApi(this, 'MosaicApi', {
-      restApiName: `mosaic-api-${this.getEnvironment()}`,
-      description: 'Mosaic Platform API',
+    const api = new apigateway.RestApi(this, 'ArtissistApi', {
+      restApiName: `artissist-api-${this.getEnvironment()}`,
+      description: 'Artissist Platform API',
       deployOptions: {
         stageName: this.getEnvironment(),
         loggingLevel: apigateway.MethodLoggingLevel.INFO,
@@ -594,14 +594,14 @@ export class MosaicDataStack extends cdk.Stack {
 
     // Application logs
     new logs.LogGroup(this, 'ApplicationLogGroup', {
-      logGroupName: `/mosaic/${this.getEnvironment()}/application`,
+      logGroupName: `/artissist/${this.getEnvironment()}/application`,
       retention: logs.RetentionDays.ONE_WEEK,
       removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     // Error logs
     new logs.LogGroup(this, 'ErrorLogGroup', {
-      logGroupName: `/mosaic/${this.getEnvironment()}/errors`,
+      logGroupName: `/artissist/${this.getEnvironment()}/errors`,
       retention: logs.RetentionDays.ONE_MONTH,
       removalPolicy: cdk.RemovalPolicy.DESTROY
     });
@@ -636,10 +636,10 @@ export class MosaicDataStack extends cdk.Stack {
     );
 
     // Create user role for frontend access
-    const userRole = new iam.Role(this, 'MosaicUserRole', {
-      roleName: `MosaicUserRole-${this.getEnvironment()}`,
+    const userRole = new iam.Role(this, 'ArtissistUserRole', {
+      roleName: `ArtissistUserRole-${this.getEnvironment()}`,
       assumedBy: new iam.WebIdentityPrincipal('cognito-identity.amazonaws.com'),
-      description: 'Role for authenticated Mosaic users'
+      description: 'Role for authenticated Artissist users'
     });
 
     // Grant limited access to resources
@@ -711,25 +711,25 @@ export class MosaicDataStack extends cdk.Stack {
 /**
  * CDK App with logging
  */
-class MosaicApp extends cdk.App {
+class ArtissistApp extends cdk.App {
   private logger: MockInfrastructureLogger;
 
   constructor() {
     super();
 
     this.logger = MockLoggerFactory.createInfrastructureLogger({
-      stackName: 'mosaic-app',
+      stackName: 'artissist-app',
       environment: process.env.CDK_ENV || 'development',
       emojis: process.env.CDK_ENV !== 'production',
       context: {
-        appName: 'mosaic-platform',
+        appName: 'artissist-platform',
         version: '1.0.0',
         deploymentTrigger: process.env.DEPLOYMENT_TRIGGER || 'manual'
       }
     });
 
     this.logger.info(
-      'Mosaic CDK Application initialization',
+      'Artissist CDK Application initialization',
       {
         event: 'SYSTEM_START',
         metadata: {
@@ -741,7 +741,7 @@ class MosaicApp extends cdk.App {
     );
 
     // Create stacks
-    new MosaicDataStack(this, 'MosaicDataStack', {
+    new ArtissistDataStack(this, 'ArtissistDataStack', {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
         region: process.env.CDK_DEFAULT_REGION || 'us-east-1'
@@ -749,7 +749,7 @@ class MosaicApp extends cdk.App {
     });
 
     this.logger.info(
-      'Mosaic CDK Application setup complete',
+      'Artissist CDK Application setup complete',
       {
         event: 'SYSTEM_START',
         metadata: {
@@ -763,7 +763,7 @@ class MosaicApp extends cdk.App {
 }
 
 // Bootstrap the application
-const app = new MosaicApp();
+const app = new ArtissistApp();
 
 // Export for testing
-export { MosaicDataStack, MosaicApp };
+export { ArtissistDataStack, ArtissistApp };

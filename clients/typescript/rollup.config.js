@@ -58,15 +58,18 @@ const browserConfig = {
             export const existsSync = () => false;
             export const mkdirSync = () => {};
             export const statSync = () => ({ size: 0, mtime: new Date() });
-            export const createWriteStream = () => ({ 
+            export const createWriteStream = () => ({
               write: () => {},
               end: () => {},
               on: () => {},
-              once: () => {}
+              once: () => {},
+              destroy: () => {}
             });
             export const renameSync = () => {};
             export const readdirSync = () => [];
             export const unlinkSync = () => {};
+            export const accessSync = () => {};
+            export const constants = { W_OK: 2 };
             export default {
               existsSync,
               mkdirSync,
@@ -74,7 +77,9 @@ const browserConfig = {
               createWriteStream,
               renameSync,
               readdirSync,
-              unlinkSync
+              unlinkSync,
+              accessSync,
+              constants
             };
           `;
         }

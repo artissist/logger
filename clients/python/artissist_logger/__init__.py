@@ -6,7 +6,7 @@ from .context import LoggerContext
 from .emoji import EmojiMapping, EmojiResolver
 from .factory import LoggerFactory
 from .logger import Logger
-from .types import ErrorInfo, LogEvent, LogLevel, LogMessage, LogMetrics
+from .types import LogEvent, LogLevel, LogEntry
 
 __version__ = "1.0.0"
 __author__ = "Artissist"
@@ -19,7 +19,5 @@ __all__ = [
     "EmojiMapping",
     "LogLevel",
     "LogEvent",
-    "LogMessage",
-    "LogMetrics",
-    "ErrorInfo",
+    "LogEntry",
 ]

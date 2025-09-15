@@ -1,15 +1,13 @@
 $version: "2"
 
-namespace mosaic.logging
+namespace artissist.logging
 
 /// Primary log entry structure
 structure LogEntry {
     /// Unique identifier for this log entry
-    @required
     logId: LogId
 
     /// Timestamp when the log entry was created
-    @required
     timestamp: Timestamp
 
     /// Severity level of the log entry
@@ -26,7 +24,6 @@ structure LogEntry {
     service: ServiceName
 
     /// Deployment environment (dev, staging, prod)
-    @required
     environment: Environment
 
     /// Pre-defined event type for consistent categorization

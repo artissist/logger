@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Client generation script for Mosaic Logger
+# Client generation script for Artissist Logger
 # This script generates TypeScript and Python clients from Smithy models
 
 set -e  # Exit on any error
@@ -10,7 +10,7 @@ LOGGER_DIR="$(dirname "$SCRIPT_DIR")"
 SMITHY_DIR="$LOGGER_DIR/smithy"
 GENERATED_DIR="$LOGGER_DIR/generated"
 
-echo "🔧 Mosaic Logger Client Generation"
+echo "🔧 Artissist Logger Client Generation"
 echo "================================="
 echo "Smithy directory: $SMITHY_DIR"
 echo "Output directory: $GENERATED_DIR"

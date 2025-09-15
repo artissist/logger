@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203, W503
+exclude =
+    .git,
+    __pycache__,
+    venv,
+    .venv,
+    .eggs,
+    *.egg,
+    build,
+    dist
+
+# Allow re-exports in types.py
+per-file-ignores =
+    artissist_logger/types.py:F401
+    artissist_logger/__init__.py:F401

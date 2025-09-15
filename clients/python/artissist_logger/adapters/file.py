@@ -4,10 +4,11 @@ File output adapter for Artissist Logger Python client
 
 import asyncio
 import json
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Dict, Optional, TextIO
 
-from ..types import LogMessage
+from ..types import LogEntry
 from .base import LogAdapter
 
 try:
@@ -37,7 +38,7 @@ class FileAdapter(LogAdapter):
         self._file_handle: Optional[TextIO] = None
         self._lock = asyncio.Lock() if self.use_async else None
 
-    async def write(self, message: LogMessage, formatted_message: str):
+    async def write(self, message: LogEntry, formatted_message: str):
         """Write message to file"""
         if self.use_async and self._lock:
             async with self._lock:
@@ -45,7 +46,7 @@ class FileAdapter(LogAdapter):
         else:
             await self._write_sync(message, formatted_message)
 
-    async def _write_async(self, message: LogMessage, formatted_message: str):
+    async def _write_async(self, message: LogEntry, formatted_message: str):
         """Async file writing using aiofiles"""
         if not HAS_AIOFILES:
             await self._write_sync(message, formatted_message)
@@ -57,7 +58,7 @@ class FileAdapter(LogAdapter):
 
         async with aiofiles.open(self.file_path, "a", encoding="utf-8") as f:
             if self.format == "json":
-                log_data = message.to_dict()
+                log_data = asdict(message)
                 await f.write(json.dumps(log_data) + "\n")
             else:
                 await f.write(formatted_message + "\n")
@@ -65,17 +66,17 @@ class FileAdapter(LogAdapter):
                 # Add structured data for errors and metrics
                 if message.error:
                     error_line = (
-                        f"  ERROR: {json.dumps(message.error.to_dict())}"
+                        f"  ERROR: {json.dumps(asdict(message.error))}"
                     )
                     await f.write(error_line + "\n")
 
                 if message.metrics:
                     metrics_line = (
-                        f"  METRICS: {json.dumps(message.metrics.to_dict())}"
+                        f"  METRICS: {json.dumps(asdict(message.metrics))}"
                     )
                     await f.write(metrics_line + "\n")
 
-    async def _write_sync(self, message: LogMessage, formatted_message: str):
+    async def _write_sync(self, message: LogEntry, formatted_message: str):
         """Synchronous file writing"""
         # Check for rotation
         if self.rotate and self._should_rotate():
@@ -83,7 +84,7 @@ class FileAdapter(LogAdapter):
 
         with open(self.file_path, "a", encoding="utf-8") as f:
             if self.format == "json":
-                log_data = message.to_dict()
+                log_data = asdict(message)
                 f.write(json.dumps(log_data) + "\n")
             else:
                 f.write(formatted_message + "\n")
@@ -91,13 +92,13 @@ class FileAdapter(LogAdapter):
                 # Add structured data for errors and metrics
                 if message.error:
                     error_line = (
-                        f"  ERROR: {json.dumps(message.error.to_dict())}"
+                        f"  ERROR: {json.dumps(asdict(message.error))}"
                     )
                     f.write(error_line + "\n")
 
                 if message.metrics:
                     metrics_line = (
-                        f"  METRICS: {json.dumps(message.metrics.to_dict())}"
+                        f"  METRICS: {json.dumps(asdict(message.metrics))}"
                     )
                     f.write(metrics_line + "\n")
 

@@ -2,7 +2,7 @@
 import { LoggerFactory } from '../factory';
 import { Logger } from '../logger';
 import { EmojiResolver } from '../emoji';
-import type { LogLevel } from '../types';
+import { LogLevel } from '../types';
 
 // Mock environment variables
 const originalEnv = process.env;
@@ -27,14 +27,14 @@ describe('LoggerFactory', () => {
         defaultService: 'test-service',
         defaultEnvironment: 'test',
         defaultEmojis: true,
-        defaultLevel: 'DEBUG',
+        defaultLevel: LogLevel.DEBUG,
       });
 
       const config = LoggerFactory.getDefaultConfig();
       expect(config.defaultService).toBe('test-service');
       expect(config.defaultEnvironment).toBe('test');
       expect(config.defaultEmojis).toBe(true);
-      expect(config.defaultLevel).toBe('DEBUG');
+      expect(config.defaultLevel).toBe(LogLevel.DEBUG);
     });
 
     it('should partially update configuration', () => {
@@ -93,7 +93,7 @@ describe('LoggerFactory', () => {
         service: 'test-service',
         environment: 'production',
         emojis: false,
-        level: 'ERROR',
+        level: LogLevel.ERROR,
       });
 
       expect(logger).toBeInstanceOf(Logger);
@@ -255,12 +255,12 @@ describe('LoggerFactory', () => {
   describe('createInfrastructureLogger', () => {
     it('should create infrastructure logger with stack-specific service name', () => {
       const logger = LoggerFactory.createInfrastructureLogger({
-        stackName: 'mosaic-prod-stack',
+        stackName: 'artissist-prod-stack',
         environment: 'production',
       });
 
       expect(logger).toBeInstanceOf(Logger);
-      expect(logger.getService()).toBe('infra-mosaic-prod-stack');
+      expect(logger.getService()).toBe('infra-artissist-prod-stack');
     });
 
     it('should default to infrastructure service name', () => {
@@ -485,7 +485,7 @@ describe('LoggerFactory', () => {
       const logger = LoggerFactory.create({
         service: 'test',
         environment: 'test',
-        level: 'ERROR' as LogLevel,
+        level: LogLevel.ERROR as LogLevel,
       });
 
       expect(logger).toBeInstanceOf(Logger);

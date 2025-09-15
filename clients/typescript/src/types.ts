@@ -1,91 +1,56 @@
-// Type definitions for Mosaic Logger TypeScript client
-// These types mirror the Smithy model definitions
+// Type definitions for Artissist Logger TypeScript client
+// Import and re-export ONLY generated Smithy types
 
-export type LogLevel = 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
+// Create a more permissive partial type that allows null values for user convenience
+type NullablePartial<T> = {
+  [P in keyof T]?: T[P] | null;
+};
 
-export type LogEvent =
-  | 'SYSTEM_START'
-  | 'SYSTEM_STOP'
-  | 'USER_AUTH'
-  | 'USER_AUTHZ'
-  | 'PROJECT_LIFECYCLE'
-  | 'DATABASE_OPERATION'
-  | 'API_REQUEST'
-  | 'PERFORMANCE_METRIC'
-  | 'ERROR_OCCURRED'
-  | 'WARNING_ISSUED'
-  | 'CONFIG_CHANGE'
-  | 'ANALYTICS_EVENT'
-  | 'AGENT_PROCESSING'
-  | 'CONVERSATION_EVENT'
-  | 'ASSET_PROCESSING'
-  | 'INSPIRATION_EVENT'
-  | 'INFRASTRUCTURE_DEPLOY'
-  | 'BUSINESS_METRIC'
-  | 'SEARCH_OPERATION'
-  | 'BACKGROUND_JOB'
-  | 'NOTIFICATION_SENT'
-  | 'SECURITY_EVENT'
-  | 'SCHEDULED_TASK'
-  | 'EXTERNAL_SERVICE'
-  | 'AUDIT_TRAIL';
+// Import enums as values and types as types
+import { LogEvent, LogLevel } from './generated-types';
+import type {
+  CustomEventMap,
+  Document,
+  EmojiMapping,
+  Environment,
+  ErrorContext,
+  ErrorDetails,
+  LogEntry,
+  LogId,
+  LogMetadata,
+  LoggingContext,
+  MetricsMap,
+  PerformanceMetrics,
+  RequestId,
+  ServiceName,
+  SessionId,
+  TagMap,
+  Timestamp,
+  UserId,
+} from './generated-types';
 
-export interface LogEntry {
-  logId?: string | null;
-  timestamp?: Date | null;
-  level?: LogLevel | null;
-  message?: string | null;
-  service?: string | null;
-  environment?: string | null;
-  event?: LogEvent | null;
-  includeEmoji?: boolean | null;
-  context?: LoggingContext | null;
-  metadata?: LogMetadata | null;
-  metrics?: PerformanceMetrics | null;
-  error?: ErrorDetails | null;
-}
-
-export interface LoggingContext {
-  correlationId?: string;
-  traceId?: string;
-  spanId?: string;
-  userId?: string;
-  sessionId?: string;
-  requestId?: string;
-  parentCorrelationId?: string;
-}
-
-export type LogMetadata = Record<string, unknown>;
-
-export interface PerformanceMetrics {
-  durationMs?: number;
-  memoryBytes?: number;
-  cpuPercent?: number;
-  counters?: Record<string, number>;
-}
-
-export interface ErrorDetails {
-  type: string;
-  message: string;
-  stackTrace?: string;
-  code?: string;
-  context?: ErrorContext;
-}
-
-export interface ErrorContext {
-  file?: string;
-  line?: number;
-  function?: string;
-  data?: unknown;
-}
-
-export interface EmojiMapping {
-  emoji: string;
-  description: string;
-  isDefault?: boolean;
-}
-
-export type CustomEventMap = Record<string, EmojiMapping>;
+// Re-export everything
+export { LogLevel, LogEvent };
+export type {
+  LogEntry,
+  LoggingContext,
+  LogMetadata,
+  PerformanceMetrics,
+  ErrorDetails,
+  ErrorContext,
+  EmojiMapping,
+  CustomEventMap,
+  TagMap,
+  MetricsMap,
+  ServiceName,
+  Environment,
+  LogId,
+  UserId,
+  SessionId,
+  RequestId,
+  Timestamp,
+  Document,
+};
 
 // Logger configuration interfaces
 export interface LoggerConfig {
@@ -134,13 +99,13 @@ export interface LoggerFactoryConfig {
 }
 
 export interface Logger {
-  trace(message: string, data?: Partial<LogEntry>): void;
-  debug(message: string, data?: Partial<LogEntry>): void;
-  info(message: string, data?: Partial<LogEntry>): void;
-  warn(message: string, data?: Partial<LogEntry>): void;
-  error(message: string, data?: Partial<LogEntry>): void;
-  fatal(message: string, data?: Partial<LogEntry>): void;
-  log(level: LogLevel, message: string, data?: Partial<LogEntry>): void;
+  trace(message: string, data?: NullablePartial<LogEntry>): void;
+  debug(message: string, data?: NullablePartial<LogEntry>): void;
+  info(message: string, data?: NullablePartial<LogEntry>): void;
+  warn(message: string, data?: NullablePartial<LogEntry>): void;
+  error(message: string, data?: NullablePartial<LogEntry>): void;
+  fatal(message: string, data?: NullablePartial<LogEntry>): void;
+  log(level: LogLevel, message: string, data?: NullablePartial<LogEntry>): void;
   child(context: Partial<LoggingContext>): Logger;
   flush(): Promise<void>;
 }

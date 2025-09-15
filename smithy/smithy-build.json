@@ -1,4 +1,18 @@
 {
     "version": "1.0",
-    "sources": ["models"]
+    "sources": ["models"],
+    "projections": {
+        "typescript": {
+            "plugins": {
+                "build-info": {},
+                "sources": {}
+            }
+        },
+        "python": {
+            "plugins": {
+                "build-info": {},
+                "sources": {}
+            }
+        }
+    }
 }

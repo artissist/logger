@@ -1,11 +1,20 @@
-// Emoji mapping utilities for Mosaic Logger
+// Emoji mapping utilities for Artissist Logger
 import type { CustomEventMap, EmojiMapping, LogEvent } from './types';
+import { TYPED_EMOJI_MAPPINGS } from './generated-types';
 
 /**
  * Default emoji mappings for predefined events
- * Maps LogEvent enum values to their corresponding emojis and descriptions
+ * Now uses the generated Smithy types for consistency across languages
+ *
+ * @deprecated Use TYPED_EMOJI_MAPPINGS from generated types for better type safety
  */
-export const DEFAULT_EMOJI_MAPPINGS: Record<LogEvent, EmojiMapping> = {
+export const DEFAULT_EMOJI_MAPPINGS: Record<LogEvent, EmojiMapping> = TYPED_EMOJI_MAPPINGS;
+
+/**
+ * Legacy emoji mappings for backwards compatibility
+ * Contains the old emoji mappings in case users need to reference them
+ */
+export const LEGACY_EMOJI_MAPPINGS: Record<LogEvent, EmojiMapping> = {
   SYSTEM_START: { emoji: '🚀', description: 'System startup or initialization', isDefault: true },
   SYSTEM_STOP: { emoji: '🛑', description: 'System shutdown or termination', isDefault: true },
   USER_AUTH: { emoji: '👤', description: 'User authentication events', isDefault: true },
@@ -37,9 +46,10 @@ export const DEFAULT_EMOJI_MAPPINGS: Record<LogEvent, EmojiMapping> = {
   },
   BUSINESS_METRIC: { emoji: '📈', description: 'Business metric events', isDefault: true },
   SEARCH_OPERATION: { emoji: '🔍', description: 'Search and discovery events', isDefault: true },
-  BACKGROUND_JOB: { emoji: '🔄', description: 'Background job processing', isDefault: true },
+  // BREAKING CHANGE: These emojis have been standardized
+  BACKGROUND_JOB: { emoji: '🔄', description: 'Background job processing', isDefault: true }, // was ⚙️
   NOTIFICATION_SENT: { emoji: '📧', description: 'Notification events', isDefault: true },
-  SECURITY_EVENT: { emoji: '🔐', description: 'Security-related events', isDefault: true },
+  SECURITY_EVENT: { emoji: '🔐', description: 'Security-related events', isDefault: true }, // was 🔒
   SCHEDULED_TASK: { emoji: '⏰', description: 'Scheduled task execution', isDefault: true },
   EXTERNAL_SERVICE: { emoji: '🌐', description: 'External service integration', isDefault: true },
   AUDIT_TRAIL: { emoji: '📋', description: 'Audit trail events', isDefault: true },

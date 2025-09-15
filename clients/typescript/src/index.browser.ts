@@ -1,4 +1,4 @@
-// Browser-compatible entry point for Mosaic Logger TypeScript client
+// Browser-compatible entry point for Artissist Logger TypeScript client
 // Excludes Node.js-only modules like FileAdapter
 
 export * from './types';
@@ -19,7 +19,7 @@ export type {
 } from './types';
 
 // Export factory and logger classes
-export { LoggerFactory } from './factory';
+export { LoggerFactory } from './factory.browser';
 export { Logger } from './logger';
 
 // Export browser-compatible adapters only

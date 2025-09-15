@@ -1,12 +1,6 @@
-// Console adapter with emoji support for Mosaic Logger
-import type {
-  ErrorDetails,
-  LogAdapter,
-  LogEntry,
-  LogLevel,
-  LogMetadata,
-  PerformanceMetrics,
-} from '../types';
+// Console adapter with emoji support for Artissist Logger
+import { LogLevel } from '../types';
+import type { ErrorDetails, LogAdapter, LogEntry, LogMetadata, PerformanceMetrics } from '../types';
 import { EmojiResolver } from '../emoji';
 
 export interface ConsoleAdapterOptions {
@@ -38,12 +32,12 @@ export class ConsoleAdapter implements LogAdapter {
   };
 
   private static readonly LOG_LEVEL_ORDER: Record<LogLevel, number> = {
-    TRACE: 0,
-    DEBUG: 1,
-    INFO: 2,
-    WARN: 3,
-    ERROR: 4,
-    FATAL: 5,
+    [LogLevel.TRACE]: 0,
+    [LogLevel.DEBUG]: 1,
+    [LogLevel.INFO]: 2,
+    [LogLevel.WARN]: 3,
+    [LogLevel.ERROR]: 4,
+    [LogLevel.FATAL]: 5,
   };
 
   constructor(options: ConsoleAdapterOptions = {}) {
@@ -51,7 +45,7 @@ export class ConsoleAdapter implements LogAdapter {
       enableColors: options.enableColors ?? true,
       enableEmojis: options.enableEmojis ?? false,
       timestampFormat: options.timestampFormat ?? 'iso',
-      logLevel: options.logLevel ?? 'INFO',
+      logLevel: options.logLevel ?? LogLevel.INFO,
       emojiResolver: options.emojiResolver ?? new EmojiResolver(options.enableEmojis ?? false),
     };
 
@@ -64,7 +58,7 @@ export class ConsoleAdapter implements LogAdapter {
    */
   write(entry: LogEntry): void {
     // Coalesce null/undefined level to default 'INFO' before filtering and switching
-    const level = entry.level ?? 'INFO';
+    const level = entry.level ?? LogLevel.INFO;
 
     // Check if this log entry should be output based on log level
     if (!this.shouldLog(level)) {
@@ -75,21 +69,21 @@ export class ConsoleAdapter implements LogAdapter {
 
     // Choose appropriate console method based on log level
     switch (level) {
-      case 'TRACE':
-      case 'DEBUG':
+      case LogLevel.TRACE:
+      case LogLevel.DEBUG:
         // eslint-disable-next-line no-console
         console.debug(formattedMessage);
         break;
-      case 'INFO':
+      case LogLevel.INFO:
         // eslint-disable-next-line no-console
         console.info(formattedMessage);
         break;
-      case 'WARN':
+      case LogLevel.WARN:
         // eslint-disable-next-line no-console
         console.warn(formattedMessage);
         break;
-      case 'ERROR':
-      case 'FATAL':
+      case LogLevel.ERROR:
+      case LogLevel.FATAL:
         // eslint-disable-next-line no-console
         console.error(formattedMessage);
         break;
@@ -129,7 +123,9 @@ export class ConsoleAdapter implements LogAdapter {
     const parts: string[] = [];
 
     // Timestamp
-    const timestamp = this.formatTimestamp(entry.timestamp ?? new Date());
+    const timestamp = this.formatTimestamp(
+      entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp ?? new Date())
+    );
     if (this.options.enableColors) {
       parts.push(`${ConsoleAdapter.COLORS.DIM}${timestamp}${ConsoleAdapter.COLORS.RESET}`);
     } else {
@@ -137,7 +133,7 @@ export class ConsoleAdapter implements LogAdapter {
     }
 
     // Log level with color
-    const levelStr = this.formatLogLevel(entry.level ?? 'INFO');
+    const levelStr = this.formatLogLevel(entry.level ?? LogLevel.INFO);
     parts.push(levelStr);
 
     // Service name
@@ -257,13 +253,13 @@ export class ConsoleAdapter implements LogAdapter {
   private formatMetrics(metrics: PerformanceMetrics): string {
     const metricParts: string[] = [];
 
-    if (metrics.durationMs !== undefined) {
+    if (metrics.durationMs !== undefined && metrics.durationMs !== null) {
       metricParts.push(`${metrics.durationMs}ms`);
     }
-    if (metrics.memoryBytes !== undefined) {
+    if (metrics.memoryBytes !== undefined && metrics.memoryBytes !== null) {
       metricParts.push(`${Math.round(metrics.memoryBytes / 1024)}KB`);
     }
-    if (metrics.cpuPercent !== undefined) {
+    if (metrics.cpuPercent !== undefined && metrics.cpuPercent !== null) {
       metricParts.push(`${metrics.cpuPercent.toFixed(1)}% CPU`);
     }
 

@@ -1,4 +1,4 @@
-// Main entry point for Mosaic Logger TypeScript client
+// Main entry point for Artissist Logger TypeScript client
 export * from './factory';
 export * from './types';
 export * from './context';

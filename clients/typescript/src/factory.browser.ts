@@ -1,4 +1,5 @@
 // Browser-compatible factory for creating Logger instances
+import { LogLevel } from './types';
 import type { LogAdapter, LoggerConfig, LoggerFactoryConfig } from './types';
 import { Logger } from './logger';
 import { EmojiResolver } from './emoji';
@@ -14,7 +15,7 @@ export class LoggerFactory {
     defaultEnvironment: 'development',
     defaultEmojis: false,
     defaultAdapters: ['console'],
-    defaultLevel: 'INFO',
+    defaultLevel: LogLevel.INFO,
   };
 
   private static globalEmojiResolver?: EmojiResolver;
@@ -49,7 +50,7 @@ export class LoggerFactory {
     const frontendConfig: LoggerConfig = {
       service: config.service ?? 'frontend-app',
       environment: config.environment ?? this.defaultConfig.defaultEnvironment ?? 'development',
-      level: config.level ?? 'INFO',
+      level: config.level ?? LogLevel.INFO,
       emojis: config.emojis ?? true,
       adapters: config.adapters ?? ['console'],
       context: {
@@ -68,7 +69,7 @@ export class LoggerFactory {
     const backendConfig: LoggerConfig = {
       service: config.service ?? 'backend-service',
       environment: config.environment ?? this.defaultConfig.defaultEnvironment ?? 'development',
-      level: config.level ?? 'INFO',
+      level: config.level ?? LogLevel.INFO,
       emojis: config.emojis ?? false,
       adapters: config.adapters ?? ['console'], // File adapter handled by polyfills
       context: {
@@ -94,7 +95,7 @@ export class LoggerFactory {
     const agentConfig: LoggerConfig = {
       service: config.service ?? `agent-${config.agentId ?? 'unknown'}`,
       environment: config.environment ?? this.defaultConfig.defaultEnvironment ?? 'development',
-      level: config.level ?? 'INFO',
+      level: config.level ?? LogLevel.INFO,
       emojis: config.emojis ?? true,
       adapters: config.adapters ?? ['console'],
       context: {
@@ -120,7 +121,7 @@ export class LoggerFactory {
     const infraConfig: LoggerConfig = {
       service: config.service ?? 'infrastructure',
       environment: config.environment ?? this.defaultConfig.defaultEnvironment ?? 'development',
-      level: config.level ?? 'INFO',
+      level: config.level ?? LogLevel.INFO,
       emojis: config.emojis ?? false,
       adapters: config.adapters ?? ['console'], // File adapter handled by polyfills
       context: {
@@ -213,7 +214,7 @@ export class LoggerFactory {
       defaultEnvironment: 'development',
       defaultEmojis: false,
       defaultAdapters: ['console'],
-      defaultLevel: 'INFO',
+      defaultLevel: LogLevel.INFO,
     };
     this.globalEmojiResolver = undefined;
   }
