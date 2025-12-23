@@ -15,10 +15,12 @@ class ConsoleAdapter(LogAdapter):
 
     # ANSI color codes
     COLORS = {
+        LogLevel.TRACE: "\033[90m",  # Gray
         LogLevel.DEBUG: "\033[36m",  # Cyan
         LogLevel.INFO: "\033[32m",  # Green
         LogLevel.WARN: "\033[33m",  # Yellow
         LogLevel.ERROR: "\033[31m",  # Red
+        LogLevel.FATAL: "\033[35m",  # Magenta
     }
     RESET = "\033[0m"
 
@@ -29,11 +31,15 @@ class ConsoleAdapter(LogAdapter):
             sys.stderr if config.get("use_stderr", False) else sys.stdout
         )
 
+    def _is_tty(self) -> bool:
+        """Check if the output stream is a TTY."""
+        return hasattr(self.output_stream, "isatty") and self.output_stream.isatty()
+
     async def write(self, message: LogEntry, formatted_message: str):
         """Write message to console with optional color formatting"""
         output_message = formatted_message
 
-        if self.use_colors and sys.stdout.isatty():
+        if self.use_colors and self._is_tty():
             color = self.COLORS.get(message.level or LogLevel.INFO, "")
             output_message = f"{color}{formatted_message}{self.RESET}"
 
@@ -44,7 +50,7 @@ class ConsoleAdapter(LogAdapter):
             error_output = (
                 f"  ERROR: {message.error.type}: {message.error.message}"
             )
-            if self.use_colors and sys.stdout.isatty():
+            if self.use_colors and self._is_tty():
                 error_output = (
                     f"{self.COLORS[LogLevel.ERROR]}{error_output}{self.RESET}"
                 )
@@ -63,10 +69,8 @@ class ConsoleAdapter(LogAdapter):
                 metrics_output = "  METRICS: " + ", ".join(
                     f"{k}={v}" for k, v in metrics_dict.items()
                 )
-                if self.use_colors and sys.stdout.isatty():
-                    metrics_output = (
-                        f"\033[35m{metrics_output}{self.RESET}"  # \
-                    )
+                if self.use_colors and self._is_tty():
+                    metrics_output = f"\033[35m{metrics_output}{self.RESET}"
                 print(metrics_output, file=self.output_stream)
 
         # Flush output

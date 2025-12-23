@@ -9,6 +9,10 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 
 
+# Maximum number of custom context keys to prevent memory growth
+MAX_CUSTOM_CONTEXT_KEYS = 100
+
+
 @dataclass
 class LoggerContext:
     """Context information for distributed logging"""
@@ -87,6 +91,44 @@ class LoggerContext:
             span_id=headers.get("x-span-id"),
         )
 
+    def clear_custom_context(self) -> None:
+        """Clear all custom context entries."""
+        self.custom_context.clear()
+
+    def remove_custom_key(self, key: str) -> None:
+        """Remove a specific key from custom context."""
+        self.custom_context.pop(key, None)
+
+    def clear_all(self) -> None:
+        """Clear all context values, resetting to defaults."""
+        self.correlation_id = None
+        self.user_id = None
+        self.session_id = None
+        self.request_id = None
+        self.trace_id = None
+        self.span_id = None
+        self.custom_context.clear()
+
+    def set_custom(self, key: str, value: Any) -> None:
+        """
+        Set a custom context value with size limit enforcement.
+
+        Args:
+            key: The context key
+            value: The context value
+
+        Raises:
+            ValueError: If adding this key would exceed the maximum limit
+        """
+        if key not in self.custom_context:
+            if len(self.custom_context) >= MAX_CUSTOM_CONTEXT_KEYS:
+                raise ValueError(
+                    f"Cannot add custom context key '{key}': "
+                    f"maximum of {MAX_CUSTOM_CONTEXT_KEYS} keys reached. "
+                    "Use clear_custom_context() or remove_custom_key() first."
+                )
+        self.custom_context[key] = value
+
 
 # Context variable for async context propagation
 _current_context: ContextVar[Optional[LoggerContext]] = ContextVar(
@@ -117,14 +159,44 @@ class ContextManager:
         """Update current context with new values"""
         current = _current_context.get() or LoggerContext()
 
+        # Define known fields
+        known_fields = {
+            "correlation_id",
+            "user_id",
+            "session_id",
+            "request_id",
+            "trace_id",
+            "span_id",
+        }
+
         # Update fields
         for key, value in kwargs.items():
-            if hasattr(current, key):
+            if key in known_fields:
                 setattr(current, key, value)
             else:
-                current.custom_context[key] = value
+                # Use set_custom for size limit enforcement
+                current.set_custom(key, value)
 
         _current_context.set(current)
+
+    @staticmethod
+    def remove_custom_key(key: str):
+        """Remove a custom context key from current context."""
+        current = _current_context.get()
+        if current:
+            current.remove_custom_key(key)
+
+    @staticmethod
+    def clear_custom_context():
+        """Clear all custom context from current context."""
+        current = _current_context.get()
+        if current:
+            current.clear_custom_context()
+
+    @staticmethod
+    def reset_context():
+        """Reset current context to a fresh empty state."""
+        _current_context.set(LoggerContext())
 
     @classmethod
     def context(cls, **kwargs):

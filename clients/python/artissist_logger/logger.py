@@ -4,18 +4,64 @@ Core Logger implementation for Artissist Logger Python client
 """
 
 import asyncio
-from datetime import datetime
+import sys
+import threading
+from datetime import datetime, timezone
+from typing import Optional
 
 from .context import ContextManager, LoggerContext
 from .emoji import EmojiResolver
 from .types import LogEntryParams, LogLevel, LogEntry
 from .generated_types import LoggingContext, LoggerConfig
 
+# Maximum message length (from Smithy schema)
+MAX_MESSAGE_LENGTH = 4096
+
+# Log level ordering for filtering
+LOG_LEVEL_ORDER = {
+    LogLevel.TRACE: 0,
+    LogLevel.DEBUG: 1,
+    LogLevel.INFO: 2,
+    LogLevel.WARN: 3,
+    LogLevel.ERROR: 4,
+    LogLevel.FATAL: 5,
+}
+
+# Background event loop for sync methods
+_background_loop: Optional[asyncio.AbstractEventLoop] = None
+_background_thread: Optional[threading.Thread] = None
+_loop_lock = threading.Lock()
+
+
+def _get_background_loop() -> asyncio.AbstractEventLoop:
+    """Get or create a background event loop for sync methods."""
+    global _background_loop, _background_thread
+
+    with _loop_lock:
+        if _background_loop is None or not _background_loop.is_running():
+            _background_loop = asyncio.new_event_loop()
+
+            def run_loop():
+                asyncio.set_event_loop(_background_loop)
+                _background_loop.run_forever()
+
+            _background_thread = threading.Thread(
+                target=run_loop, daemon=True, name="artissist-logger-bg"
+            )
+            _background_thread.start()
+
+    return _background_loop
+
 
 class Logger:
     """Core logger implementation with emoji support and context management"""
 
-    def __init__(self, config: LoggerConfig, adapter_instances=None):
+    def __init__(
+        self,
+        config: LoggerConfig,
+        adapter_instances=None,
+        min_level: LogLevel = LogLevel.DEBUG,
+    ):
         """
         Initialize logger
 
@@ -23,10 +69,12 @@ class Logger:
             config: Logger configuration containing service, environment,
                 adapter names
             adapter_instances: Pre-created adapter instances (for factory use)
+            min_level: Minimum log level to process (default: DEBUG)
         """
         self.service = config.service or "unknown"
         self.environment = config.environment or "dev"
         self.emojis = config.emojis or False
+        self.min_level = min_level
 
         # Convert LoggingContext to LoggerContext for internal use
         if config.context:
@@ -48,6 +96,16 @@ class Logger:
             self.adapters = self._resolve_adapters(config.adapters or [])
 
         self.emoji_resolver = EmojiResolver()
+
+    def _should_log(self, level: LogLevel) -> bool:
+        """Check if a message at the given level should be logged."""
+        return LOG_LEVEL_ORDER.get(level, 0) >= LOG_LEVEL_ORDER.get(
+            self.min_level, 0
+        )
+
+    def set_level(self, level: LogLevel) -> None:
+        """Set the minimum log level."""
+        self.min_level = level
 
     def _resolve_adapters(self, adapter_names):
         """Resolve adapter names to adapter instances"""
@@ -79,6 +137,14 @@ class Logger:
             # Add other adapter mappings as needed
         return adapter_names
 
+    def _validate_message(self, message: str) -> str:
+        """Validate and potentially truncate message."""
+        if not message:
+            return ""
+        if len(message) > MAX_MESSAGE_LENGTH:
+            return message[: MAX_MESSAGE_LENGTH - 3] + "..."
+        return message
+
     async def log(self, params: LogEntryParams):
         """
         Core logging method
@@ -86,6 +152,13 @@ class Logger:
         Args:
             params: LogEntryParams containing all log entry parameters
         """
+        # Check log level filter
+        if not self._should_log(params.level):
+            return
+
+        # Validate message
+        validated_message = self._validate_message(params.message)
+
         # Merge contexts: base -> current -> provided
         current_context = ContextManager.get_context()
         final_context = self.base_context
@@ -104,11 +177,11 @@ class Logger:
             request_id=final_context.request_id,
         )
 
-        # Create log message
+        # Create log message with timezone-aware datetime
         log_message = LogEntry(
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             level=params.level,
-            message=params.message,
+            message=validated_message,
             service=self.service,
             event=params.event,
             context=logging_context,
@@ -135,10 +208,28 @@ class Logger:
 
         if tasks:
             try:
-                await asyncio.gather(*tasks, return_exceptions=True)
-            except Exception:
-                # Ignore adapter errors to prevent logging failures
-                pass
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                # Log adapter errors to stderr instead of silently ignoring
+                for i, result in enumerate(results):
+                    if isinstance(result, Exception):
+                        adapter_name = self.adapters[i].__class__.__name__
+                        print(
+                            f"[artissist-logger] Adapter error ({adapter_name})"
+                            f": {result}",
+                            file=sys.stderr,
+                        )
+            except Exception as e:
+                # Fallback error logging to stderr
+                print(
+                    f"[artissist-logger] Critical error in log dispatch: {e}",
+                    file=sys.stderr,
+                )
+
+    async def trace(self, message: str, **kwargs):
+        """Log trace message"""
+        await self.log(
+            LogEntryParams(level=LogLevel.TRACE, message=message, **kwargs)
+        )
 
     async def debug(self, message: str, **kwargs):
         """Log debug message"""
@@ -164,22 +255,42 @@ class Logger:
             LogEntryParams(level=LogLevel.ERROR, message=message, **kwargs)
         )
 
-    # Synchronous convenience methods
+    async def fatal(self, message: str, **kwargs):
+        """Log fatal message"""
+        await self.log(
+            LogEntryParams(level=LogLevel.FATAL, message=message, **kwargs)
+        )
+
+    # Synchronous convenience methods using background event loop
+    def trace_sync(self, message: str, **kwargs):
+        """Synchronous trace logging (fire-and-forget)"""
+        loop = _get_background_loop()
+        asyncio.run_coroutine_threadsafe(self.trace(message, **kwargs), loop)
+
     def debug_sync(self, message: str, **kwargs):
-        """Synchronous debug logging"""
-        asyncio.create_task(self.debug(message, **kwargs))
+        """Synchronous debug logging (fire-and-forget)"""
+        loop = _get_background_loop()
+        asyncio.run_coroutine_threadsafe(self.debug(message, **kwargs), loop)
 
     def info_sync(self, message: str, **kwargs):
-        """Synchronous info logging"""
-        asyncio.create_task(self.info(message, **kwargs))
+        """Synchronous info logging (fire-and-forget)"""
+        loop = _get_background_loop()
+        asyncio.run_coroutine_threadsafe(self.info(message, **kwargs), loop)
 
     def warn_sync(self, message: str, **kwargs):
-        """Synchronous warning logging"""
-        asyncio.create_task(self.warn(message, **kwargs))
+        """Synchronous warning logging (fire-and-forget)"""
+        loop = _get_background_loop()
+        asyncio.run_coroutine_threadsafe(self.warn(message, **kwargs), loop)
 
     def error_sync(self, message: str, **kwargs):
-        """Synchronous error logging"""
-        asyncio.create_task(self.error(message, **kwargs))
+        """Synchronous error logging (fire-and-forget)"""
+        loop = _get_background_loop()
+        asyncio.run_coroutine_threadsafe(self.error(message, **kwargs), loop)
+
+    def fatal_sync(self, message: str, **kwargs):
+        """Synchronous fatal logging (fire-and-forget)"""
+        loop = _get_background_loop()
+        asyncio.run_coroutine_threadsafe(self.fatal(message, **kwargs), loop)
 
     async def close(self):
         """Close all adapters and cleanup resources"""
@@ -235,4 +346,5 @@ class Logger:
                 context=logging_context,
             ),
             self.adapters,  # Pass current adapter instances
+            self.min_level,  # Preserve log level
         )

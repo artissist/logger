@@ -3,6 +3,7 @@
 Logger factory for creating specialized loggers in different contexts
 """
 
+import re
 from typing import Any, Dict, List, Optional
 
 from .adapters.base import LogAdapter
@@ -16,6 +17,36 @@ from .generated_types import (
     LoggingContext,
     AdapterName,
 )
+
+
+def _sanitize_path_component(component: str) -> str:
+    """
+    Sanitize a path component to prevent directory traversal attacks.
+
+    Args:
+        component: A single path component (service name, agent_id, etc.)
+
+    Returns:
+        Sanitized component safe for use in file paths
+    """
+    if not component:
+        return "unknown"
+
+    # Remove any path separators and parent directory references
+    sanitized = re.sub(r'[/\\]', '_', component)
+    sanitized = re.sub(r'\.\.', '_', sanitized)
+
+    # Remove any null bytes or other control characters
+    sanitized = re.sub(r'[\x00-\x1f\x7f]', '', sanitized)
+
+    # Limit length to prevent excessively long filenames
+    sanitized = sanitized[:64]
+
+    # Ensure we have something left
+    if not sanitized or sanitized.isspace():
+        return "unknown"
+
+    return sanitized
 
 
 class LoggerFactory:
@@ -56,7 +87,8 @@ class LoggerFactory:
             elif adapter_name == "file":
                 adapter_names.append(AdapterName.FILE)
                 if "file_path" not in adapter_config:
-                    adapter_config["file_path"] = f"logs/{service}.log"
+                    safe_service = _sanitize_path_component(service)
+                    adapter_config["file_path"] = f"logs/{safe_service}.log"
                 adapter_instances.append(FileAdapter(adapter_config))
             else:
                 raise ValueError(f"Unknown adapter: {adapter_name}")
@@ -140,13 +172,14 @@ class LoggerFactory:
         # Backend uses both console and file
         adapters = adapters or ["console", "file"]
 
+        safe_service = _sanitize_path_component(service)
         adapter_configs: Dict[str, Dict[str, Any]] = {
             "console": {
                 "colors": environment == "development",
                 "use_stderr": True,
             },
             "file": {
-                "file_path": f"logs/{service}.log",
+                "file_path": f"logs/{safe_service}.log",
                 "format": "json" if environment == "production" else "text",
                 "rotate": True,
                 "max_size_mb": 50,
@@ -198,6 +231,8 @@ class LoggerFactory:
         else:
             adapters = ["console", "file"]
 
+        safe_agent_type = _sanitize_path_component(config.agent_type)
+        safe_agent_id = _sanitize_path_component(config.agent_id)
         adapter_configs: Dict[str, Dict[str, Any]] = {
             "console": {
                 "colors": config.environment == "development",
@@ -205,7 +240,7 @@ class LoggerFactory:
             },
             "file": {
                 "file_path": (
-                    f"logs/agents/{config.agent_type}-{config.agent_id}.log"
+                    f"logs/agents/{safe_agent_type}-{safe_agent_id}.log"
                 ),
                 "format": "json",
                 "rotate": True,
@@ -246,13 +281,14 @@ class LoggerFactory:
         # Infrastructure typically uses structured logging
         adapters = adapters or ["console", "file"]
 
+        safe_component = _sanitize_path_component(component)
         adapter_configs: Dict[str, Dict[str, Any]] = {
             "console": {
                 "colors": False,  # Infrastructure logs are typically plain
                 "use_stderr": True,
             },
             "file": {
-                "file_path": f"logs/infrastructure/{component}.log",
+                "file_path": f"logs/infrastructure/{safe_component}.log",
                 "format": "json",  # Always structured for infrastructure
                 "rotate": True,
                 "max_size_mb": 100,

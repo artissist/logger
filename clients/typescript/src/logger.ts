@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Core Logger class for Artissist Logger
+import { randomUUID } from 'crypto';
 import { LogLevel } from './types';
 import type {
   ErrorContext,
@@ -228,16 +229,14 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Generate a unique log ID
+   * Generate a unique log ID using cryptographically secure randomness
    */
   private generateLogId(): string {
-    // Generate log ID in format: log_<32 hex chars>
-    const chars = '0123456789abcdef';
-    let result = 'log_';
-    for (let i = 0; i < 32; i++) {
-      result += chars[Math.floor(Math.random() * 16)];
-    }
-    return result;
+    // Generate log ID in format: log_<32 hex chars> using crypto.randomUUID()
+    // randomUUID() returns format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (36 chars with dashes)
+    // We remove dashes to get 32 hex chars
+    const uuid = randomUUID().replace(/-/g, '');
+    return `log_${uuid}`;
   }
 
   /**
